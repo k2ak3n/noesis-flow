@@ -1,0 +1,5309 @@
+.noesis-flow-settings-panel h2,
+.noesis-flow-settings-panel h3,
+.noesis-flow-settings-panel h4 {
+  margin-top: 1.25em;
+}
+
+.noesis-flow-settings-panel > p {
+  color: var(--text-muted);
+  max-width: 720px;
+}
+
+.noesis-flow-settings-panel > h3 {
+  border-top: 1px solid var(--background-modifier-border);
+  padding-top: 18px;
+}
+
+.noesis-flow-settings-panel > h3.noesis-flow-settings-group-heading {
+  border-top: 0;
+  color: var(--text-normal);
+  font-size: var(--font-ui-medium);
+  font-weight: 700;
+  letter-spacing: 0;
+  margin: 0 0 8px;
+  padding-top: 0;
+}
+
+.noesis-flow-settings-panel > h2 + p + h3 {
+  margin-top: 18px;
+}
+
+.noesis-flow-settings-divider {
+  border: 0;
+  border-top: 1px solid var(--background-modifier-border);
+  margin: 22px 0 14px;
+}
+
+.noesis-flow-settings-panel .setting-item {
+  padding-top: 10px;
+  padding-bottom: 10px;
+}
+
+.noesis-flow-settings-details {
+  border: 1px solid var(--background-modifier-border);
+  border-radius: var(--radius-m, 6px);
+  margin: 14px 0;
+  padding: 0 12px;
+}
+
+.noesis-flow-settings-details > summary {
+  cursor: pointer;
+  font-weight: 600;
+  padding: 12px 0;
+}
+
+.noesis-flow-settings-section > summary {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.noesis-flow-settings-summary-title {
+  color: var(--text-normal);
+}
+
+.noesis-flow-settings-summary-desc {
+  color: var(--text-muted);
+  font-size: var(--font-ui-smaller);
+  font-weight: 400;
+}
+
+.noesis-flow-settings-details[open] > summary {
+  border-bottom: 1px solid var(--background-modifier-border);
+  margin-bottom: 2px;
+}
+
+.noesis-flow-priority-row {
+  color: var(--text-normal);
+  font-size: var(--font-ui-small);
+  padding: 6px 0;
+}
+
+.noesis-flow-priority-row.muted {
+  color: var(--text-muted);
+}
+
+.noesis-flow-settings-card {
+  border: 1px solid color-mix(in srgb, var(--interactive-accent) 18%, var(--background-modifier-border));
+  border-radius: var(--radius-l, 8px);
+  padding: 14px;
+  margin: 12px 0;
+  background: color-mix(in srgb, var(--background-secondary) 82%, var(--background-primary));
+  box-shadow: 0 1px 0 rgba(255, 255, 255, 0.035);
+}
+
+.noesis-flow-settings-card h4 {
+  margin: 0 0 4px;
+}
+
+.noesis-flow-settings-card p {
+  margin: 0 0 8px;
+  color: var(--text-muted);
+}
+
+.noesis-flow-settings-textarea {
+  width: 100%;
+  min-height: 220px;
+  resize: vertical;
+  font-family: var(--font-monospace);
+  font-size: var(--font-ui-small);
+  border: 1px solid var(--background-modifier-border);
+  border-radius: var(--radius-l, 8px);
+  padding: 10px;
+  background: var(--background-primary);
+  color: var(--text-normal);
+}
+
+.noesis-flow-dialog .noesis-flow-dialog-text-input {
+  width: 100%;
+  box-sizing: border-box;
+  margin: 8px 0 12px;
+  padding: 8px 10px;
+  border: 1px solid var(--background-modifier-border);
+  border-radius: var(--radius-m, 6px);
+  background: var(--background-primary);
+  color: var(--text-normal);
+}
+
+.noesis-flow-dialog-chooser-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  max-height: 50vh;
+  overflow: auto;
+  margin: 8px 0 12px;
+}
+
+.noesis-flow-dialog-chooser-item {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  width: 100%;
+  padding: 10px 12px;
+  border: 1px solid var(--background-modifier-border);
+  border-radius: var(--radius-l, 8px);
+  background: color-mix(in srgb, var(--background-secondary) 82%, var(--background-primary));
+  color: var(--text-normal);
+  cursor: pointer;
+  text-align: left;
+  transition: background-color 120ms ease, border-color 120ms ease;
+}
+
+.noesis-flow-dialog-chooser-item:hover,
+.noesis-flow-dialog-chooser-item:focus-visible {
+  background: var(--background-modifier-hover);
+  border-color: var(--interactive-accent);
+}
+
+.noesis-flow-dialog-chooser-title {
+  font-weight: 600;
+}
+
+.noesis-flow-dialog-chooser-meta {
+  margin-top: 2px;
+  color: var(--text-muted);
+  font-size: var(--font-ui-smaller);
+}
+
+.noesis-flow-choice-modal h2 {
+  margin-bottom: 14px;
+}
+
+.noesis-flow-choice-modal .noesis-flow-dialog-text-input {
+  margin-bottom: 10px;
+}
+
+.noesis-flow-choice-modal .noesis-flow-dialog-chooser-list {
+  border: 1px solid var(--background-modifier-border);
+  border-radius: var(--radius-m, 6px);
+  gap: 0;
+  margin: 8px 0 14px;
+  overflow: auto;
+}
+
+.noesis-flow-choice-modal .noesis-flow-dialog-chooser-item {
+  background: transparent;
+  border: 0;
+  border-radius: 0;
+  box-shadow: none;
+  min-height: 42px;
+  padding: 8px 10px;
+}
+
+.noesis-flow-choice-modal .noesis-flow-dialog-chooser-item:not(:last-child) {
+  border-bottom: 1px solid color-mix(in srgb, var(--background-modifier-border) 78%, transparent);
+}
+
+.noesis-flow-choice-modal .noesis-flow-dialog-chooser-item:hover,
+.noesis-flow-choice-modal .noesis-flow-dialog-chooser-item:focus-visible {
+  background: color-mix(in srgb, var(--interactive-accent) 9%, var(--background-modifier-hover));
+  border-color: color-mix(in srgb, var(--background-modifier-border) 78%, transparent);
+}
+
+.noesis-flow-choice-modal .setting-item {
+  border-top: 1px solid var(--background-modifier-border);
+  justify-content: flex-end;
+  margin-top: 12px;
+  padding-top: 12px;
+}
+
+.noesis-flow-time-view-content,
+.noesis-flow-daily-brief-view-content,
+.noesis-flow-timeline-view-content {
+  container-type: size;
+  height: 100%;
+  min-height: 0;
+  overflow: auto;
+  padding: 0;
+}
+
+.noesis-flow-calendar-view-content {
+  container-type: inline-size;
+  height: 100%;
+  min-height: 0;
+  overflow: auto;
+  padding: 0;
+}
+
+.noesis-flow-calendar-empty {
+  padding: 16px;
+  color: var(--text-muted);
+  font-size: var(--font-ui-small);
+}
+
+.noesis-flow-productivity-widget {
+  --noesis-flow-widget-accent: var(--noesis-flow-current-accent, var(--interactive-accent));
+  --noesis-flow-widget-radius: var(--noesis-flow-calendar-cell-radius, 6px);
+}
+
+.noesis-flow-calendar-wrapper {
+  --color-background-weekend: color-mix(in srgb, var(--noesis-flow-current-accent, var(--interactive-accent)) var(--noesis-flow-calendar-weekend-strength, 6%), transparent);
+  --color-arrow: color-mix(in srgb, var(--noesis-flow-current-accent, var(--interactive-accent)) 10%, var(--text-muted));
+  --color-button: color-mix(in srgb, var(--noesis-flow-current-accent, var(--interactive-accent)) 8%, var(--text-muted));
+  --color-hover-cell: color-mix(in srgb, var(--noesis-flow-current-accent, var(--interactive-accent)) 6%, transparent);
+  --color-active-cell: var(--noesis-flow-current-accent, var(--interactive-accent));
+  --color-active-cell-hover: color-mix(in srgb, var(--noesis-flow-current-accent, var(--interactive-accent)) 88%, var(--text-normal));
+  --color-quarter: color-mix(in srgb, var(--noesis-flow-current-accent, var(--interactive-accent)) 12%, var(--text-faint));
+  --color-text-heading: color-mix(in srgb, var(--noesis-flow-current-accent, var(--interactive-accent)) 6%, var(--text-muted));
+  --color-text-weeknum: color-mix(in srgb, var(--noesis-flow-current-accent, var(--interactive-accent)) 6%, var(--text-faint));
+  --color-text-today: var(--noesis-flow-current-accent, var(--interactive-accent));
+  container-type: inline-size;
+  color: var(--text-normal);
+  height: auto;
+  min-height: 0;
+  overflow: visible;
+  user-select: none;
+}
+
+.noesis-flow-calendar-wrapper.weekend-tint-red {
+  --color-background-weekend: color-mix(in srgb, #ef4444 var(--noesis-flow-calendar-weekend-strength, 6%), transparent);
+}
+
+.noesis-flow-calendar-shell {
+  --noesis-flow-calendar-edge: clamp(16px, 8cqw, 28px);
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  padding: 2px 0 clamp(4px, 2cqw, 8px);
+  position: relative;
+}
+
+.noesis-flow-calendar-header {
+  align-items: center;
+  border-bottom: 1px solid color-mix(in srgb, var(--noesis-flow-widget-accent) 18%, var(--background-modifier-border));
+  display: grid;
+  gap: 10px;
+  grid-template-columns: minmax(0, 1fr) auto;
+  margin: clamp(8px, 4cqw, 14px) var(--noesis-flow-calendar-edge) 10px;
+  min-height: 26px;
+  padding-bottom: 9px;
+  width: auto;
+}
+
+.noesis-flow-calendar-wrapper.show-quarters .noesis-flow-calendar-header {
+  border-bottom-color: transparent;
+  margin-bottom: var(--noesis-flow-calendar-quarter-section-spacing, 4px);
+  padding-bottom: 0;
+}
+
+.noesis-flow-calendar-title-area {
+  align-items: flex-start;
+  display: flex;
+  flex-direction: column;
+  justify-self: start;
+  min-width: 0;
+}
+
+.noesis-flow-calendar-title {
+  align-items: center;
+  color: var(--text-normal);
+  display: flex;
+  font-size: 1em;
+  font-style: normal;
+  font-weight: 400;
+  gap: 5px;
+  line-height: 1.2;
+  margin: 0;
+  min-height: 24px;
+  min-width: 0;
+  padding: 0;
+  text-shadow: none;
+  transition: background-color 120ms ease, box-shadow 120ms ease, color 120ms ease;
+}
+
+.noesis-flow-calendar-title-button,
+.noesis-flow-calendar-picker-button,
+.noesis-flow-calendar-quarter,
+.noesis-flow-calendar-today-button,
+.noesis-flow-calendar-icon-button,
+.noesis-flow-calendar-week-number,
+.noesis-flow-calendar-day {
+  appearance: none;
+  background: transparent !important;
+  background-image: none !important;
+  border: 0 !important;
+  box-shadow: none !important;
+  font: inherit;
+  letter-spacing: 0;
+  margin: 0;
+  outline: 0;
+}
+
+.noesis-flow-calendar-title-button,
+.noesis-flow-calendar-year {
+  align-items: center;
+  color: var(--text-normal);
+  display: inline-flex;
+  font-size: var(--noesis-flow-calendar-title-size, 1em);
+  font-weight: 400;
+  height: 22px;
+  line-height: 1.2;
+  padding: 0 1px;
+}
+
+.noesis-flow-calendar-title-button {
+  cursor: pointer;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.noesis-flow-calendar-title-date-short {
+  display: none;
+}
+
+.noesis-flow-calendar-year {
+  opacity: 0.94;
+}
+
+.noesis-flow-calendar-title-button:hover,
+.noesis-flow-calendar-title-button:focus-visible,
+.noesis-flow-calendar-picker-button:hover,
+.noesis-flow-calendar-picker-button:focus-visible {
+  color: var(--color-active-cell);
+}
+
+.noesis-flow-calendar-year-button {
+  cursor: pointer;
+}
+
+.noesis-flow-calendar-year-range {
+  box-sizing: border-box;
+  display: block;
+  flex: 0 1 12ch;
+  font-size: clamp(0.68em, 5.5cqw, var(--noesis-flow-calendar-title-size, 1.15em));
+  min-width: 0;
+  overflow: hidden;
+  padding-left: 1px;
+  text-overflow: clip;
+  white-space: nowrap;
+  width: 12ch;
+}
+
+.noesis-flow-calendar-picker {
+  display: grid;
+  align-content: space-between;
+  column-gap: 8px;
+  flex: 1 1 auto;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  margin: 0;
+  min-height: 220px;
+  padding: 8px 0 12px;
+}
+
+.noesis-flow-calendar-month-picker {
+  grid-template-rows: repeat(3, max-content);
+}
+
+.noesis-flow-calendar-year-picker {
+  grid-template-rows: repeat(4, max-content);
+}
+
+.noesis-flow-calendar-picker-button {
+  align-items: center;
+  aspect-ratio: 1;
+  border-radius: var(--noesis-flow-calendar-cell-radius, 6px);
+  color: var(--text-normal);
+  cursor: pointer;
+  display: inline-flex;
+  font-size: 0.86em;
+  justify-content: center;
+  line-height: 1.2;
+  opacity: 0.96;
+  padding: 0;
+  transition: background-color 120ms ease, color 120ms ease, opacity 120ms ease;
+  width: 100%;
+}
+
+.noesis-flow-calendar-picker-button.active {
+  background: color-mix(in srgb, var(--noesis-flow-widget-accent) 64%, var(--background-primary)) !important;
+  color: var(--text-on-accent, var(--text-normal));
+  font-weight: 600;
+  opacity: 1;
+}
+
+.noesis-flow-calendar-picker-button.adjacent-range {
+  color: var(--text-muted);
+  opacity: 0.58;
+}
+
+.noesis-flow-calendar-picker-button:focus-visible {
+  box-shadow: 0 0 0 2px var(--interactive-accent) !important;
+}
+
+.noesis-flow-calendar-wrapper.picker-mode-month,
+.noesis-flow-calendar-wrapper.picker-mode-year {
+  display: flex;
+  min-height: 100%;
+}
+
+.noesis-flow-calendar-wrapper.picker-mode-month .noesis-flow-calendar-shell,
+.noesis-flow-calendar-wrapper.picker-mode-year .noesis-flow-calendar-shell {
+  flex: 1 1 auto;
+}
+
+.noesis-flow-calendar-wrapper.picker-mode-month .noesis-flow-calendar-body,
+.noesis-flow-calendar-wrapper.picker-mode-year .noesis-flow-calendar-body {
+  display: flex;
+  flex: 1 1 auto;
+}
+
+.noesis-flow-calendar-quarters {
+  align-items: center;
+  border-bottom: 1px solid color-mix(in srgb, var(--background-modifier-border) 70%, transparent);
+  border-top: 1px solid color-mix(in srgb, var(--background-modifier-border) 70%, transparent);
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  margin: 0 var(--noesis-flow-calendar-edge) var(--noesis-flow-calendar-quarter-section-spacing, 4px);
+  padding: max(calc(var(--noesis-flow-calendar-quarter-section-spacing, 4px) - 1.6px), 0px) 0;
+  width: auto;
+}
+
+.noesis-flow-calendar-quarter {
+  color: var(--color-quarter);
+  cursor: pointer;
+  font-size: 0.62em;
+  line-height: 1.2;
+  opacity: 0.72;
+  padding: 0 8px;
+  position: relative;
+  text-align: center;
+}
+
+.noesis-flow-calendar-quarter:not(:first-child)::before {
+  background-color: color-mix(in srgb, var(--background-modifier-border) 70%, transparent);
+  content: "";
+  height: 1.1em;
+  left: 0;
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 1px;
+}
+
+.noesis-flow-calendar-quarter.active {
+  color: color-mix(in srgb, var(--color-active-cell) 82%, var(--text-normal));
+  font-weight: 600;
+  opacity: 1;
+}
+
+.noesis-flow-calendar-actions {
+  align-items: center;
+  display: flex;
+  gap: 4px;
+  justify-content: center;
+  justify-self: end;
+  min-height: 24px;
+  padding-top: 0;
+}
+
+.noesis-flow-calendar-today-button {
+  align-items: center;
+  border-radius: var(--noesis-flow-calendar-cell-radius, 6px);
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--noesis-flow-widget-accent) 18%, transparent) !important;
+  color: var(--color-button);
+  cursor: pointer;
+  display: inline-flex;
+  font-size: 0.72em;
+  font-weight: 400;
+  height: 26px;
+  justify-content: center;
+  line-height: 1.2;
+  min-height: 26px;
+  opacity: 0.9;
+  padding: 0 9px;
+  text-transform: none;
+}
+
+.noesis-flow-calendar-icon-button {
+  align-items: center;
+  border-radius: var(--noesis-flow-calendar-cell-radius, 6px);
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--noesis-flow-widget-accent) 18%, transparent) !important;
+  color: var(--color-arrow);
+  cursor: pointer;
+  display: flex;
+  flex: 0 0 26px;
+  height: 26px;
+  justify-content: center;
+  opacity: 0.9;
+  padding: 0;
+  width: 26px;
+}
+
+.noesis-flow-calendar-today-button:hover,
+.noesis-flow-calendar-icon-button:hover,
+.noesis-flow-calendar-icon-button.active {
+  background-color: var(--color-hover-cell) !important;
+  color: var(--color-active-cell);
+  opacity: 1;
+}
+
+.noesis-flow-calendar-icon-button svg {
+  height: 15px;
+  width: 15px;
+}
+
+.noesis-flow-calendar-body {
+  min-height: 0;
+  margin: 0 var(--noesis-flow-calendar-edge);
+}
+
+.noesis-flow-calendar-grid {
+  border-collapse: separate;
+  border-spacing: 0 clamp(1px, 1.5cqw, 5px);
+  table-layout: fixed;
+  width: 100%;
+}
+
+.noesis-flow-calendar-grid th {
+  background-color: transparent;
+  color: var(--color-text-heading);
+  font-size: 0.62em;
+  font-weight: 600;
+  letter-spacing: 0;
+  padding: 0 0 4px;
+  text-align: center;
+  text-transform: uppercase;
+}
+
+.noesis-flow-calendar-grid td {
+  padding: 0;
+  text-align: center;
+  vertical-align: middle;
+}
+
+.noesis-flow-calendar-week-heading,
+.noesis-flow-calendar-week-col {
+  width: 11%;
+}
+
+.noesis-flow-calendar-week-heading:first-child,
+.noesis-flow-calendar-week-cell.grid-right {
+  padding-right: clamp(8px, 3.6cqw, 13px);
+}
+
+.noesis-flow-calendar-week-heading:last-child,
+.noesis-flow-calendar-week-cell:not(.grid-right) {
+  padding-left: clamp(8px, 3.6cqw, 13px);
+}
+
+.noesis-flow-calendar-weekday.weekend,
+.noesis-flow-calendar-cell.weekend {
+  transition: background-color 0.1s ease-in;
+}
+
+.noesis-flow-calendar-wrapper.weekend-shading-enabled .noesis-flow-calendar-cell.weekend {
+  background-color: var(--color-background-weekend);
+  border-radius: var(--noesis-flow-calendar-cell-radius, 6px);
+}
+
+.noesis-flow-calendar-wrapper.weekend-shading-enabled .noesis-flow-calendar-weekday.weekend {
+  background-color: transparent;
+}
+
+.noesis-flow-calendar-week-cell.grid-right {
+  border-right: 0;
+}
+
+.noesis-flow-calendar-day,
+.noesis-flow-calendar-week-number {
+  align-items: center;
+  border-radius: var(--noesis-flow-calendar-cell-radius, 6px);
+  color: var(--text-normal);
+  cursor: pointer;
+  display: inline-flex;
+  font-size: var(--noesis-flow-calendar-day-size, 0.86em);
+  height: clamp(20px, 10.5cqw, 30px);
+  justify-content: center;
+  line-height: 1;
+  min-height: clamp(20px, 10.5cqw, 30px);
+  padding: 0;
+  position: relative;
+  transition: background-color 0.1s ease-in, color 0.1s ease-in, opacity 0.1s ease-in;
+  width: clamp(20px, 10.5cqw, 30px);
+}
+
+.noesis-flow-calendar-week-number {
+  color: var(--color-text-weeknum);
+  font-size: 0.56em;
+  font-weight: 500;
+  height: clamp(20px, 10.5cqw, 30px);
+  min-height: clamp(20px, 10.5cqw, 30px);
+  opacity: 0.38;
+  width: clamp(16px, 7cqw, 22px);
+}
+
+.noesis-flow-calendar-day:hover,
+.noesis-flow-calendar-week-number:hover {
+  background-color: var(--color-hover-cell) !important;
+}
+
+.noesis-flow-calendar-day.today {
+  color: var(--color-text-today);
+  font-weight: 600;
+}
+
+.noesis-flow-calendar-day.active {
+  background-color: var(--color-active-cell) !important;
+  color: var(--text-on-accent);
+}
+
+.noesis-flow-calendar-day.active:hover {
+  background-color: var(--color-active-cell-hover, var(--interactive-accent-hover)) !important;
+}
+
+.noesis-flow-calendar-day.is-drop-target {
+  box-shadow: inset 0 0 0 2px var(--interactive-accent) !important;
+  transform: scale(1.04);
+}
+
+.noesis-flow-calendar-day.has-task-indicator {
+  --noesis-flow-calendar-task-signal: color-mix(in srgb, var(--color-active-cell) 72%, var(--text-muted));
+}
+
+.noesis-flow-calendar-day.task-load-busy:not(.active) {
+  background-color: color-mix(in srgb, var(--color-active-cell) 8%, transparent) !important;
+  color: color-mix(in srgb, var(--color-active-cell) 24%, var(--text-normal));
+}
+
+.noesis-flow-calendar-day.event {
+  --noesis-flow-calendar-event-color: #eab308;
+}
+
+.noesis-flow-calendar-day.event:not(.active) {
+  background-color: color-mix(in srgb, var(--noesis-flow-calendar-event-color) 14%, transparent) !important;
+  color: color-mix(in srgb, var(--noesis-flow-calendar-event-color) 72%, var(--text-normal));
+}
+
+.noesis-flow-calendar-day.task-load-warning {
+  --noesis-flow-calendar-load-color: var(--noesis-flow-task-high-color, #fd884b);
+  --noesis-flow-calendar-task-signal: var(--noesis-flow-calendar-load-color);
+}
+
+.noesis-flow-calendar-day.task-load-warning:not(.active) {
+  background-color: color-mix(in srgb, var(--noesis-flow-calendar-load-color) 16%, transparent) !important;
+  color: color-mix(in srgb, var(--noesis-flow-calendar-load-color) 68%, var(--text-normal));
+}
+
+.noesis-flow-calendar-day.task-load-critical {
+  --noesis-flow-calendar-load-color: var(--noesis-flow-task-critical-color, #ea4458);
+  --noesis-flow-calendar-task-signal: var(--noesis-flow-calendar-load-color);
+}
+
+.noesis-flow-calendar-day.task-load-critical:not(.active) {
+  background-color: color-mix(in srgb, var(--noesis-flow-calendar-load-color) 16%, transparent) !important;
+  color: color-mix(in srgb, var(--noesis-flow-calendar-load-color) 70%, var(--text-normal));
+}
+
+.noesis-flow-calendar-day.task-load-overdue,
+.noesis-flow-calendar-day.holiday {
+  --noesis-flow-calendar-load-color: var(--noesis-flow-task-critical-color, #ea4458);
+  --noesis-flow-calendar-task-signal: var(--noesis-flow-calendar-load-color);
+}
+
+.noesis-flow-calendar-day.task-load-overdue:not(.active),
+.noesis-flow-calendar-day.holiday:not(.active) {
+  background-color: color-mix(in srgb, var(--noesis-flow-calendar-load-color) 16%, transparent) !important;
+  color: color-mix(in srgb, var(--noesis-flow-calendar-load-color) 72%, var(--text-normal));
+}
+
+.noesis-flow-calendar-task-dots {
+  align-items: center;
+  bottom: 3px;
+  display: flex;
+  gap: 2px;
+  justify-content: center;
+  left: 50%;
+  pointer-events: none;
+  position: absolute;
+  transform: translateX(-50%);
+}
+
+.noesis-flow-calendar-task-dot {
+  background: var(--noesis-flow-calendar-task-signal);
+  border-radius: 999px;
+  height: 2px;
+  opacity: 0.86;
+  width: 2px;
+}
+
+.noesis-flow-calendar-day.active .noesis-flow-calendar-task-dot {
+  background: color-mix(in srgb, var(--text-on-accent) 88%, transparent);
+}
+
+.noesis-flow-calendar-day.adjacent-month .noesis-flow-calendar-task-dots {
+  opacity: 0.58;
+}
+
+.noesis-flow-calendar-wrapper.weekend-shading-enabled .noesis-flow-calendar-weekday.weekend {
+  color: color-mix(in srgb, var(--color-active-cell) 20%, var(--text-muted));
+}
+
+.noesis-flow-calendar-wrapper.weekend-tint-red.weekend-shading-enabled .noesis-flow-calendar-weekday.weekend {
+  color: color-mix(in srgb, #ef4444 46%, var(--text-muted));
+}
+
+.noesis-flow-calendar-wrapper.weekend-shading-enabled .noesis-flow-calendar-cell.weekend .noesis-flow-calendar-day:not(.active) {
+  color: color-mix(in srgb, var(--color-active-cell) 18%, var(--text-normal));
+}
+
+.noesis-flow-calendar-wrapper.weekend-tint-red.weekend-shading-enabled .noesis-flow-calendar-cell.weekend .noesis-flow-calendar-day:not(.active) {
+  color: color-mix(in srgb, #ef4444 32%, var(--text-normal));
+}
+
+
+.noesis-flow-calendar-week-number:hover {
+  background-color: transparent !important;
+  color: var(--color-text-weeknum);
+}
+
+.noesis-flow-calendar-week-number.active,
+.noesis-flow-calendar-week-number.active:hover {
+  background-color: transparent !important;
+  color: color-mix(in srgb, var(--color-active-cell) 72%, var(--text-muted));
+  font-weight: 600;
+  opacity: 0.76;
+}
+
+.noesis-flow-calendar-day.adjacent-month {
+  color: var(--text-faint);
+  opacity: var(--noesis-flow-calendar-adjacent-opacity, 0.42);
+}
+
+.noesis-flow-time-shell {
+  container-type: size;
+  box-sizing: border-box;
+  height: 100%;
+  min-height: 100%;
+  padding: clamp(6px, min(4cqw, 3cqh), 14px);
+}
+
+.noesis-flow-time-shell {
+  display: flex;
+  min-height: 0;
+  padding-top: clamp(2px, 1cqh, 6px);
+}
+
+.noesis-flow-time-card {
+  background: transparent;
+  border-radius: 0;
+  box-shadow: none;
+  color: var(--text-normal);
+}
+
+.noesis-flow-time-card {
+  align-items: stretch;
+  display: flex;
+  flex: 1 1 auto;
+  flex-direction: column;
+  gap: clamp(6px, min(3.6cqw, 2.8cqh), 18px);
+  justify-content: space-evenly;
+  min-height: 0;
+  overflow: hidden;
+  padding: clamp(8px, min(5cqw, 4cqh), 18px);
+  width: 100%;
+}
+
+.noesis-flow-time-label,
+.noesis-flow-time-meta,
+.noesis-flow-today-task-meta {
+  color: var(--text-muted);
+  font-size: var(--font-ui-smaller);
+}
+
+.noesis-flow-time-segmented,
+.noesis-flow-time-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  justify-content: center;
+}
+
+.noesis-flow-time-segment,
+.noesis-flow-time-button,
+.noesis-flow-calendar-wrapper .noesis-flow-calendar-today-button,
+.noesis-flow-calendar-wrapper .noesis-flow-calendar-icon-button {
+  background: transparent !important;
+  border: 0 !important;
+  border-radius: var(--noesis-flow-calendar-cell-radius, 6px);
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--noesis-flow-widget-accent) 18%, transparent) !important;
+  box-sizing: border-box;
+  color: var(--text-muted);
+  cursor: pointer;
+  font-size: var(--font-ui-small);
+  height: 26px;
+  min-height: 26px;
+  padding: 5px clamp(7px, 3cqw, 10px);
+}
+
+
+
+
+.noesis-flow-calendar-wrapper .noesis-flow-calendar-icon-button {
+  flex: 0 0 26px;
+  justify-content: center;
+  padding: 0;
+  width: 26px;
+}
+
+.noesis-flow-calendar-wrapper :is(.noesis-flow-calendar-today-button, .noesis-flow-calendar-icon-button):hover {
+  background: color-mix(in srgb, var(--noesis-flow-widget-accent) 11%, transparent) !important;
+  color: color-mix(in srgb, var(--noesis-flow-widget-accent) 74%, var(--text-normal));
+}
+
+.noesis-flow-timer-display-stage {
+  --noesis-flow-timer-display-size: clamp(112px, min(58cqw, 38cqh), 200px);
+  align-items: center;
+  display: flex;
+  flex: 0 0 auto;
+  justify-content: center;
+  margin: 0 auto;
+  min-height: var(--noesis-flow-timer-display-size);
+  width: 100%;
+}
+
+.noesis-flow-timer-digital-display {
+  align-items: center;
+  background: color-mix(in srgb, var(--noesis-flow-widget-accent) 4%, transparent);
+  border-radius: var(--noesis-flow-calendar-cell-radius, 6px);
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--noesis-flow-widget-accent) 18%, transparent);
+  box-sizing: border-box;
+  display: none;
+  flex: 0 0 auto;
+  flex-direction: column;
+  height: clamp(76px, min(34cqw, 25cqh), 118px);
+  justify-content: center;
+  max-width: min(100%, 230px);
+  padding: 0 clamp(12px, 5cqw, 24px);
+  width: clamp(136px, min(70cqw, 42cqh), 220px);
+}
+
+.noesis-flow-timer-cycle-row {
+  align-items: center;
+  display: flex;
+  gap: 8px;
+  justify-content: center;
+  min-height: 18px;
+  text-align: center;
+}
+
+.noesis-flow-timer-cycle-markers {
+  align-items: center;
+  display: inline-flex;
+  gap: 4px;
+}
+
+.noesis-flow-timer-cycle-marker {
+  background: color-mix(in srgb, var(--background-modifier-border) 78%, transparent);
+  border-radius: 999px;
+  height: 5px;
+  transition: background-color 120ms ease, transform 120ms ease;
+  width: 5px;
+}
+
+.noesis-flow-timer-cycle-marker.complete,
+.noesis-flow-timer-cycle-marker.current {
+  background: var(--noesis-flow-widget-accent);
+}
+
+.noesis-flow-timer-cycle-marker.current {
+  transform: scale(1.35);
+}
+
+.noesis-flow-timer-cycle-hint {
+  color: var(--text-muted);
+  font-size: var(--font-ui-smaller);
+  text-align: center;
+}
+
+.noesis-flow-time-button.icon-only {
+  align-items: center;
+  display: inline-flex;
+  flex: 0 0 26px;
+  justify-content: center;
+  padding: 0;
+  width: 26px;
+}
+
+.noesis-flow-time-button.icon-only svg {
+  height: 14px;
+  width: 14px;
+}
+
+.noesis-flow-timer-digital-time {
+  color: color-mix(in srgb, var(--noesis-flow-widget-accent) 20%, var(--text-normal));
+  font-size: clamp(1.75em, min(12cqw, 9cqh), 3em);
+  font-variant-numeric: tabular-nums;
+  font-weight: 650;
+  letter-spacing: 0;
+  line-height: 1;
+}
+
+.noesis-flow-timer-digital-mode {
+  color: var(--text-muted);
+  font-size: 0.68em;
+  margin-top: 5px;
+  text-transform: uppercase;
+}
+
+.noesis-flow-time-shell.noesis-flow-timer-display-digital-v2 .noesis-flow-timer-digital-display {
+  display: flex;
+}
+
+.noesis-flow-time-shell.noesis-flow-timer-display-digital-v2 .noesis-flow-timer-circle {
+  display: none;
+}
+
+.noesis-flow-time-segment.active,
+.noesis-flow-time-button.primary {
+  background: color-mix(in srgb, var(--noesis-flow-widget-accent) 16%, transparent) !important;
+  color: color-mix(in srgb, var(--noesis-flow-widget-accent) 74%, var(--text-normal));
+}
+
+.noesis-flow-timer-circle {
+  align-items: center;
+  background:
+    radial-gradient(circle at center, var(--background-secondary) 0 58%, transparent 59%),
+    conic-gradient(var(--noesis-flow-widget-accent) var(--noesis-flow-timer-progress, 0deg), color-mix(in srgb, var(--background-modifier-border) 72%, transparent) 0);
+  border-radius: 999px;
+  display: flex;
+  flex: 0 1 auto;
+  flex-direction: column;
+  height: var(--noesis-flow-timer-display-size);
+  justify-content: center;
+  width: var(--noesis-flow-timer-display-size);
+}
+
+.noesis-flow-timer-time {
+  font-size: clamp(1.75em, min(12cqw, 9cqh), 3em);
+  font-variant-numeric: tabular-nums;
+  font-weight: 650;
+  line-height: 1;
+}
+
+.noesis-flow-timer-mode {
+  color: var(--text-muted);
+  font-size: 0.68em;
+  margin-top: 5px;
+  text-transform: uppercase;
+}
+
+.noesis-flow-tasks-title-area {
+  min-width: 0;
+  width: 100%;
+}
+
+.noesis-flow-tasks-heading-row {
+  align-items: center;
+  display: flex;
+  gap: 8px;
+  min-width: 0;
+  width: 100%;
+}
+
+.noesis-flow-today-task-item {
+  --noesis-flow-task-priority-color: var(--text-muted);
+  align-items: flex-start;
+  display: grid;
+  gap: 8px;
+  grid-template-columns: 22px 1fr;
+}
+
+.noesis-flow-today-task-marker {
+  align-items: center;
+  appearance: none;
+  background: color-mix(in srgb, var(--noesis-flow-task-priority-color) 18%, transparent) !important;
+  border: 0;
+  border-color: transparent !important;
+  border-radius: var(--noesis-flow-calendar-cell-radius, 6px);
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--noesis-flow-task-priority-color) 36%, transparent) !important;
+  color: var(--noesis-flow-task-priority-color) !important;
+  cursor: pointer;
+  display: inline-flex;
+  font-size: var(--font-ui-smaller);
+  font-weight: 700;
+  height: 22px;
+  justify-content: center;
+  letter-spacing: 0;
+  line-height: 1;
+  margin: 0;
+  padding: 0;
+  position: relative;
+  transition: background-color 120ms ease, color 120ms ease, opacity 120ms ease;
+  width: 22px;
+}
+
+.noesis-flow-today-task-complete:hover,
+.noesis-flow-today-task-complete:focus-visible {
+  background: color-mix(in srgb, var(--noesis-flow-task-priority-color) 26%, transparent) !important;
+  color: var(--noesis-flow-task-priority-color) !important;
+  opacity: 1;
+}
+
+.noesis-flow-today-task-complete:disabled {
+  cursor: default;
+  opacity: 0.55;
+}
+
+.noesis-flow-today-task-item.priority-critical {
+  --noesis-flow-task-priority-color: var(--noesis-flow-task-critical-color, #ea4458);
+}
+
+.noesis-flow-today-task-item.priority-h {
+  --noesis-flow-task-priority-color: var(--noesis-flow-task-high-color, #fd884b);
+}
+
+.noesis-flow-today-task-item.priority-m {
+  --noesis-flow-task-priority-color: var(--noesis-flow-task-medium-color, #f1c24d);
+}
+
+.noesis-flow-today-task-item.priority-l {
+  --noesis-flow-task-priority-color: var(--noesis-flow-task-low-color, #5cdf95);
+}
+
+.noesis-flow-today-task-item.priority-none {
+  --noesis-flow-task-priority-color: var(--text-muted);
+}
+
+.noesis-flow-today-task-text {
+  font-size: var(--font-ui-small);
+  line-height: 1.35;
+}
+
+.noesis-flow-markdown-inline {
+  min-width: 0;
+}
+
+.noesis-flow-markdown-inline > :is(p, div) {
+  margin: 0;
+}
+
+.noesis-flow-markdown-inline :is(a, .internal-link) {
+  color: color-mix(in srgb, var(--noesis-flow-widget-accent, var(--interactive-accent)) 68%, var(--text-accent));
+  text-decoration: none;
+}
+
+.noesis-flow-markdown-inline :is(a, .internal-link):hover {
+  text-decoration: underline;
+}
+
+.noesis-flow-markdown-inline code {
+  font-size: 0.92em;
+}
+
+.noesis-flow-timeline-shell {
+  --noesis-flow-calendar-edge: clamp(16px, min(8cqw, 5cqh), 28px);
+}
+
+.noesis-flow-daily-brief-view-content {
+  background: var(--background-primary);
+}
+
+.noesis-flow-kanban-view-content {
+  background: var(--background-primary);
+  overflow: hidden;
+}
+
+.noesis-flow-task-list-view-content {
+  background: var(--background-primary);
+  overflow: hidden;
+}
+
+.noesis-flow-task-list {
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  height: 100%;
+  min-height: 0;
+  padding: clamp(20px, 4cqh, 34px) clamp(20px, 4cqw, 42px);
+}
+
+.noesis-flow-task-list-header {
+  align-items: end;
+  border-bottom: 1px solid color-mix(in srgb, var(--interactive-accent) 24%, var(--background-modifier-border));
+  display: grid;
+  gap: 18px;
+  grid-template-columns: minmax(0, 1fr) auto;
+  padding-bottom: 18px;
+}
+
+.noesis-flow-task-list-title h2 {
+  color: var(--text-normal);
+  text-transform: uppercase;
+  font-size: clamp(1.7em, 4cqw, 2.35em);
+  letter-spacing: 0.04em;
+  margin: 3px 0 4px;
+}
+
+.noesis-flow-task-list-subtitle,
+.noesis-flow-task-list-count,
+
+.noesis-flow-task-list-signal {
+  color: var(--text-muted);
+  font-size: var(--font-ui-smaller);
+  font-weight: 650;
+  letter-spacing: 0.05em;
+}
+
+.noesis-flow-task-list-kicker {
+  color: var(--interactive-accent);
+  font-size: var(--font-ui-smaller);
+  font-weight: 700;
+  letter-spacing: 0.12em;
+}
+
+.noesis-flow-task-list-signal { margin-top: 6px; }
+.noesis-flow-task-list-signal.is-active { color: var(--interactive-accent); }
+
+.noesis-flow-task-list-controls {
+  align-items: center;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  justify-content: flex-end;
+}
+
+.noesis-flow-task-list-controls :is(input, select, button) {
+  height: 30px;
+}
+
+.noesis-flow-task-list-controls input[type="search"] {
+  max-width: 180px;
+}
+
+.noesis-flow-task-list-column-chooser,
+.noesis-flow-task-list-add-row,
+.noesis-flow-task-list-bulk-actions {
+  align-items: center;
+  background: color-mix(in srgb, var(--background-secondary) 42%, transparent);
+  border: 1px solid color-mix(in srgb, var(--background-modifier-border) 78%, transparent);
+  border-radius: var(--noesis-flow-calendar-cell-radius, 6px);
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  padding: 8px 10px;
+}
+
+.noesis-flow-task-list-column-chooser {
+  align-items: start;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.noesis-flow-task-list-column-chooser-header,
+.noesis-flow-task-list-column-control {
+  align-items: center;
+  display: flex;
+  gap: 6px;
+  width: 100%;
+}
+
+.noesis-flow-task-list-column-chooser-header {
+  font-size: var(--font-ui-smaller);
+  font-weight: 650;
+  justify-content: space-between;
+}
+
+.noesis-flow-task-list-column-chooser-header button,
+.noesis-flow-task-list-column-control button {
+  font-size: var(--font-ui-smaller);
+  height: 28px;
+}
+
+.noesis-flow-task-list-column-control label {
+  align-items: center;
+  display: inline-flex;
+  flex: 1 1 auto;
+  gap: 6px;
+  min-width: 130px;
+}
+
+.noesis-flow-task-list-column-width-input {
+  flex: 0 0 82px;
+  height: 28px;
+  width: 82px;
+}
+
+
+.noesis-flow-task-list-add-row input[type="text"] {
+  flex: 1 1 230px;
+}
+
+.noesis-flow-task-list-add-row :is(input, select, button),
+.noesis-flow-task-list-bulk-actions :is(input, select, button) {
+  height: 30px;
+}
+
+.noesis-flow-task-list-add-row input[type="date"],
+.noesis-flow-task-list-bulk-actions input[type="date"] {
+  width: 140px;
+}
+
+.noesis-flow-task-list-add-row input[list],
+.noesis-flow-task-list-bulk-actions input[list] {
+  min-width: 145px;
+}
+
+.noesis-flow-task-list-bulk-actions > span {
+  color: var(--text-muted);
+  font-size: var(--font-ui-smaller);
+  font-weight: 650;
+}
+
+.noesis-flow-task-list-table-wrap {
+  border: 1px solid color-mix(in srgb, var(--background-modifier-border) 80%, transparent);
+  border-radius: var(--noesis-flow-calendar-cell-radius, 6px);
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow: auto;
+}
+
+.noesis-flow-task-list-filter-button {
+  align-items: center;
+  display: inline-flex;
+  justify-content: center;
+  min-width: 30px;
+  padding: 0 7px;
+}
+
+.noesis-flow-task-list-filter-button.is-active {
+  background: color-mix(in srgb, var(--interactive-accent) 18%, var(--background-secondary));
+  border-color: var(--interactive-accent);
+  color: var(--interactive-accent);
+}
+
+.noesis-flow-task-list-filter-button svg {
+  height: 16px;
+  width: 16px;
+}
+
+.noesis-flow-task-list-table {
+  border-collapse: collapse;
+  min-width: 0;
+  table-layout: fixed;
+  width: auto;
+}
+
+.noesis-flow-task-list-table th {
+  background: var(--background-secondary);
+  border-bottom: 1px solid var(--background-modifier-border);
+  border-right: 1px solid color-mix(in srgb, var(--background-modifier-border) 90%, var(--text-muted));
+  color: var(--text-muted);
+  font-size: var(--font-ui-smaller);
+  font-weight: 650;
+  padding: 9px 10px;
+  position: sticky;
+  text-align: left;
+  text-transform: uppercase;
+  top: 0;
+  z-index: 1;
+}
+
+.noesis-flow-task-list-table th:last-child {
+  border-right: 0;
+}
+
+.noesis-flow-task-list-column-filter-row th {
+  padding: 5px 6px;
+  position: static;
+  text-transform: none;
+}
+
+.noesis-flow-task-list-column-search {
+  background: var(--background-primary);
+  border: 1px solid var(--background-modifier-border);
+  border-radius: 4px;
+  box-sizing: border-box;
+  color: var(--text-normal);
+  font-size: var(--font-ui-smaller);
+  height: 28px;
+  padding: 3px 6px;
+  width: 100%;
+}
+
+.noesis-flow-task-list-column-search:focus {
+  border-color: var(--interactive-accent);
+  outline: none;
+}
+
+.noesis-flow-task-list-column-filter-row button {
+  font-size: var(--font-ui-smaller);
+  height: 28px;
+  padding: 0 7px;
+}
+
+.noesis-flow-task-list-table th[draggable="true"] {
+  cursor: grab;
+}
+
+.noesis-flow-task-list-table th.is-sorted {
+  color: var(--text-normal);
+}
+
+.noesis-flow-task-list-sort-direction {
+  color: var(--interactive-accent);
+  font-size: 0.8em;
+  margin-left: 5px;
+}
+
+.noesis-flow-task-list-table th.is-dragging {
+  cursor: grabbing;
+  opacity: 0.45;
+}
+
+.noesis-flow-task-list-table th.is-drop-target {
+  box-shadow: inset 3px 0 0 var(--interactive-accent);
+}
+
+.noesis-flow-task-list-column-resizer {
+  cursor: col-resize;
+  height: 100%;
+  position: absolute;
+  right: -4px;
+  touch-action: none;
+  top: 0;
+  width: 9px;
+  z-index: 3;
+}
+
+.noesis-flow-task-list-column-resizer:focus-visible {
+  background: var(--interactive-accent);
+  outline: none;
+}
+
+.noesis-flow-task-list-table td {
+  border-bottom: 1px solid color-mix(in srgb, var(--background-modifier-border) 65%, transparent);
+  border-right: 1px solid color-mix(in srgb, var(--background-modifier-border) 55%, transparent);
+  padding: 5px 6px;
+  vertical-align: middle;
+}
+
+.noesis-flow-task-list-table td:last-child {
+  border-right: 0;
+}
+
+.noesis-flow-task-list-row:hover td {
+  background: color-mix(in srgb, var(--interactive-accent) 5%, transparent);
+}
+
+.noesis-flow-task-list-row.is-completed td {
+  opacity: 0.64;
+}
+
+.noesis-flow-task-list-row.is-completed .noesis-flow-task-list-text-cell input {
+  text-decoration: line-through;
+}
+
+.noesis-flow-task-list-row.is-completed .noesis-flow-task-list-text-preview {
+  text-decoration: line-through;
+}
+
+.noesis-flow-task-list-cell input:not([type="checkbox"]),
+.noesis-flow-task-list-cell select {
+  background: transparent;
+  border: 1px solid transparent;
+  border-radius: 4px;
+  box-sizing: border-box;
+  color: var(--text-normal);
+  height: 30px;
+  padding: 3px 5px;
+  width: 100%;
+}
+
+.noesis-flow-task-list-cell :is(input:not([type="checkbox"]), select):focus {
+  background: var(--background-primary);
+  border-color: var(--interactive-accent);
+  outline: none;
+}
+
+.noesis-flow-task-list-text-preview {
+  border: 1px solid transparent;
+  border-radius: 4px;
+  cursor: text;
+  min-height: 30px;
+  padding: 5px;
+}
+
+.noesis-flow-task-list-text-preview:focus {
+  border-color: var(--interactive-accent);
+  outline: none;
+}
+
+.noesis-flow-task-list-text-preview :is(p, ul, ol) {
+  margin: 0;
+}
+
+.noesis-flow-task-list-text-preview a {
+  cursor: pointer;
+}
+
+.noesis-flow-task-list-date-column,
+.noesis-flow-task-list-section-column,
+
+.noesis-flow-task-list-available-column,
+.noesis-flow-task-list-due-column,
+.noesis-flow-task-list-priority-column,
+.noesis-flow-task-list-actions-column {
+  text-align: center;
+  white-space: nowrap;
+}
+
+.noesis-flow-task-list-select-column,
+.noesis-flow-task-list-select-cell {
+  max-width: 28px;
+  min-width: 28px;
+  text-align: center;
+  width: 28px;
+}
+
+.noesis-flow-task-list-select-column {
+  font-size: 0.72em !important;
+  padding-left: 2px !important;
+  padding-right: 2px !important;
+}
+
+.noesis-flow-task-list-select-cell {
+  padding-left: 2px !important;
+  padding-right: 2px !important;
+}
+
+.noesis-flow-task-list-select-cell input[type="checkbox"] {
+  cursor: pointer;
+  height: 16px;
+  margin: 0;
+  width: 16px;
+}
+
+.noesis-flow-task-list-row-actions {
+  align-items: center;
+  display: inline-flex;
+  gap: 6px;
+  white-space: nowrap;
+}
+
+.noesis-flow-task-list-action-button,
+.noesis-flow-task-list-delete-button {
+  align-items: center;
+  border-radius: 5px;
+  cursor: pointer;
+  display: inline-flex;
+  height: 28px;
+  justify-content: center;
+  padding: 0;
+  width: 28px;
+}
+
+.noesis-flow-task-list-action-button svg,
+.noesis-flow-task-list-delete-button svg {
+  height: 16px;
+  stroke-width: 2.4;
+  width: 16px;
+}
+
+.noesis-flow-task-list-complete-button {
+  background: color-mix(in srgb, var(--color-green) 14%, transparent);
+  border: 1px solid color-mix(in srgb, var(--color-green) 38%, transparent);
+  color: var(--color-green);
+}
+
+.noesis-flow-task-list-complete-button:hover {
+  background: color-mix(in srgb, var(--color-green) 25%, transparent);
+  border-color: var(--color-green);
+}
+
+.noesis-flow-task-list-delete-button {
+  background: color-mix(in srgb, var(--color-red) 14%, transparent);
+  border: 1px solid color-mix(in srgb, var(--color-red) 38%, transparent);
+  color: var(--color-red);
+}
+
+.noesis-flow-task-list-delete-button:hover {
+  background: color-mix(in srgb, var(--color-red) 25%, transparent);
+  border-color: var(--color-red);
+}
+
+.noesis-flow-task-list-empty {
+  background: color-mix(in srgb, var(--background-secondary) 28%, transparent);
+  border-radius: var(--noesis-flow-calendar-cell-radius, 6px);
+  color: var(--text-muted);
+  padding: 18px;
+}
+
+.noesis-flow-kanban-board {
+  --noesis-flow-kanban-accent: var(--noesis-flow-current-accent, var(--interactive-accent));
+  --noesis-flow-kanban-edge: clamp(20px, 4cqw, 42px);
+  box-sizing: border-box;
+  color: var(--text-normal);
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  min-height: 0;
+  padding: clamp(20px, 4cqh, 34px) var(--noesis-flow-kanban-edge);
+}
+
+.noesis-flow-kanban-hero {
+  align-items: end;
+  border-bottom: 1px solid color-mix(in srgb, var(--noesis-flow-kanban-accent) 18%, var(--background-modifier-border));
+  display: grid;
+  gap: 16px;
+  grid-template-columns: minmax(0, 1fr) max-content;
+  margin: 0 0 clamp(18px, 3cqh, 28px);
+  padding-bottom: clamp(12px, 2.2cqh, 18px);
+}
+
+.noesis-flow-kanban-title-block {
+  min-width: 0;
+}
+
+.noesis-flow-kanban-kicker,
+.noesis-flow-kanban-subtitle,
+.noesis-flow-kanban-progress,
+.noesis-flow-kanban-card-date,
+.noesis-flow-kanban-lane-count,
+.noesis-flow-kanban-empty {
+  color: var(--text-muted);
+  font-size: var(--font-ui-smaller);
+  line-height: 1.3;
+}
+
+.noesis-flow-kanban-kicker,
+.noesis-flow-kanban-subtitle,
+.noesis-flow-kanban-card-date,
+.noesis-flow-kanban-lane-title,
+.noesis-flow-kanban-lane-count,
+.noesis-flow-kanban-empty {
+  text-transform: uppercase;
+}
+
+.noesis-flow-kanban-kicker {
+  color: color-mix(in srgb, var(--noesis-flow-kanban-accent) 42%, var(--text-muted));
+  font-weight: 650;
+}
+
+.noesis-flow-kanban-title {
+  color: var(--text-normal);
+  font-size: clamp(1.75em, 4cqw, 2.55em);
+  font-weight: 720;
+  letter-spacing: 0;
+  line-height: 1.05;
+  text-transform: uppercase;
+  margin: 2px 0 5px;
+  padding: 0;
+}
+
+.noesis-flow-kanban-hero-actions {
+  align-items: center;
+  display: flex;
+  gap: 8px;
+  justify-content: flex-end;
+  padding-bottom: 2px;
+}
+
+.noesis-flow-kanban-filter-select,
+.noesis-flow-kanban-view-select {
+  font-size: var(--font-ui-smaller);
+  height: 28px;
+  max-width: 150px;
+  min-width: 106px;
+}
+
+.noesis-flow-kanban-add-button {
+  font-size: var(--font-ui-smaller);
+  height: 28px;
+  padding: 0 10px;
+  white-space: nowrap;
+}
+
+.noesis-flow-kanban-summary {
+  color: var(--text-muted);
+  font-size: var(--font-ui-smaller);
+  line-height: 1.3;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.noesis-flow-kanban-search {
+  height: 28px;
+  max-width: 150px;
+  min-width: 110px;
+}
+
+.noesis-flow-kanban-saved-select {
+  height: 28px;
+  max-width: 130px;
+}
+
+.noesis-flow-kanban-filter-button {
+  align-items: center;
+  display: inline-flex;
+  height: 28px;
+  justify-content: center;
+  padding: 0;
+  width: 28px;
+}
+
+.noesis-flow-kanban-calendar-button {
+  align-items: center;
+  display: inline-flex;
+  height: 28px;
+  justify-content: center;
+  padding: 0;
+  width: 28px;
+}
+
+.modal.noesis-flow-kanban-filter-modal-container {
+  max-width: calc(100vw - 32px);
+  width: min(680px, calc(100vw - 32px));
+}
+
+.noesis-flow-kanban-filter-modal {
+  display: grid;
+  gap: 14px 18px;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.noesis-flow-kanban-filter-modal > h2,
+.noesis-flow-kanban-filter-columns,
+.noesis-flow-kanban-filter-actions {
+  grid-column: 1 / -1;
+}
+
+.noesis-flow-kanban-filter-columns {
+  align-items: start;
+  display: grid;
+  gap: 14px 18px;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.noesis-flow-kanban-filter-column {
+  align-content: start;
+  display: grid;
+  gap: 14px;
+}
+
+.noesis-flow-kanban-filter-group {
+  display: grid;
+  gap: 7px;
+  margin: 0;
+}
+
+.noesis-flow-kanban-filter-group-title {
+  color: var(--text-muted);
+  font-size: var(--font-ui-smaller);
+  font-weight: 650;
+  text-transform: uppercase;
+}
+
+.noesis-flow-kanban-filter-option {
+  align-items: center;
+  display: flex;
+  gap: 8px;
+}
+
+.noesis-flow-kanban-filter-actions {
+  display: flex;
+  gap: 8px;
+  justify-content: flex-end;
+  margin-top: 4px;
+}
+
+@media (max-width: 560px) {
+  .noesis-flow-kanban-filter-modal {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .noesis-flow-kanban-filter-columns {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+.modal.noesis-flow-kanban-task-modal-container {
+  max-width: calc(100vw - 32px);
+  width: min(480px, calc(100vw - 32px));
+}
+
+.modal.noesis-flow-task-details-modal-container {
+  max-width: calc(100vw - 32px);
+  width: min(480px, calc(100vw - 32px));
+}
+
+.modal.noesis-flow-calendar-day-tasks-modal-container {
+  height: min(640px, calc(100vh - 32px));
+  max-width: calc(100vw - 32px);
+  width: min(560px, calc(100vw - 32px));
+}
+
+.noesis-flow-calendar-day-tasks-modal {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  min-height: 0;
+}
+
+.noesis-flow-calendar-day-tasks-header {
+  align-items: stretch;
+  border-bottom: 1px solid var(--background-modifier-border);
+  display: flex;
+  flex-direction: column;
+  flex: 0 0 auto;
+  gap: 6px;
+  justify-content: space-between;
+  padding: 0 4px 12px 0;
+}
+
+.noesis-flow-calendar-day-tasks-title {
+  align-items: baseline;
+  display: flex;
+  gap: 10px;
+  min-width: 0;
+}
+
+.noesis-flow-calendar-day-tasks-header h2 {
+  font-size: 1.2em;
+  letter-spacing: 0.12em;
+  line-height: 1.2;
+  margin: 0;
+}
+
+.noesis-flow-calendar-day-tasks-date {
+  color: var(--text-muted);
+  font-size: 0.72em;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  margin: 0;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.noesis-flow-calendar-day-tasks-count {
+  color: var(--text-muted);
+  font-size: var(--font-ui-smaller);
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  margin-left: 10px;
+  vertical-align: middle;
+  white-space: nowrap;
+}
+
+.noesis-flow-calendar-day-tasks-actions {
+  align-self: flex-start;
+  display: flex;
+  flex: 0 0 auto;
+  justify-content: flex-end;
+  margin-top: 2px;
+}
+
+.noesis-flow-calendar-day-tasks-list {
+  display: flex;
+  flex: 1 1 auto;
+  flex-direction: column;
+  gap: 8px;
+  margin-top: 12px;
+  min-height: 0;
+  overflow-y: auto;
+  padding-right: 4px;
+}
+
+.noesis-flow-calendar-day-meta-row {
+  align-items: center;
+  display: flex;
+  gap: 16px;
+  justify-content: space-between;
+  min-width: 0;
+}
+
+.noesis-flow-calendar-day-summary {
+  align-self: center;
+  color: var(--text-muted);
+  font-size: 0.72em;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  margin: 0;
+  text-align: right;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.noesis-flow-calendar-day-workspace {
+  display: flex;
+  flex: 1 1 auto;
+  flex-direction: column;
+  margin-top: 12px;
+  min-height: 0;
+  overflow-y: auto;
+  padding-right: 4px;
+}
+
+.noesis-flow-calendar-day-section + .noesis-flow-calendar-day-section {
+  border-top: 1px solid color-mix(in srgb, var(--background-modifier-border) 68%, transparent);
+  margin-top: 16px;
+  padding-top: 16px;
+}
+
+.noesis-flow-calendar-day-section-header {
+  align-items: center;
+  display: flex;
+  gap: 12px;
+  justify-content: space-between;
+}
+
+.noesis-flow-calendar-day-section-heading {
+  align-items: baseline;
+  display: flex;
+  min-width: 0;
+}
+
+.noesis-flow-calendar-day-section-heading h3 {
+  color: var(--text-normal);
+  font-size: 0.78em;
+  letter-spacing: 0.1em;
+  margin: 0;
+}
+
+.noesis-flow-calendar-day-section-body {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-top: 10px;
+}
+
+.noesis-flow-calendar-day-empty {
+  color: var(--text-muted);
+  font-size: var(--font-ui-small);
+  padding: 8px 0;
+}
+
+.noesis-flow-calendar-day-reference-row {
+  align-items: center;
+  background: color-mix(in srgb, var(--noesis-flow-day-reference-color) 7%, var(--background-secondary));
+  border-left: 2px solid var(--noesis-flow-day-reference-color);
+  border-radius: var(--noesis-flow-calendar-cell-radius, 6px);
+  display: flex;
+  gap: 10px;
+  justify-content: space-between;
+  padding: 9px 10px;
+}
+
+.noesis-flow-calendar-day-reference-row.is-event {
+  --noesis-flow-day-reference-color: var(--noesis-flow-event-color, #eab308);
+}
+
+.noesis-flow-calendar-day-reference-row.is-holiday {
+  --noesis-flow-day-reference-color: var(--noesis-flow-task-critical-color, #ea4458);
+}
+
+.noesis-flow-calendar-day-reference-details {
+  min-width: 0;
+}
+
+.noesis-flow-calendar-day-reference-title {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.noesis-flow-calendar-day-reference-meta {
+  color: var(--text-muted);
+  font-size: var(--font-ui-smaller);
+  margin-top: 3px;
+}
+
+.noesis-flow-calendar-day-reference-row > button {
+  flex: 0 0 auto;
+  font-size: var(--font-ui-smaller);
+
+}
+
+.noesis-flow-calendar-day-task-row {
+  flex: 0 0 auto;
+}
+
+.noesis-flow-calendar-day-tasks-modal .noesis-flow-task-main-row {
+  grid-template-columns: minmax(0, 1fr) auto;
+}
+
+/*
+ * Task Details layout contract. Keep this isolated from the shared Kanban form:
+ * the same 480px modal width as New Task, a full-width task field, and
+ * two equal metadata columns. The visual regression test enforces these rules.
+ */
+.noesis-flow-task-details-modal {
+  --noesis-flow-task-details-task-width: 100%;
+  container-type: inline-size;
+}
+
+.noesis-flow-task-details-modal .noesis-flow-kanban-task-form {
+  margin: 0;
+  max-width: none;
+  width: 100%;
+}
+
+.noesis-flow-task-details-modal .noesis-flow-kanban-task-name-field {
+  box-sizing: border-box;
+  max-width: var(--noesis-flow-task-details-task-width);
+  width: var(--noesis-flow-task-details-task-width);
+}
+
+.noesis-flow-task-details-modal .noesis-flow-kanban-task-name-field input {
+  width: 100%;
+}
+
+.noesis-flow-task-details-modal .noesis-flow-kanban-task-fields {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.noesis-flow-task-details-modal .noesis-flow-kanban-task-fields > .noesis-flow-kanban-task-field {
+  grid-column: auto;
+}
+
+.noesis-flow-task-details-actions {
+  align-items: center;
+  display: flex;
+  justify-content: space-between;
+  margin-top: 16px;
+  width: 100%;
+}
+
+.noesis-flow-task-details-primary-actions {
+  display: flex;
+  gap: 8px;
+}
+
+.noesis-flow-kanban-task-modal {
+  box-sizing: border-box;
+  overflow-x: hidden;
+  width: 100%;
+}
+
+.noesis-flow-kanban-task-header,
+.noesis-flow-modal-header {
+  border-bottom: 1px solid var(--background-modifier-border);
+  margin-bottom: 14px;
+  padding: 0 40px 12px 0;
+}
+
+.noesis-flow-kanban-task-header h2,
+.noesis-flow-modal-header h2 {
+  font-size: 1.2em;
+  letter-spacing: 0.12em;
+  line-height: 1.2;
+  margin: 0;
+}
+
+/* Keep every Noesis Flow dialog title consistent, including dynamically supplied titles. */
+.noesis-flow-dialog h2 {
+  text-transform: uppercase;
+}
+
+.noesis-flow-kanban-task-date {
+  color: var(--text-muted);
+  font-size: 0.72em;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  margin-top: 6px;
+  text-transform: uppercase;
+}
+
+.noesis-flow-kanban-task-form {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin: 0 auto;
+  max-width: 440px;
+  width: 100%;
+}
+
+.noesis-flow-kanban-task-name-field {
+  max-width: 440px;
+}
+
+.noesis-flow-kanban-task-name-field input {
+  box-sizing: border-box;
+  height: 34px;
+  width: 100%;
+}
+
+.noesis-flow-kanban-task-fields {
+  display: grid;
+  gap: 10px 12px;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.noesis-flow-kanban-task-field {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  min-width: 0;
+}
+
+.noesis-flow-kanban-task-field label {
+  color: var(--text-muted);
+  font-size: var(--font-ui-smaller);
+  font-weight: 650;
+}
+
+.noesis-flow-kanban-task-field :is(input:not([type="checkbox"]), select) {
+  box-sizing: border-box;
+  height: 34px;
+  min-width: 0;
+  max-width: 100%;
+  width: 100%;
+}
+
+.noesis-flow-dialog input[type="date"],
+.noesis-flow-task-list-add-row input[type="date"],
+.noesis-flow-task-list-bulk-actions input[type="date"] {
+  direction: rtl;
+  padding-right: 34px;
+  position: relative;
+  text-align: left;
+}
+
+.noesis-flow-dialog input[type="date"]::-webkit-calendar-picker-indicator,
+.noesis-flow-task-list-add-row input[type="date"]::-webkit-calendar-picker-indicator,
+.noesis-flow-task-list-bulk-actions input[type="date"]::-webkit-calendar-picker-indicator {
+  cursor: pointer;
+}
+
+.noesis-flow-dialog input[type="date"]::-webkit-datetime-edit,
+.noesis-flow-task-list-add-row input[type="date"]::-webkit-datetime-edit,
+.noesis-flow-task-list-bulk-actions input[type="date"]::-webkit-datetime-edit {
+  direction: ltr;
+  text-align: left;
+}
+
+.noesis-flow-kanban-repeat-interval-unit {
+  color: var(--text-muted);
+  font-size: var(--font-ui-smaller);
+}
+
+.noesis-flow-kanban-recurrence-options {
+  align-items: center;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  min-height: 34px;
+}
+
+.noesis-flow-kanban-recurrence-options label {
+  align-items: center;
+  color: var(--text-normal);
+  display: inline-flex;
+  font-size: var(--font-ui-small);
+  font-weight: 400;
+  gap: 6px;
+}
+
+.noesis-flow-kanban-task-field.is-hidden {
+  display: none;
+}
+
+.noesis-flow-kanban-task-field.noesis-flow-kanban-task-span-full {
+  grid-column: 1 / -1;
+}
+
+.noesis-flow-kanban-task-actions {
+  display: flex;
+  gap: 8px;
+  justify-content: flex-end;
+  margin-top: 16px;
+}
+
+.noesis-flow-kanban-lanes {
+  align-items: start;
+  display: grid;
+  flex: 1 1 auto;
+  gap: clamp(14px, 2.2cqw, 22px);
+  grid-auto-columns: minmax(238px, 1fr);
+  grid-auto-flow: column;
+  min-height: 0;
+  overflow-x: auto;
+  overscroll-behavior-x: contain;
+  padding-bottom: 10px;
+  scrollbar-color: color-mix(in srgb, var(--noesis-flow-kanban-accent) 45%, transparent) transparent;
+}
+
+.noesis-flow-kanban-lane {
+  background: color-mix(in srgb, var(--background-secondary) 32%, transparent);
+  border-radius: var(--noesis-flow-calendar-cell-radius, 6px);
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--background-modifier-border) 72%, transparent);
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  min-width: 0;
+  min-height: 0;
+  padding: clamp(12px, 2cqw, 16px);
+}
+
+.noesis-flow-kanban-lane.is-holiday {
+  background: color-mix(in srgb, var(--noesis-flow-task-critical-color, #ea4458) 8%, var(--background-secondary));
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--noesis-flow-task-critical-color, #ea4458) 40%, var(--background-modifier-border));
+}
+
+.noesis-flow-kanban-lane.is-holiday .noesis-flow-kanban-lane-header {
+  border-bottom-color: color-mix(in srgb, var(--noesis-flow-task-critical-color, #ea4458) 32%, var(--background-modifier-border));
+}
+
+.noesis-flow-kanban-lane.is-holiday .noesis-flow-kanban-lane-title {
+  color: var(--noesis-flow-task-critical-color, #ea4458);
+}
+
+.noesis-flow-kanban-lane.is-event:not(.is-holiday) {
+  background: color-mix(in srgb, var(--noesis-flow-kanban-event-color, #eab308) 8%, var(--background-secondary));
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--noesis-flow-kanban-event-color, #eab308) 40%, var(--background-modifier-border));
+}
+
+.noesis-flow-kanban-lane.is-event:not(.is-holiday) .noesis-flow-kanban-lane-header {
+  border-bottom-color: color-mix(in srgb, var(--noesis-flow-kanban-event-color, #eab308) 32%, var(--background-modifier-border));
+}
+
+.noesis-flow-kanban-lane.is-event:not(.is-holiday) .noesis-flow-kanban-lane-title {
+  color: color-mix(in srgb, var(--noesis-flow-kanban-event-color, #eab308) 76%, var(--text-normal));
+}
+
+.noesis-flow-kanban-lane.is-drop-target {
+  box-shadow:
+    inset 0 0 0 2px color-mix(in srgb, var(--noesis-flow-kanban-accent) 72%, transparent),
+    inset 0 0 0 1px color-mix(in srgb, var(--background-modifier-border) 72%, transparent);
+}
+
+.noesis-flow-kanban-lane-header {
+  align-items: baseline;
+  border-bottom: 1px solid color-mix(in srgb, var(--background-modifier-border) 72%, transparent);
+  display: flex;
+  gap: 10px;
+  justify-content: space-between;
+  margin-bottom: 11px;
+  padding-bottom: 8px;
+}
+
+.noesis-flow-kanban-lane-title {
+  color: var(--text-normal);
+  font-size: var(--font-ui-small);
+  font-weight: 700;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.noesis-flow-kanban-lane-count {
+  flex: 0 0 auto;
+}
+
+.noesis-flow-kanban-cards {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  min-height: 0;
+  overflow-y: auto;
+  overscroll-behavior-y: contain;
+  padding-right: 3px;
+}
+
+.noesis-flow-kanban-card {
+  --noesis-flow-kanban-priority: var(--text-muted);
+  background: color-mix(in srgb, var(--background-primary) 92%, var(--background-secondary));
+  border-left: 3px solid color-mix(in srgb, var(--noesis-flow-kanban-priority) 65%, transparent);
+  border-radius: var(--noesis-flow-calendar-cell-radius, 6px);
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--background-modifier-border) 72%, transparent);
+  cursor: grab;
+  min-width: 0;
+  padding: 9px 10px;
+}
+
+.noesis-flow-kanban-card.is-dragging {
+  cursor: grabbing;
+  opacity: 0.45;
+}
+
+.noesis-flow-kanban-card.is-card-drop-target {
+  box-shadow:
+    inset 0 2px 0 var(--interactive-accent),
+    inset 0 0 0 1px color-mix(in srgb, var(--interactive-accent) 55%, var(--background-modifier-border));
+}
+
+.noesis-flow-kanban-card .noesis-flow-today-task-item.is-completed {
+  opacity: 0.58;
+}
+
+.noesis-flow-kanban-card .noesis-flow-today-task-item.is-completed .noesis-flow-today-task-text {
+  text-decoration: line-through;
+}
+
+.noesis-flow-kanban-card.priority-critical {
+  --noesis-flow-kanban-priority: var(--noesis-flow-task-critical-color, #ea4458);
+}
+
+.noesis-flow-kanban-card.priority-h {
+  --noesis-flow-kanban-priority: var(--noesis-flow-task-high-color, #fd884b);
+}
+
+.noesis-flow-kanban-card.priority-m {
+  --noesis-flow-kanban-priority: var(--noesis-flow-task-medium-color, #f1c24d);
+}
+
+.noesis-flow-kanban-card.priority-l {
+  --noesis-flow-kanban-priority: var(--noesis-flow-task-low-color, #5cdf95);
+}
+
+.noesis-flow-kanban-card-date {
+  color: color-mix(in srgb, var(--noesis-flow-kanban-priority) 75%, var(--text-muted));
+  font-weight: 650;
+  margin: 0 0 6px 28px;
+}
+
+.noesis-flow-kanban-board.is-compact-cards .noesis-flow-kanban-lanes {
+  gap: clamp(10px, 1.6cqw, 16px);
+}
+
+.noesis-flow-kanban-board.is-compact-cards .noesis-flow-kanban-lane {
+  padding: 10px;
+}
+
+.noesis-flow-kanban-board.is-compact-cards .noesis-flow-kanban-lane-header {
+  margin-bottom: 7px;
+  padding-bottom: 6px;
+}
+
+.noesis-flow-kanban-board.is-compact-cards .noesis-flow-kanban-cards {
+  gap: 6px;
+}
+
+.noesis-flow-kanban-board.is-compact-cards .noesis-flow-kanban-card {
+  border-left-width: 2px;
+  padding: 6px 8px;
+}
+
+.noesis-flow-kanban-board.is-compact-cards .noesis-flow-kanban-card-date {
+  font-size: var(--font-ui-smaller);
+  margin: 0 0 3px 24px;
+}
+
+.noesis-flow-kanban-board.is-compact-cards .noesis-flow-kanban-card .noesis-flow-today-task-item {
+  gap: 5px;
+}
+
+.noesis-flow-kanban-board.is-compact-cards .noesis-flow-kanban-card .noesis-flow-task-edit-button.noesis-flow-calendar-icon-button {
+  height: 19px;
+  min-height: 19px;
+  width: 19px;
+}
+
+.noesis-flow-kanban-card .noesis-flow-today-task-item {
+  gap: 8px;
+}
+
+.noesis-flow-kanban-card .noesis-flow-today-task-body {
+  min-width: 0;
+}
+
+.noesis-flow-kanban-card .noesis-flow-today-task-text,
+.noesis-flow-kanban-card .noesis-flow-markdown-inline,
+.noesis-flow-kanban-card .noesis-flow-markdown-inline :is(p, div, a, code) {
+  overflow-wrap: anywhere;
+  word-break: break-word;
+}
+
+.noesis-flow-kanban-card .noesis-flow-today-task-meta {
+  color: var(--text-muted);
+  font-size: var(--font-ui-smaller);
+}
+
+.noesis-flow-kanban-card .noesis-flow-task-meta-row {
+  align-items: start;
+  gap: 4px;
+  grid-template-columns: minmax(0, 1fr);
+}
+
+.noesis-flow-kanban-card .noesis-flow-task-edit-actions {
+  justify-content: flex-end;
+}
+
+.noesis-flow-kanban-empty {
+  background: color-mix(in srgb, var(--background-secondary) 28%, transparent);
+  border-radius: var(--noesis-flow-calendar-cell-radius, 6px);
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--background-modifier-border) 72%, transparent);
+  padding: 18px;
+}
+
+@container (max-width: 420px) {
+  .noesis-flow-kanban-board {
+    --noesis-flow-kanban-edge: 14px;
+  }
+
+  .noesis-flow-kanban-hero {
+    align-items: start;
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .noesis-flow-kanban-hero-actions {
+    justify-content: flex-start;
+  }
+
+  .noesis-flow-kanban-task-fields {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+.noesis-flow-daily-brief-board {
+  --noesis-flow-brief-accent: var(--noesis-flow-current-accent, var(--interactive-accent));
+  --noesis-flow-brief-edge: clamp(20px, 4cqw, 42px);
+  box-sizing: border-box;
+  color: var(--text-normal);
+  min-height: 100%;
+  padding: clamp(20px, 4cqh, 34px) var(--noesis-flow-brief-edge);
+}
+
+.noesis-flow-brief-hero {
+  align-items: end;
+  border-bottom: 1px solid color-mix(in srgb, var(--noesis-flow-brief-accent) 18%, var(--background-modifier-border));
+  display: grid;
+  gap: 16px;
+  grid-template-columns: minmax(0, 1fr) max-content;
+  margin: 0 0 clamp(18px, 3cqh, 28px);
+  padding-bottom: clamp(12px, 2.2cqh, 18px);
+}
+
+.noesis-flow-brief-title-block {
+  min-width: 0;
+}
+
+.noesis-flow-brief-hero-actions {
+  align-items: center;
+  display: flex;
+  gap: 10px;
+  justify-content: flex-end;
+  justify-self: end;
+  min-width: 0;
+  padding-bottom: 2px;
+}
+
+.noesis-flow-brief-kicker,
+.noesis-flow-brief-date,
+.noesis-flow-brief-panel-meta,
+.noesis-flow-brief-signal-label,
+.noesis-flow-brief-signal-meta,
+.noesis-flow-brief-lane-count,
+.noesis-flow-brief-empty-line,
+.noesis-flow-brief-more-line,
+.noesis-flow-brief-next-meta,
+.noesis-flow-brief-next-unit,
+.noesis-flow-brief-priority-label {
+  color: var(--text-muted);
+  font-size: var(--font-ui-smaller);
+  line-height: 1.3;
+}
+
+.noesis-flow-daily-brief-board :is(
+  .noesis-flow-brief-kicker,
+  .noesis-flow-brief-date,
+  .noesis-flow-brief-panel-title,
+  .noesis-flow-brief-panel-meta,
+  .noesis-flow-brief-signal-label,
+  .noesis-flow-brief-signal-meta,
+  .noesis-flow-brief-group-title,
+  .noesis-flow-brief-lane-title,
+  .noesis-flow-brief-lane-count,
+  .noesis-flow-brief-empty-line,
+  .noesis-flow-brief-more-line,
+  .noesis-flow-brief-next-title,
+  .noesis-flow-brief-next-meta,
+  .noesis-flow-brief-next-unit,
+  .noesis-flow-brief-priority-label
+) {
+  text-transform: uppercase;
+}
+
+.noesis-flow-brief-kicker {
+  color: color-mix(in srgb, var(--noesis-flow-brief-accent) 42%, var(--text-muted));
+  font-weight: 650;
+}
+
+.noesis-flow-brief-date {
+  align-items: center;
+  display: flex;
+  gap: 5px;
+  min-width: 0;
+}
+
+.noesis-flow-brief-weekday {
+  color: color-mix(in srgb, var(--noesis-flow-brief-accent) 66%, var(--text-muted));
+  font-weight: 650;
+}
+
+.noesis-flow-brief-date-separator {
+  color: var(--text-faint);
+}
+
+.noesis-flow-brief-date-value {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.noesis-flow-brief-title {
+  color: var(--text-normal);
+  font-size: clamp(1.75em, 4cqw, 2.55em);
+  font-weight: 720;
+  letter-spacing: 0;
+  line-height: 1.05;
+  text-transform: uppercase;
+  margin: 2px 0 5px;
+  padding: 0;
+}
+
+.noesis-flow-brief-signal-grid {
+  display: grid;
+  gap: 0;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  margin-bottom: 0;
+}
+
+.noesis-flow-brief-signal {
+  border-left: 1px solid color-mix(in srgb, var(--background-modifier-border) 82%, transparent);
+  min-width: 0;
+  padding: 0 clamp(12px, 2cqw, 20px);
+}
+
+.noesis-flow-brief-signal:first-child {
+  border-left: 0;
+  padding-left: 0;
+}
+
+.noesis-flow-brief-signal:last-child {
+  padding-right: 0;
+}
+
+.noesis-flow-brief-signal.type-overdue {
+  border-left-color: color-mix(in srgb, var(--noesis-flow-task-critical-color, #ea4458) 45%, var(--background-modifier-border));
+}
+
+.noesis-flow-brief-signal.type-priority {
+  border-left-color: color-mix(in srgb, var(--noesis-flow-task-high-color, #fd884b) 45%, var(--background-modifier-border));
+}
+
+.noesis-flow-brief-signal.type-none {
+  border-left-color: color-mix(in srgb, var(--text-muted) 35%, var(--background-modifier-border));
+}
+
+.noesis-flow-brief-signal-value {
+  color: color-mix(in srgb, var(--noesis-flow-brief-accent) 62%, var(--text-normal));
+  font-size: clamp(1.45em, 3.2cqw, 2.2em);
+  font-weight: 740;
+  letter-spacing: 0;
+  line-height: 1.05;
+  margin: 3px 0;
+}
+
+.noesis-flow-brief-signal.type-overdue .noesis-flow-brief-signal-value {
+  color: var(--noesis-flow-task-critical-color, #ea4458);
+}
+
+.noesis-flow-brief-signal.type-priority .noesis-flow-brief-signal-value {
+  color: var(--noesis-flow-task-high-color, #fd884b);
+}
+
+.noesis-flow-brief-signal.type-none .noesis-flow-brief-signal-value {
+  color: var(--text-muted);
+}
+
+.noesis-flow-brief-priority-strip {
+  align-items: center;
+  border-bottom: 1px solid color-mix(in srgb, var(--background-modifier-border) 70%, transparent);
+  border-top: 1px solid color-mix(in srgb, var(--background-modifier-border) 70%, transparent);
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 16px;
+  margin-top: clamp(12px, 2.2cqh, 18px);
+  padding: 9px 0;
+}
+
+.noesis-flow-brief-priority-item {
+  --noesis-flow-brief-priority-color: var(--text-muted);
+  align-items: center;
+  display: inline-flex;
+  gap: 6px;
+  min-width: 0;
+}
+
+.noesis-flow-brief-priority-item.priority-critical {
+  --noesis-flow-brief-priority-color: var(--noesis-flow-task-critical-color, #ea4458);
+}
+
+.noesis-flow-brief-priority-item.priority-h {
+  --noesis-flow-brief-priority-color: var(--noesis-flow-task-high-color, #fd884b);
+}
+
+.noesis-flow-brief-priority-item.priority-m {
+  --noesis-flow-brief-priority-color: var(--noesis-flow-task-medium-color, #f1c24d);
+}
+
+.noesis-flow-brief-priority-item.priority-l {
+  --noesis-flow-brief-priority-color: var(--noesis-flow-task-low-color, #5cdf95);
+}
+
+.noesis-flow-brief-priority-item.priority-none {
+  --noesis-flow-brief-priority-color: var(--text-muted);
+}
+
+.noesis-flow-brief-priority-marker {
+  align-items: center;
+  background: color-mix(in srgb, var(--noesis-flow-brief-priority-color) 22%, transparent);
+  border-radius: 5px;
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--noesis-flow-brief-priority-color) 34%, transparent);
+  color: var(--noesis-flow-brief-priority-color);
+  display: inline-flex;
+  font-size: var(--font-ui-smaller);
+  font-weight: 750;
+  height: 20px;
+  justify-content: center;
+  width: 20px;
+}
+
+.noesis-flow-brief-priority-count {
+  color: var(--text-normal);
+  font-size: var(--font-ui-small);
+  font-weight: 700;
+}
+
+.noesis-flow-brief-stats-panel {
+  margin-bottom: clamp(18px, 3cqh, 28px);
+}
+
+.noesis-flow-brief-main-grid {
+  align-items: stretch;
+  display: grid;
+  gap: clamp(18px, 3cqw, 32px);
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  min-height: 0;
+}
+
+.noesis-flow-brief-overdue-panel .noesis-flow-brief-panel-title {
+  color: var(--noesis-flow-task-critical-color, #ea4458);
+}
+
+.noesis-flow-brief-panel {
+  background: color-mix(in srgb, var(--background-secondary) 28%, transparent);
+  border-radius: var(--noesis-flow-calendar-cell-radius, 6px);
+  box-shadow:
+    inset 0 0 0 1px color-mix(in srgb, var(--background-modifier-border) 72%, transparent),
+    0 1px 0 color-mix(in srgb, var(--background-primary) 70%, transparent);
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  min-width: 0;
+  padding: clamp(13px, min(2.5cqw, 2cqh), 18px);
+}
+
+.noesis-flow-brief-panel-header {
+  align-items: end;
+  border-bottom: 1px solid color-mix(in srgb, var(--background-modifier-border) 72%, transparent);
+  display: flex;
+  gap: 12px;
+  justify-content: space-between;
+  margin-bottom: 12px;
+  padding-bottom: 8px;
+}
+
+.noesis-flow-brief-filter-select {
+  font-size: var(--font-ui-smaller);
+  height: 28px;
+  max-width: 150px;
+  min-width: 106px;
+}
+
+.noesis-flow-brief-panel-title {
+  color: var(--text-normal);
+  font-size: 1.04em;
+  font-weight: 700;
+  line-height: 1.2;
+}
+
+.noesis-flow-brief-task-lanes {
+  display: grid;
+  gap: clamp(14px, 2.2cqw, 22px);
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  min-height: 0;
+}
+
+.noesis-flow-brief-task-lanes.has-divider {
+  column-gap: 0;
+}
+
+.noesis-flow-brief-task-lane {
+  min-width: 0;
+}
+
+.noesis-flow-brief-task-lanes.has-divider .noesis-flow-brief-task-lane:first-child {
+  padding-right: clamp(14px, 2.4cqw, 24px);
+}
+
+.noesis-flow-brief-task-lanes.has-divider .noesis-flow-brief-task-lane + .noesis-flow-brief-task-lane {
+  border-left: 1px solid color-mix(in srgb, var(--background-modifier-border) 82%, transparent);
+  padding-left: clamp(14px, 2.4cqw, 24px);
+}
+
+.noesis-flow-brief-lane-header {
+  align-items: baseline;
+  display: flex;
+  gap: 10px;
+  justify-content: space-between;
+  margin-bottom: 9px;
+}
+
+.noesis-flow-brief-lane-title {
+  color: var(--text-normal);
+  font-size: var(--font-ui-small);
+  font-weight: 700;
+}
+
+.noesis-flow-brief-task-lane.type-overdue .noesis-flow-brief-lane-title {
+  color: var(--noesis-flow-task-critical-color, #ea4458);
+}
+
+.noesis-flow-brief-task-groups {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  min-height: 0;
+}
+
+.noesis-flow-brief-task-lanes + .noesis-flow-brief-task-groups {
+  border-top: 1px solid color-mix(in srgb, var(--background-modifier-border) 64%, transparent);
+  margin-top: 14px;
+  padding-top: 12px;
+}
+
+.noesis-flow-brief-task-group {
+  min-width: 0;
+}
+
+.noesis-flow-brief-task-group:not(:last-child) {
+  border-bottom: 1px solid color-mix(in srgb, var(--background-modifier-border) 54%, transparent);
+  padding-bottom: 10px;
+}
+
+.noesis-flow-brief-group-header {
+  align-items: baseline;
+  display: flex;
+  gap: 10px;
+  justify-content: space-between;
+  margin-bottom: 9px;
+}
+
+.noesis-flow-brief-group-title {
+  color: var(--text-normal);
+  font-size: var(--font-ui-small);
+  font-weight: 700;
+}
+
+.noesis-flow-brief-task-group.is-overdue .noesis-flow-brief-group-title {
+  color: var(--noesis-flow-task-critical-color, #ea4458);
+}
+
+.noesis-flow-brief-task-list,
+.noesis-flow-brief-next-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.noesis-flow-brief-task-item {
+  padding-bottom: 7px;
+}
+
+.noesis-flow-brief-task-item .noesis-flow-today-task-marker {
+  background: color-mix(in srgb, var(--noesis-flow-task-priority-color) 24%, transparent) !important;
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--noesis-flow-task-priority-color) 44%, transparent) !important;
+  color: color-mix(in srgb, var(--noesis-flow-task-priority-color) 82%, var(--text-normal)) !important;
+}
+
+.noesis-flow-brief-task-item:not(:last-child) {
+  border-bottom: 1px solid color-mix(in srgb, var(--background-modifier-border) 54%, transparent);
+}
+
+.noesis-flow-brief-more-line {
+  margin-top: 8px;
+}
+
+.noesis-flow-brief-next-row {
+  align-items: center;
+  border-bottom: 1px solid color-mix(in srgb, var(--background-modifier-border) 58%, transparent);
+  display: grid;
+  gap: 12px;
+  grid-template-columns: 58px minmax(0, 1fr);
+  min-height: 58px;
+  padding: 8px 0;
+}
+
+.noesis-flow-brief-next-row:last-child {
+  border-bottom-color: transparent;
+}
+
+.noesis-flow-brief-next-date {
+  align-items: center;
+  border-radius: var(--noesis-flow-calendar-cell-radius, 6px);
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--noesis-flow-brief-accent) 22%, transparent);
+  display: flex;
+  flex-direction: column;
+  height: 48px;
+  justify-content: center;
+  min-width: 0;
+}
+
+.noesis-flow-brief-next-row.type-holiday .noesis-flow-brief-next-date {
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--noesis-flow-task-critical-color, #ea4458) 32%, transparent);
+  color: var(--noesis-flow-task-critical-color, #ea4458);
+}
+
+.noesis-flow-brief-next-row.type-event .noesis-flow-brief-next-date {
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--noesis-flow-event-color, #eab308) 34%, transparent);
+  color: color-mix(in srgb, var(--noesis-flow-event-color, #eab308) 76%, var(--text-normal));
+}
+
+.noesis-flow-brief-next-row.type-weekend .noesis-flow-brief-next-date {
+  color: var(--text-muted);
+}
+
+.noesis-flow-brief-next-value {
+  color: var(--text-normal);
+  font-size: var(--font-ui-medium);
+  font-weight: 760;
+  line-height: 1;
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.noesis-flow-brief-next-unit {
+  margin-top: 3px;
+}
+
+.noesis-flow-brief-next-title {
+  color: var(--text-normal);
+  font-size: var(--font-ui-small);
+  font-weight: 650;
+  line-height: 1.25;
+}
+
+.noesis-flow-brief-next-text {
+  min-width: 0;
+}
+
+.noesis-flow-brief-eventually-panel {
+  margin-top: clamp(18px, 3cqh, 28px);
+}
+
+.noesis-flow-brief-eventually-list {
+  display: grid;
+  gap: 8px 18px;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  min-width: 0;
+}
+
+.noesis-flow-brief-eventually-task {
+  min-width: 0;
+}
+
+/* Unscheduled tasks retain the Dashboard's column rhythm without boxed panels. */
+.noesis-flow-brief-eventually-list {
+  position: relative;
+}
+
+.noesis-flow-brief-eventually-list::before,
+.noesis-flow-brief-eventually-list::after {
+  background: var(--background-modifier-border);
+  content: "";
+  inset-block: 0;
+  pointer-events: none;
+  position: absolute;
+  width: 1px;
+}
+
+.noesis-flow-brief-eventually-list::before {
+  inset-inline-start: calc(33.333% - 3px);
+}
+
+.noesis-flow-brief-eventually-list::after {
+  inset-inline-start: calc(66.667% + 3px);
+}
+
+.noesis-flow-timeline-list {
+  display: flex;
+  flex: 1 1 auto;
+  flex-direction: column;
+  margin: 0 var(--noesis-flow-calendar-edge);
+  min-height: 0;
+  overflow: auto;
+}
+
+.noesis-flow-timeline-list {
+  gap: 7px;
+}
+
+.noesis-flow-timeline-item {
+  align-items: center;
+  border-bottom: 1px solid color-mix(in srgb, var(--background-modifier-border) 62%, transparent);
+  display: grid;
+  gap: 10px;
+  grid-template-columns: 42px minmax(0, 1fr);
+  min-height: 48px;
+  padding: 6px 0;
+}
+
+.noesis-flow-timeline-item:last-child {
+  border-bottom-color: transparent;
+}
+
+.noesis-flow-timeline-date {
+  align-items: center;
+  border-radius: var(--noesis-flow-widget-radius);
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--noesis-flow-widget-accent) 20%, transparent);
+  display: flex;
+  flex-direction: column;
+  height: 38px;
+  justify-content: center;
+  width: 38px;
+}
+
+.noesis-flow-timeline-item.type-holiday .noesis-flow-timeline-date {
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--noesis-flow-task-critical-color, #ea4458) 35%, transparent);
+  color: var(--noesis-flow-task-critical-color, #ea4458);
+}
+
+.noesis-flow-timeline-item.type-event .noesis-flow-timeline-date {
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--noesis-flow-event-color, #eab308) 34%, transparent);
+  color: color-mix(in srgb, var(--noesis-flow-event-color, #eab308) 76%, var(--text-normal));
+}
+
+.noesis-flow-timeline-day {
+  font-size: var(--font-ui-small);
+  font-weight: 750;
+  line-height: 1;
+}
+
+.noesis-flow-timeline-month {
+  color: var(--text-muted);
+  font-size: 0.62em;
+  line-height: 1.1;
+  margin-top: 2px;
+  text-transform: uppercase;
+}
+
+.noesis-flow-timeline-title {
+  color: var(--text-normal);
+  font-size: var(--font-ui-small);
+  font-weight: 600;
+  line-height: 1.25;
+}
+
+.noesis-flow-timeline-meta {
+  color: var(--text-muted);
+  font-size: var(--font-ui-smaller);
+  line-height: 1.25;
+  margin-top: 2px;
+}
+
+@container (max-width: 780px) {
+  .noesis-flow-daily-brief-board {
+    --noesis-flow-brief-edge: clamp(16px, 5cqw, 24px);
+  }
+
+  .noesis-flow-brief-main-grid,
+  .noesis-flow-brief-task-lanes {
+    grid-template-columns: 1fr;
+  }
+
+  .noesis-flow-brief-eventually-list {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .noesis-flow-brief-eventually-list::before {
+    inset-inline-start: calc(50% - 4px);
+  }
+
+  .noesis-flow-brief-eventually-list::after {
+    display: none;
+  }
+
+  .noesis-flow-brief-main-grid {
+    align-items: start;
+  }
+
+  .noesis-flow-brief-panel {
+    height: auto;
+  }
+
+  .noesis-flow-brief-signal-grid {
+    gap: 12px;
+  }
+
+  .noesis-flow-brief-signal {
+    border-left: 0;
+    padding: 0;
+  }
+
+  .noesis-flow-brief-task-lanes.has-divider .noesis-flow-brief-task-lane:first-child {
+    padding-right: 0;
+  }
+
+  .noesis-flow-brief-task-lanes.has-divider .noesis-flow-brief-task-lane + .noesis-flow-brief-task-lane {
+    border-left: 0;
+    border-top: 1px solid color-mix(in srgb, var(--background-modifier-border) 72%, transparent);
+    padding-left: 0;
+    padding-top: 14px;
+  }
+
+  .noesis-flow-brief-hero {
+    align-items: start;
+  }
+}
+
+.noesis-flow-timeline-item {
+  grid-template-columns: 58px minmax(0, 1fr) auto;
+}
+
+.noesis-flow-timeline-edit {
+  align-self: center;
+}
+
+@container (max-width: 420px) {
+  .noesis-flow-brief-hero {
+    grid-template-columns: 1fr;
+  }
+
+  .noesis-flow-brief-hero-actions {
+    justify-self: start;
+    padding-bottom: 0;
+  }
+
+  .noesis-flow-brief-eventually-list {
+    grid-template-columns: 1fr;
+  }
+
+  .noesis-flow-brief-eventually-list::before,
+  .noesis-flow-brief-eventually-list::after {
+    display: none;
+  }
+}
+
+@container (max-width: 250px) {
+  .noesis-flow-calendar-shell,
+  .noesis-flow-timeline-shell {
+    --noesis-flow-calendar-edge: 12px;
+  }
+
+  .noesis-flow-calendar-header {
+    gap: 8px;
+  }
+
+  .noesis-flow-calendar-actions {
+    gap: 1px;
+  }
+
+  .noesis-flow-calendar-week-heading:first-child,
+  .noesis-flow-calendar-week-cell.grid-right {
+    padding-right: 6px;
+  }
+
+  .noesis-flow-calendar-week-heading:last-child,
+  .noesis-flow-calendar-week-cell:not(.grid-right) {
+    padding-left: 6px;
+  }
+
+  .noesis-flow-time-card {
+    padding: 10px;
+  }
+
+  .noesis-flow-time-segment,
+  .noesis-flow-time-button {
+    min-height: 24px;
+    padding-left: 7px;
+    padding-right: 7px;
+  }
+
+
+  .noesis-flow-tasks-heading-row {
+    gap: 6px;
+  }
+
+  .noesis-flow-today-task-item {
+    grid-template-columns: 20px 1fr;
+  }
+
+  .noesis-flow-today-task-marker {
+    height: 20px;
+    width: 20px;
+  }
+}
+
+.noesis-flow-widget-shell {
+  --noesis-flow-calendar-edge: clamp(16px, min(8cqw, 5cqh), 28px);
+  box-sizing: border-box;
+  color: var(--text-normal);
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  margin: 0;
+  min-height: 0;
+  overflow: hidden;
+  padding: 2px 0 clamp(8px, min(4cqw, 3cqh), 14px);
+}
+
+.noesis-flow-widget-header {
+  align-items: center;
+  border-bottom: 1px solid color-mix(in srgb, var(--noesis-flow-widget-accent) 18%, var(--background-modifier-border));
+  display: grid;
+  gap: 8px;
+  grid-template-columns: minmax(0, 1fr) auto;
+  margin: clamp(8px, 3cqh, 14px) var(--noesis-flow-calendar-edge) 10px;
+  min-height: 32px;
+  min-width: 0;
+  padding-bottom: 9px;
+}
+
+.noesis-flow-calendar-wrapper .noesis-flow-widget-header {
+  margin-top: clamp(8px, 4cqw, 14px);
+}
+
+.noesis-flow-calendar-wrapper .noesis-flow-widget-shell {
+  --noesis-flow-calendar-edge: clamp(16px, 8cqw, 28px);
+}
+
+.noesis-flow-widget-title-area,
+.noesis-flow-widget-title-row {
+  min-width: 0;
+}
+
+.noesis-flow-widget-title-row {
+  align-items: center;
+  display: flex;
+  gap: 8px;
+  width: 100%;
+}
+
+.noesis-flow-widget-title {
+  color: var(--text-normal);
+  flex: 1 1 auto;
+  font-size: 1.05em;
+  font-style: normal;
+  font-weight: 600;
+  letter-spacing: 0;
+  line-height: 1.2;
+  margin: 0;
+  min-height: 24px;
+  min-width: 0;
+  padding: 0;
+  text-shadow: none;
+}
+
+.noesis-flow-widget-meta {
+  color: var(--text-muted);
+  font-size: var(--font-ui-smaller);
+  line-height: 1.2;
+  margin-top: 2px;
+}
+
+.noesis-flow-widget-actions .noesis-flow-widget-meta {
+  margin-top: 0;
+  white-space: nowrap;
+}
+
+.noesis-flow-widget-actions {
+  align-items: center;
+  display: flex;
+  flex: 0 0 auto;
+  gap: 4px;
+  justify-content: flex-end;
+  min-height: 26px;
+  min-width: 0;
+}
+
+.noesis-flow-widget-actions.is-empty {
+  display: none;
+}
+
+.noesis-flow-widget-body {
+  display: flex;
+  flex: 1 1 auto;
+  flex-direction: column;
+  min-height: 0;
+  min-width: 0;
+}
+
+.noesis-flow-widget-empty {
+  color: var(--text-muted);
+  font-size: var(--font-ui-small);
+  margin: 0 var(--noesis-flow-calendar-edge);
+  padding: 8px 0;
+}
+
+.noesis-flow-time-card.noesis-flow-widget-shell {
+  gap: 0;
+  justify-content: flex-start;
+  padding: 0 0 clamp(8px, min(4cqw, 3cqh), 14px);
+}
+
+@container (max-width: 270px) {
+  .noesis-flow-calendar-title-date-full {
+    display: none;
+  }
+
+  .noesis-flow-calendar-title-date-short {
+    display: inline;
+  }
+}
+
+@container (max-width: 210px) {
+  .noesis-flow-calendar-wrapper .noesis-flow-calendar-today-button {
+    display: none;
+  }
+}
+
+.noesis-flow-timer-card .noesis-flow-widget-header {
+  display: none;
+}
+
+.noesis-flow-timer-card .noesis-flow-widget-title-row {
+  align-items: flex-start;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.noesis-flow-timer-card .noesis-flow-widget-title {
+  border-bottom: 1px solid color-mix(in srgb, var(--noesis-flow-widget-accent) 18%, var(--background-modifier-border));
+  padding-bottom: 9px;
+  white-space: nowrap;
+  width: 100%;
+}
+
+.noesis-flow-timer-card .noesis-flow-widget-actions {
+  justify-content: center;
+  min-height: 26px;
+  width: 100%;
+}
+
+.noesis-flow-timer-body {
+  margin: 0 var(--noesis-flow-calendar-edge);
+}
+
+.noesis-flow-timer-body {
+  align-items: center;
+  gap: clamp(7px, min(3cqw, 2cqh), 11px);
+  justify-content: flex-start;
+  padding-top: 0;
+}
+
+.noesis-flow-pomodoro-actions {
+  margin-top: clamp(2px, 1cqh, 6px);
+}
+
+.noesis-flow-widget-actions.noesis-flow-time-segmented {
+  flex-wrap: wrap;
+}
+
+.noesis-flow-widget-actions.noesis-flow-time-segmented .noesis-flow-time-segment {
+  height: 26px;
+  min-height: 26px;
+}
+
+.noesis-flow-task-main-row {
+  align-items: start;
+  display: grid;
+  gap: 6px;
+  grid-template-columns: minmax(0, 1fr) auto;
+  min-width: 0;
+}
+
+
+.noesis-flow-today-task-item.actions-in-meta .noesis-flow-task-main-row {
+  grid-template-columns: minmax(0, 1fr);
+}
+
+.noesis-flow-task-meta-row {
+  align-items: center;
+  display: grid;
+  gap: 8px;
+  grid-template-columns: minmax(0, 1fr) auto;
+  margin-top: 2px;
+  min-width: 0;
+}
+
+.noesis-flow-task-metadata {
+  align-items: center;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  min-width: 0;
+}
+
+.noesis-flow-task-meta-row .noesis-flow-today-task-meta {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.noesis-flow-task-meta-row .noesis-flow-task-edit-actions {
+  justify-content: flex-end;
+}
+
+.noesis-flow-task-edit-actions {
+  align-items: center;
+  display: flex;
+  gap: 2px;
+  opacity: 0.55;
+  transition: opacity 120ms ease;
+}
+
+.noesis-flow-today-task-item:hover .noesis-flow-task-edit-actions,
+.noesis-flow-task-edit-actions:focus-within {
+  opacity: 1;
+}
+
+.noesis-flow-task-edit-button.noesis-flow-calendar-icon-button {
+  flex: 0 0 22px;
+  height: 22px;
+  min-height: 22px;
+  opacity: 0.9;
+  padding: 0;
+  width: 22px;
+}
+
+.noesis-flow-task-edit-button.noesis-flow-calendar-icon-button svg {
+  height: 12px;
+  width: 12px;
+}
+
+.noesis-flow-task-delete-button.noesis-flow-calendar-icon-button:hover {
+  color: var(--text-error);
+}
+
+.noesis-flow-confirm-message {
+  color: var(--text-muted);
+  line-height: 1.5;
+  margin: 0 0 18px;
+}
+
+.noesis-flow-kanban-no-date-option {
+  align-items: center;
+  color: var(--text-muted);
+  display: inline-flex;
+  font-size: var(--font-ui-smaller);
+  font-weight: 400;
+  gap: 6px;
+  margin-left: auto;
+  text-transform: none;
+  white-space: nowrap;
+}
+
+.noesis-flow-kanban-date-field > label {
+  align-items: center;
+  display: flex;
+  justify-content: space-between;
+}
+
+.noesis-flow-kanban-no-date-option input[type="checkbox"] {
+  height: 13px;
+  margin: 0;
+  width: 13px;
+}
+
+.noesis-flow-kanban-task-field.is-undated input[type="date"] {
+  opacity: 0.55;
+}
+
+.noesis-flow-settings-search {
+  margin: 12px 0 4px;
+  max-width: 520px;
+}
+
+.noesis-flow-settings-search .noesis-flow-dialog-text-input {
+  width: 100%;
+}
+
+.noesis-flow-settings-search-hidden {
+  display: none !important;
+}
+
+.noesis-flow-settings-search-exact {
+  background: color-mix(in srgb, var(--interactive-accent) 10%, transparent);
+  border-radius: var(--radius-s, 4px);
+  box-shadow: inset 3px 0 0 var(--interactive-accent);
+  padding-inline: 8px;
+}
+
+.noesis-flow-settings-section-action {
+  display: flex;
+  justify-content: flex-end;
+  margin: 8px 0 2px;
+}
+
+.noesis-flow-settings-section-action button {
+  font-size: var(--font-ui-smaller);
+}
+
+.noesis-flow-onboarding-status {
+  color: var(--interactive-accent);
+  display: inline-flex;
+  height: 16px;
+  margin-right: 6px;
+  vertical-align: -3px;
+  width: 16px;
+}
+
+.noesis-flow-onboarding-status svg {
+  height: 16px;
+  width: 16px;
+}
+
+.noesis-flow-recurring-manager {
+  margin: 0 auto;
+  max-width: 860px;
+  padding: 24px;
+}
+
+.noesis-flow-recurring-header {
+  align-items: flex-start;
+  display: flex;
+  gap: 16px;
+  justify-content: space-between;
+  margin-bottom: 20px;
+}
+
+.noesis-flow-recurring-header h2 {
+  margin: 0;
+}
+
+.noesis-flow-recurring-header-actions {
+  align-items: center;
+  display: flex;
+  flex: 0 0 auto;
+  flex-wrap: wrap;
+  gap: 8px;
+  justify-content: flex-end;
+}
+
+.noesis-flow-recurring-header p,
+.noesis-flow-recurring-source {
+  color: var(--text-muted);
+  margin: 6px 0 0;
+}
+
+.noesis-flow-recurring-list {
+  display: grid;
+  gap: 10px;
+}
+
+.noesis-flow-recurring-card {
+  background: var(--background-secondary);
+  border: 1px solid var(--background-modifier-border);
+  border-radius: 10px;
+  padding: 14px 16px;
+}
+
+.noesis-flow-recurring-card.is-paused {
+  opacity: 0.72;
+}
+
+.noesis-flow-recurring-card-top,
+.noesis-flow-recurring-actions {
+  align-items: center;
+  display: flex;
+  gap: 8px;
+  justify-content: space-between;
+}
+
+.noesis-flow-recurring-task-name {
+  font-weight: 650;
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.noesis-flow-recurring-status {
+  background: var(--background-modifier-hover);
+  border-radius: 999px;
+  color: var(--text-muted);
+  font-size: 0.78em;
+  padding: 3px 8px;
+}
+
+.noesis-flow-recurring-details {
+  color: var(--text-muted);
+  font-size: 0.9em;
+  margin-top: 8px;
+  overflow-wrap: anywhere;
+}
+
+.noesis-flow-recurring-source {
+  font-size: 0.82em;
+  overflow-wrap: anywhere;
+}
+
+.noesis-flow-recurring-exceptions {
+  color: var(--text-muted);
+  font-size: 0.82em;
+  margin-top: 7px;
+  overflow-wrap: anywhere;
+}
+
+.noesis-flow-recurring-progress-row {
+  align-items: center;
+  color: var(--text-muted);
+  display: flex;
+  font-size: 0.84em;
+  gap: 10px;
+  margin-top: 10px;
+}
+
+.noesis-flow-recurring-progress-row progress {
+  accent-color: var(--interactive-accent);
+  flex: 1;
+  height: 6px;
+}
+
+.noesis-flow-recurring-upcoming {
+  color: var(--text-muted);
+  font-size: 0.84em;
+  margin-top: 7px;
+  overflow-wrap: anywhere;
+}
+
+.noesis-flow-recurring-actions {
+  justify-content: flex-end;
+  margin-top: 12px;
+}
+
+.noesis-flow-recurring-icon-button {
+  color: var(--text-muted);
+  padding: 4px;
+}
+
+.noesis-flow-recurring-icon-button.is-destructive:hover {
+  color: var(--text-error);
+}
+
+.noesis-flow-planning {
+  margin: 0 auto;
+  max-width: 1400px;
+  padding: 24px;
+}
+
+.noesis-flow-planning-section h3 {
+  margin: 0;
+}
+
+.noesis-flow-planning-drag-hint,
+.noesis-flow-planning-day-summary {
+  color: var(--text-muted);
+}
+
+.noesis-flow-planner-hero {
+  align-items: end;
+  border-bottom: 1px solid color-mix(in srgb, var(--interactive-accent) 24%, var(--background-modifier-border));
+  display: grid;
+  gap: 18px;
+  grid-template-columns: minmax(0, 1fr) auto;
+  padding-bottom: 18px;
+}
+
+.noesis-flow-planner-title-block { min-width: 0; }
+
+.noesis-flow-planner-kicker {
+  color: var(--interactive-accent);
+  font-size: var(--font-ui-smaller);
+  font-weight: 700;
+  letter-spacing: 0.12em;
+}
+
+.noesis-flow-planner-title {
+  font-size: clamp(1.7em, 4cqw, 2.35em);
+  letter-spacing: 0.04em;
+  margin: 3px 0 4px;
+}
+
+.noesis-flow-planner-subtitle,
+.noesis-flow-planner-signal {
+  color: var(--text-muted);
+  font-size: var(--font-ui-smaller);
+  font-weight: 650;
+  letter-spacing: 0.05em;
+}
+
+.noesis-flow-planner-signal { margin-top: 6px; }
+.noesis-flow-planner-signal.is-overdue { color: var(--text-error); }
+
+.noesis-flow-planner-hero-actions {
+  align-items: center;
+  display: flex;
+  gap: 7px;
+}
+
+.noesis-flow-planning-section {
+  margin-top: 18px;
+}
+
+.noesis-flow-planning-drag-hint { font-size: 0.86em; margin-top: 3px; }
+
+.noesis-flow-planning-month-grid {
+  display: grid;
+  gap: 6px;
+  grid-template-columns: repeat(7, minmax(130px, 1fr));
+  margin-top: 12px;
+  overflow-x: auto;
+}
+
+.noesis-flow-planning-month-weekday {
+  color: var(--text-muted);
+  font-size: var(--font-ui-smaller);
+  font-weight: 650;
+  padding: 2px 6px;
+  text-transform: uppercase;
+}
+
+.noesis-flow-planning-day {
+  background: var(--background-secondary);
+  border: 1px solid var(--background-modifier-border);
+  border-radius: 9px;
+  min-height: 180px;
+  padding: 9px;
+}
+
+.noesis-flow-planning-day.is-today {
+  border-color: var(--interactive-accent);
+  box-shadow: inset 0 2px 0 var(--interactive-accent);
+}
+
+.noesis-flow-planning-day.is-month-day {
+  min-height: 140px;
+}
+
+.noesis-flow-planning-day.is-outside-month {
+  opacity: 0.52;
+}
+
+.noesis-flow-planning-day.is-past {
+  background: var(--background-primary);
+  filter: grayscale(0.75);
+  opacity: 0.46;
+}
+
+.noesis-flow-planning-day-heading {
+  display: flex;
+  justify-content: space-between;
+}
+
+.noesis-flow-planning-day-name { font-weight: 650; }
+.noesis-flow-planning-day-date { color: var(--text-muted); font-size: 0.88em; }
+.noesis-flow-planning-day-summary { font-size: 0.8em; margin: 7px 0; }
+
+.noesis-flow-planning-day-tasks {
+  border-radius: 6px;
+  min-height: 115px;
+}
+
+.noesis-flow-planning-day-tasks.is-drop-target {
+  background: color-mix(in srgb, var(--interactive-accent) 14%, transparent);
+  outline: 1px dashed var(--interactive-accent);
+}
+
+.noesis-flow-planning-task {
+  align-items: center;
+  background: var(--background-primary);
+  border-left: 3px solid var(--text-muted);
+  border-radius: 5px;
+  cursor: grab;
+  display: flex;
+  font-size: 0.86em;
+  gap: 6px;
+  margin-top: 5px;
+  padding: 6px 7px;
+}
+
+.noesis-flow-planning-task:active { cursor: grabbing; }
+.noesis-flow-planning-task-title { min-width: 0; overflow-wrap: anywhere; }
+.noesis-flow-planning-task-details { align-items: center; background: transparent; border: 0; color: var(--text-muted); cursor: pointer; display: inline-flex; flex: 0 0 auto; padding: 2px; }
+.noesis-flow-planning-task-details:hover { color: var(--text-normal); }
+.noesis-flow-planning-task.priority-\! { border-left-color: var(--noesis-flow-task-critical-color, #ea4458); }
+.noesis-flow-planning-task.priority-h { border-left-color: var(--noesis-flow-task-high-color, #fd884b); }
+.noesis-flow-planning-task.priority-m { border-left-color: var(--noesis-flow-task-medium-color, #f1c24d); }
+.noesis-flow-planning-task.priority-l { border-left-color: var(--noesis-flow-task-low-color, #5cdf95); }
+
+.noesis-flow-task-source-list { display: grid; gap: 6px; margin: 0 0 14px; }
+.noesis-flow-task-source-row { align-items: center; background: var(--background-secondary); border: 1px solid var(--background-modifier-border); border-radius: 6px; display: flex; gap: 8px; justify-content: space-between; padding: 7px 9px; }
+.noesis-flow-task-source-row > span:first-child { min-width: 0; overflow-wrap: anywhere; }
+.noesis-flow-task-source-label { color: var(--text-muted); font-size: 0.85em; }
+.noesis-flow-task-meta-detail { color: var(--text-muted); font-size: 0.82em; white-space: nowrap; }
+.noesis-flow-task-meta-detail::before { content: "Ãƒâ€šÃ‚Â·"; margin-right: 5px; }
+.noesis-flow-task-metadata .noesis-flow-task-meta-detail:first-child::before { display: none; }
+
+
+
+@media (max-width: 520px) {
+  .noesis-flow-recurring-manager, .noesis-flow-planning { padding: 16px; }
+  .noesis-flow-recurring-header { align-items: stretch; flex-direction: column; }
+  .noesis-flow-recurring-header-actions { justify-content: flex-start; }
+  .noesis-flow-task-list-header {
+    align-items: start;
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .noesis-flow-task-list-controls { justify-content: flex-start; }
+}
+
+@container (max-width: 250px) {
+  .noesis-flow-widget-shell {
+    --noesis-flow-calendar-edge: 12px;
+  }
+
+  .noesis-flow-widget-header {
+    gap: 6px;
+    min-height: 30px;
+  }
+
+  .noesis-flow-widget-title {
+    font-size: 1em;
+  }
+
+  .noesis-flow-task-main-row {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .noesis-flow-task-edit-actions {
+    opacity: 1;
+  }
+}
+
+@media (max-height: 430px) {
+  .noesis-flow-time-card {
+    gap: 8px;
+    justify-content: center;
+    padding-bottom: 10px;
+    padding-top: 10px;
+  }
+
+  .noesis-flow-timer-display-stage {
+    margin-bottom: 4px;
+    margin-top: 4px;
+  }
+
+  .noesis-flow-timer-digital-time {
+    font-size: clamp(1.75em, 12cqw, 2.4em);
+  }
+}
+
+
+@media (max-width: 700px) {
+  .noesis-flow-calendar-wrapper:not(.show-mobile-today) .noesis-flow-calendar-today-button {
+    display: none;
+  }
+
+  .noesis-flow-calendar-wrapper .noesis-flow-calendar-shell {
+    padding-left: 8px;
+    padding-right: 8px;
+  }
+
+  .noesis-flow-calendar-wrapper .noesis-flow-calendar-title-button {
+    font-size: 1em;
+  }
+
+  .noesis-flow-calendar-wrapper .noesis-flow-calendar-icon-button {
+    height: 30px;
+    width: 30px;
+  }
+}
+
+.noesis-flow-dialog .noesis-flow-date-input-control {
+  position: relative;
+  width: 100%;
+}
+
+.noesis-flow-dialog .noesis-flow-date-input-control input[type="date"] {
+  direction: ltr;
+  padding-right: 38px;
+  text-align: left;
+}
+
+.noesis-flow-dialog .noesis-flow-date-input-control input[type="date"]::-webkit-calendar-picker-indicator {
+  opacity: 0;
+  pointer-events: none;
+}
+
+.noesis-flow-date-picker-button {
+  align-items: center;
+  background: transparent !important;
+  border: 0 !important;
+  color: var(--text-muted);
+  cursor: pointer;
+  display: inline-flex;
+  height: 24px;
+  justify-content: center;
+  padding: 0;
+  position: absolute;
+  right: 5px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 24px;
+}
+
+.noesis-flow-date-picker-button:hover,
+.noesis-flow-date-picker-button:focus-visible {
+  color: var(--text-normal);
+}
+
+.noesis-flow-date-picker-button svg {
+  height: 14px;
+  width: 14px;
+}
+/* -------------------------------------------------------------------------- */
+/* Noesis Flow quiet productivity system                                             */
+/* -------------------------------------------------------------------------- */
+
+:is(.noesis-flow-calendar-wrapper, .noesis-flow-time-shell, .noesis-flow-daily-brief-board, .noesis-flow-kanban-board, .noesis-flow-task-list, .noesis-flow-planning, .noesis-flow-timeline-shell, .noesis-flow-recurring-manager, .noesis-flow-settings-panel, .noesis-flow-dialog) {
+  --noesis-flow-ui-accent: var(--noesis-flow-current-accent, var(--interactive-accent));
+  --noesis-flow-ui-surface: color-mix(in srgb, var(--background-secondary) 58%, var(--background-primary));
+  --noesis-flow-ui-surface-raised: color-mix(in srgb, var(--background-primary) 90%, var(--background-secondary));
+  --noesis-flow-ui-surface-quiet: color-mix(in srgb, var(--background-secondary) 34%, transparent);
+  --noesis-flow-ui-border: color-mix(in srgb, var(--background-modifier-border) 76%, transparent);
+  --noesis-flow-ui-border-strong: color-mix(in srgb, var(--noesis-flow-ui-accent) 26%, var(--background-modifier-border));
+  --noesis-flow-ui-radius: 10px;
+  --noesis-flow-ui-radius-small: 7px;
+  --noesis-flow-ui-shadow: 0 1px 2px rgba(0, 0, 0, 0.06), 0 8px 24px rgba(0, 0, 0, 0.035);
+  --noesis-flow-ui-focus: 0 0 0 2px color-mix(in srgb, var(--noesis-flow-ui-accent) 38%, transparent);
+  --noesis-flow-ui-control-height: 32px;
+}
+
+:is(.noesis-flow-time-shell, .noesis-flow-daily-brief-board, .noesis-flow-kanban-board, .noesis-flow-task-list, .noesis-flow-planning, .noesis-flow-timeline-shell, .noesis-flow-recurring-manager) { color: var(--text-normal); font-family: var(--font-interface); }
+
+/* Shared controls: compact, calm, and clearly interactive. */
+:is(.noesis-flow-time-shell, .noesis-flow-daily-brief-board, .noesis-flow-kanban-board, .noesis-flow-task-list, .noesis-flow-planning, .noesis-flow-timeline-shell, .noesis-flow-recurring-manager, .noesis-flow-dialog) :is(button, input, select, textarea) { border-radius: var(--noesis-flow-ui-radius-small); }
+:is(.noesis-flow-time-shell, .noesis-flow-daily-brief-board, .noesis-flow-kanban-board, .noesis-flow-task-list, .noesis-flow-planning, .noesis-flow-timeline-shell, .noesis-flow-recurring-manager, .noesis-flow-dialog) :is(button, select, input:not([type="checkbox"]):not([type="radio"])) { min-height: var(--noesis-flow-ui-control-height); }
+:is(.noesis-flow-time-shell, .noesis-flow-daily-brief-board, .noesis-flow-kanban-board, .noesis-flow-task-list, .noesis-flow-planning, .noesis-flow-timeline-shell, .noesis-flow-recurring-manager, .noesis-flow-dialog) :is(input, select, textarea) { border-color: var(--noesis-flow-ui-border); box-shadow: none; }
+:is(.noesis-flow-time-shell, .noesis-flow-daily-brief-board, .noesis-flow-kanban-board, .noesis-flow-task-list, .noesis-flow-planning, .noesis-flow-timeline-shell, .noesis-flow-recurring-manager, .noesis-flow-dialog) :is(button, input, select, textarea):focus-visible { box-shadow: var(--noesis-flow-ui-focus); outline: 0; }
+:is(.noesis-flow-time-shell, .noesis-flow-daily-brief-board, .noesis-flow-kanban-board, .noesis-flow-task-list, .noesis-flow-planning, .noesis-flow-timeline-shell, .noesis-flow-recurring-manager, .noesis-flow-dialog) button:not(.mod-cta):not(.mod-warning) { border-color: var(--noesis-flow-ui-border); }
+:is(.noesis-flow-time-shell, .noesis-flow-daily-brief-board, .noesis-flow-kanban-board, .noesis-flow-task-list, .noesis-flow-planning, .noesis-flow-timeline-shell, .noesis-flow-recurring-manager, .noesis-flow-dialog) button:not(:disabled):hover { border-color: var(--noesis-flow-ui-border-strong); }
+:is(.noesis-flow-time-shell, .noesis-flow-daily-brief-board, .noesis-flow-kanban-board, .noesis-flow-task-list, .noesis-flow-planning, .noesis-flow-timeline-shell, .noesis-flow-recurring-manager, .noesis-flow-dialog) button:disabled { cursor: not-allowed; opacity: 0.5; }
+.mod-cta { border-color: color-mix(in srgb, var(--interactive-accent) 62%, transparent) !important; box-shadow: 0 1px 1px color-mix(in srgb, var(--interactive-accent) 26%, transparent); }
+.mod-warning { border-color: color-mix(in srgb, var(--text-error) 38%, var(--background-modifier-border)) !important; }
+
+/* Settings and dialogs */
+.noesis-flow-settings-panel .setting-item { border-bottom: 1px solid color-mix(in srgb, var(--background-modifier-border) 58%, transparent); padding: 14px 2px; }
+.noesis-flow-settings-panel .setting-item:last-child { border-bottom: 0; }
+.noesis-flow-settings-details, .noesis-flow-settings-card, .noesis-flow-task-source-row { background: var(--noesis-flow-ui-surface-quiet); border-color: var(--noesis-flow-ui-border); border-radius: var(--noesis-flow-ui-radius); box-shadow: none; }
+.noesis-flow-settings-details > summary { letter-spacing: 0; }
+.noesis-flow-modal-header, .noesis-flow-kanban-task-header { border-color: var(--noesis-flow-ui-border); margin-bottom: 18px; padding-bottom: 14px; }
+.noesis-flow-modal-header h2, .noesis-flow-kanban-task-header h2, .noesis-flow-dialog h2 { font-size: 1.25em; font-weight: 700; letter-spacing: -0.015em; text-transform: uppercase; }
+.noesis-flow-kanban-task-field label, .noesis-flow-kanban-filter-group-title { font-size: var(--font-ui-smaller); font-weight: 600; letter-spacing: 0; text-transform: none; }
+.noesis-flow-kanban-task-form, .noesis-flow-task-details-modal .noesis-flow-kanban-task-form { gap: 14px; }
+
+/* Shared view hierarchy */
+:is(.noesis-flow-kanban-hero, .noesis-flow-brief-hero, .noesis-flow-planner-hero, .noesis-flow-task-list-header) { border-bottom-color: var(--noesis-flow-ui-border); gap: 20px; }
+:is(.noesis-flow-kanban-title, .noesis-flow-brief-title, .noesis-flow-planner-title, .noesis-flow-task-list-title h2) { font-size: clamp(1.65rem, 3.2cqw, 2.2rem); font-weight: 720; letter-spacing: -0.035em; line-height: 1.08; }
+:is(.noesis-flow-kanban-kicker, .noesis-flow-brief-kicker, .noesis-flow-planner-kicker, .noesis-flow-task-list-kicker) { color: color-mix(in srgb, var(--noesis-flow-ui-accent) 66%, var(--text-muted)); font-size: 0.72em; font-weight: 700; letter-spacing: 0.07em; text-transform: uppercase; }
+:is(.noesis-flow-kanban-subtitle, .noesis-flow-kanban-progress, .noesis-flow-brief-date, .noesis-flow-task-list-subtitle, .noesis-flow-task-list-count,
+ .noesis-flow-task-list-signal) { font-weight: 500; letter-spacing: 0; text-transform: none; }
+
+/* Calendar */
+.noesis-flow-calendar-shell { background: var(--noesis-flow-ui-surface-raised); border: 1px solid var(--noesis-flow-ui-border); border-radius: 14px; box-shadow: var(--noesis-flow-ui-shadow); }
+.noesis-flow-calendar-header { border-bottom: 1px solid var(--noesis-flow-ui-border); padding: 16px 0 12px; }
+.noesis-flow-calendar-title-button, .noesis-flow-calendar-year { font-size: clamp(1.15em, 3cqw, 1.45em); font-weight: 700; letter-spacing: -0.025em; }
+.noesis-flow-calendar-grid th { color: var(--text-muted); font-size: 0.69em; font-weight: 650; letter-spacing: 0.045em; text-transform: uppercase; }
+.noesis-flow-calendar-day, .noesis-flow-calendar-week-number { border-radius: 8px; }
+.noesis-flow-calendar-day.today { box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--noesis-flow-ui-accent) 64%, transparent); }
+.noesis-flow-calendar-day.active, .noesis-flow-calendar-week-number.active { box-shadow: 0 1px 3px color-mix(in srgb, var(--noesis-flow-ui-accent) 26%, transparent); }
+.noesis-flow-calendar-task-dot { box-shadow: 0 0 0 1px color-mix(in srgb, var(--background-primary) 62%, transparent); }
+
+/* Task list */
+.noesis-flow-task-list { gap: 18px; }
+.noesis-flow-task-list-table-wrap { background: var(--noesis-flow-ui-surface-raised); border-color: var(--noesis-flow-ui-border); border-radius: var(--noesis-flow-ui-radius); box-shadow: var(--noesis-flow-ui-shadow); }
+.noesis-flow-task-list-table th { background: color-mix(in srgb, var(--background-secondary) 72%, var(--background-primary)); border-color: var(--noesis-flow-ui-border); font-size: 0.68em; font-weight: 650; letter-spacing: 0.045em; text-transform: uppercase; }
+.noesis-flow-task-list-table th:focus-visible { box-shadow: inset 0 -2px 0 var(--noesis-flow-ui-accent), var(--noesis-flow-ui-focus); outline: 0; }
+.noesis-flow-task-list-table td { border-color: color-mix(in srgb, var(--background-modifier-border) 52%, transparent); padding-bottom: 7px; padding-top: 7px; }
+.noesis-flow-task-list-row:hover td { background: color-mix(in srgb, var(--noesis-flow-ui-accent) 4%, transparent); }
+.noesis-flow-task-list-cell :is(input:not([type="checkbox"]), select), .noesis-flow-task-list-text-preview { border-radius: 6px; }
+.noesis-flow-task-list-filter-button.is-active { background: color-mix(in srgb, var(--noesis-flow-ui-accent) 13%, var(--background-secondary)); border-color: color-mix(in srgb, var(--noesis-flow-ui-accent) 55%, var(--background-modifier-border)); }
+.noesis-flow-task-list-column-chooser, .noesis-flow-task-list-add-row, .noesis-flow-task-list-bulk-actions { background: var(--noesis-flow-ui-surface-quiet); border-color: var(--noesis-flow-ui-border); border-radius: var(--noesis-flow-ui-radius); }
+
+/* Boards, cards, and planning */
+.noesis-flow-kanban-lane, .noesis-flow-brief-panel, .noesis-flow-planning-day, .noesis-flow-recurring-card, .noesis-flow-time-card { background: var(--noesis-flow-ui-surface); border: 1px solid var(--noesis-flow-ui-border); border-radius: var(--noesis-flow-ui-radius); box-shadow: none; }
+.noesis-flow-kanban-lane { padding: 14px; }
+.noesis-flow-kanban-card, .noesis-flow-planning-task { background: var(--noesis-flow-ui-surface-raised); border-radius: var(--noesis-flow-ui-radius-small); box-shadow: 0 1px 1px color-mix(in srgb, var(--background-primary) 70%, transparent); }
+.noesis-flow-kanban-card:hover, .noesis-flow-planning-task:hover { box-shadow: 0 4px 12px color-mix(in srgb, var(--background-modifier-border) 38%, transparent); }
+.noesis-flow-kanban-lane-header, .noesis-flow-brief-panel-header, .noesis-flow-planning-day-heading { border-color: var(--noesis-flow-ui-border); }
+.noesis-flow-kanban-lane-title, .noesis-flow-brief-panel-title, .noesis-flow-planning-day-name { font-weight: 650; letter-spacing: -0.01em; }
+.noesis-flow-kanban-card-date, .noesis-flow-kanban-lane-count, .noesis-flow-brief-panel-meta, .noesis-flow-planning-day-summary, .noesis-flow-today-task-meta, .noesis-flow-task-meta-detail { font-weight: 500; letter-spacing: 0; text-transform: none; }
+.noesis-flow-kanban-empty, .noesis-flow-task-list-empty, .noesis-flow-calendar-empty, .noesis-flow-widget-empty { background: var(--noesis-flow-ui-surface-quiet); border: 1px dashed var(--noesis-flow-ui-border); border-radius: var(--noesis-flow-ui-radius); color: var(--text-muted); padding: 22px; }
+
+/* Timer, timeline, and compact layouts */
+.noesis-flow-time-card { box-shadow: var(--noesis-flow-ui-shadow); }
+.noesis-flow-timer-digital-display { background: color-mix(in srgb, var(--noesis-flow-ui-accent) 5%, var(--noesis-flow-ui-surface-raised)); border-color: color-mix(in srgb, var(--noesis-flow-ui-accent) 20%, var(--noesis-flow-ui-border)); border-radius: 10px; }
+
+/* Pomodoro display: a compact circular default with an intentional digital alternative. */
+.noesis-flow-time-shell {
+  align-items: flex-start;
+  overflow-y: auto;
+  overscroll-behavior-y: contain;
+}
+
+.noesis-flow-time-card.noesis-flow-widget-shell {
+  flex: 0 0 auto;
+  gap: 0;
+  height: auto;
+  min-height: 0;
+  padding: 10px 0;
+}
+
+.noesis-flow-timer-card .noesis-flow-timer-body {
+  flex: 0 0 auto;
+  gap: clamp(6px, min(2.4cqw, 1.8cqh), 10px);
+  padding: 0;
+}
+
+.noesis-flow-timer-display-stage {
+  --noesis-flow-timer-display-size: clamp(96px, min(52cqw, 40cqh), 168px);
+  background: transparent;
+  border: 0;
+  border-radius: 0;
+  min-height: var(--noesis-flow-timer-display-size);
+}
+
+.noesis-flow-timer-circle {
+  background:
+    radial-gradient(circle at center, var(--background-secondary) 0 58%, transparent 59%),
+    conic-gradient(var(--noesis-flow-ui-accent) var(--noesis-flow-timer-progress, 0deg), color-mix(in srgb, var(--background-modifier-border) 72%, transparent) 0);
+  border-radius: 999px;
+  box-shadow: 0 0 0 1px color-mix(in srgb, var(--noesis-flow-ui-accent) 20%, var(--background-modifier-border)), 0 5px 14px color-mix(in srgb, var(--background-modifier-border) 28%, transparent);
+}
+
+.noesis-flow-timer-digital-display {
+  border: 1px solid color-mix(in srgb, var(--noesis-flow-ui-accent) 20%, var(--noesis-flow-ui-border));
+  box-shadow: none;
+  height: clamp(64px, min(28cqw, 22cqh), 88px);
+  max-width: min(100%, 190px);
+  padding: 0 16px;
+  width: clamp(128px, min(60cqw, 40cqh), 190px);
+}
+
+.noesis-flow-timer-cycle-row {
+  min-height: 14px;
+}
+
+.noesis-flow-timer-cycle-hint {
+  line-height: 1.3;
+}
+
+.noesis-flow-pomodoro-actions {
+  margin-top: 0;
+}
+
+
+/* Date fields own one surface; their picker trigger is a stable icon affordance. */
+.noesis-flow-date-input-control.is-date-input > input[type="date"] {
+  padding-right: 38px;
+}
+
+.noesis-flow-date-input-control.is-date-input > input[type="date"]::-webkit-calendar-picker-indicator {
+  opacity: 0;
+  pointer-events: none;
+}
+
+.noesis-flow-date-input-control .noesis-flow-date-picker-button {
+  appearance: none;
+  background: transparent !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  box-shadow: none !important;
+  height: 24px;
+  min-height: 24px !important;
+  min-width: 24px !important;
+  transform: translateY(-50%) !important;
+}
+
+.noesis-flow-date-input-control .noesis-flow-date-picker-button:hover {
+  background: transparent !important;
+  transform: translateY(-50%) !important;
+}
+.noesis-flow-timeline-item, .noesis-flow-recurring-card { border-color: var(--noesis-flow-ui-border); }
+.noesis-flow-planner-subtitle, .noesis-flow-planner-signal { font-weight: 500; letter-spacing: 0; text-transform: none; }
+
+/* Kanban uses one surface per task: the outer card owns all elevation and state. */
+.noesis-flow-kanban-card {
+  border: 1px solid var(--noesis-flow-ui-border);
+  border-left: 3px solid color-mix(in srgb, var(--noesis-flow-kanban-priority) 65%, transparent);
+  padding: 10px;
+  transition: border-color 140ms ease, box-shadow 140ms ease, transform 140ms ease;
+}
+
+.noesis-flow-kanban-card:hover,
+.noesis-flow-kanban-card:focus-within {
+  box-shadow: 0 5px 16px color-mix(in srgb, var(--background-modifier-border) 48%, transparent);
+}
+
+.noesis-flow-kanban-card:focus-visible {
+  box-shadow: var(--noesis-flow-ui-focus), 0 5px 16px color-mix(in srgb, var(--background-modifier-border) 48%, transparent);
+  outline: 0;
+}
+
+.noesis-flow-kanban-card .noesis-flow-today-task-item,
+.noesis-flow-kanban-card .noesis-flow-today-task-item:hover {
+  background: transparent;
+  border: 0;
+  border-radius: 0;
+  box-shadow: none;
+  margin: 0;
+  padding: 0;
+  transform: none;
+}
+
+.noesis-flow-kanban-card .noesis-flow-today-task-item {
+  gap: 8px;
+}
+
+.noesis-flow-kanban-card .noesis-flow-today-task-body {
+  min-width: 0;
+}
+
+.noesis-flow-kanban-card .noesis-flow-task-main-row {
+  align-items: start;
+}
+
+.noesis-flow-kanban-card .noesis-flow-task-edit-actions {
+  align-self: start;
+}
+
+.noesis-flow-kanban-card .noesis-flow-today-task-marker {
+  margin-top: 1px;
+}
+
+.noesis-flow-kanban-card .noesis-flow-today-task-meta,
+.noesis-flow-kanban-card .noesis-flow-task-meta-detail {
+  font-size: var(--font-ui-smaller);
+}
+
+.noesis-flow-kanban-board.is-compact-cards .noesis-flow-kanban-card {
+  padding: 7px 8px;
+}
+
+/* Planner tasks use a full-width tile so the details control has a stable right edge. */
+.noesis-flow-planning-task {
+  --noesis-flow-planning-priority: var(--text-muted);
+  align-items: center;
+  background: var(--noesis-flow-ui-surface-raised);
+  border: 1px solid var(--noesis-flow-ui-border);
+  border-left: 3px solid var(--noesis-flow-planning-priority);
+  border-radius: var(--noesis-flow-ui-radius-small);
+  box-sizing: border-box;
+  display: grid;
+  gap: 8px;
+  grid-template-columns: minmax(0, 1fr) auto;
+  margin-top: 6px;
+  min-width: 0;
+  padding: 7px 8px 7px 9px;
+  transition: border-color 140ms ease, box-shadow 140ms ease, transform 140ms ease;
+  width: 100%;
+}
+
+.noesis-flow-planning-task.priority-\! { --noesis-flow-planning-priority: var(--noesis-flow-task-critical-color, #ea4458); }
+.noesis-flow-planning-task.priority-h { --noesis-flow-planning-priority: var(--noesis-flow-task-high-color, #fd884b); }
+.noesis-flow-planning-task.priority-m { --noesis-flow-planning-priority: var(--noesis-flow-task-medium-color, #f1c24d); }
+.noesis-flow-planning-task.priority-l { --noesis-flow-planning-priority: var(--noesis-flow-task-low-color, #5cdf95); }
+
+.noesis-flow-planning-task:hover,
+.noesis-flow-planning-task:focus-within {
+  border-color: var(--noesis-flow-ui-border-strong);
+  border-left-color: var(--noesis-flow-planning-priority);
+  box-shadow: 0 4px 12px color-mix(in srgb, var(--background-modifier-border) 38%, transparent);
+}
+
+.noesis-flow-planning-task:focus-visible {
+  box-shadow: var(--noesis-flow-ui-focus), 0 4px 12px color-mix(in srgb, var(--background-modifier-border) 38%, transparent);
+  outline: 0;
+}
+
+.noesis-flow-planning-task-title {
+  line-height: 1.3;
+  min-width: 0;
+}
+
+.noesis-flow-planning-task-details {
+  align-self: center;
+  background: transparent !important;
+  border: 1px solid var(--noesis-flow-ui-border) !important;
+  border-radius: 6px;
+  box-shadow: none !important;
+  height: 24px;
+  justify-content: center;
+  justify-self: end;
+  min-height: 24px !important;
+  padding: 0;
+  width: 24px;
+}
+
+.noesis-flow-planning-task-details:hover,
+.noesis-flow-planning-task-details:focus-visible {
+  background: color-mix(in srgb, var(--noesis-flow-ui-accent) 8%, transparent) !important;
+  border-color: var(--noesis-flow-ui-border-strong) !important;
+  transform: none !important;
+}
+
+@container (max-width: 560px) {
+  :is(.noesis-flow-kanban-board, .noesis-flow-task-list, .noesis-flow-daily-brief-board, .noesis-flow-planning) { padding-left: 16px; padding-right: 16px; }
+  :is(.noesis-flow-kanban-hero, .noesis-flow-brief-hero, .noesis-flow-planner-hero, .noesis-flow-task-list-header) { gap: 14px; }
+  .noesis-flow-kanban-hero-actions, .noesis-flow-task-list-controls { gap: 6px; }
+}
+
+/* Calendar header follows the body width and uses one responsive title row. */
+.noesis-flow-calendar-wrapper .noesis-flow-widget-shell {
+  --noesis-flow-calendar-edge: clamp(12px, 6cqw, 28px);
+}
+
+.noesis-flow-calendar-wrapper .noesis-flow-widget-header {
+  display: block;
+  margin-left: var(--noesis-flow-calendar-edge);
+  margin-right: var(--noesis-flow-calendar-edge);
+  min-width: 0;
+  width: auto;
+}
+
+.noesis-flow-calendar-wrapper .noesis-flow-widget-title-area,
+.noesis-flow-calendar-wrapper .noesis-flow-widget-title-row {
+  min-width: 0;
+  width: 100%;
+}
+
+.noesis-flow-calendar-wrapper .noesis-flow-widget-title-row {
+  display: grid;
+  gap: clamp(4px, 2cqw, 8px);
+  grid-template-columns: minmax(0, 1fr) max-content;
+}
+
+.noesis-flow-calendar-wrapper .noesis-flow-widget-title {
+  flex: initial;
+  justify-content: flex-start;
+  min-width: 0;
+  text-align: left;
+}
+
+.noesis-flow-calendar-wrapper .noesis-flow-calendar-title-button {
+  justify-content: flex-start;
+  max-width: 100%;
+  text-align: left;
+}
+
+
+.noesis-flow-calendar-wrapper .noesis-flow-widget-title-area {
+  display: block;
+  justify-self: stretch;
+  min-width: 0;
+}
+
+.noesis-flow-calendar-wrapper .noesis-flow-widget-title,
+.noesis-flow-calendar-wrapper .noesis-flow-calendar-title-button {
+  width: 100%;
+}
+
+.noesis-flow-calendar-wrapper .noesis-flow-calendar-title-button {
+  flex: 1 1 auto;
+}
+
+.noesis-flow-calendar-wrapper .noesis-flow-widget-actions {
+  flex: 0 0 auto;
+  justify-self: end;
+  min-width: max-content;
+  white-space: nowrap;
+}
+
+/* Calendar and Pomodoro cards should end with their content, not a stretched body. */
+.noesis-flow-calendar-wrapper.picker-mode-day .noesis-flow-calendar-shell,
+.noesis-flow-time-card.noesis-flow-widget-shell {
+  flex: 0 0 auto;
+  height: auto;
+}
+
+.noesis-flow-calendar-wrapper.picker-mode-day .noesis-flow-calendar-body,
+.noesis-flow-timer-card .noesis-flow-timer-body {
+  flex: 0 0 auto;
+}
+
+@container (max-width: 360px) {
+  .noesis-flow-calendar-wrapper .noesis-flow-widget-header {
+    gap: 4px;
+  }
+
+  .noesis-flow-calendar-wrapper .noesis-flow-widget-actions {
+    gap: 2px;
+  }
+
+  .noesis-flow-calendar-wrapper .noesis-flow-calendar-today-button {
+    padding-left: 7px;
+    padding-right: 7px;
+  }
+}
+
+@container (max-width: 220px) {
+  .noesis-flow-calendar-wrapper .noesis-flow-widget-header {
+    gap: 3px;
+  }
+
+  .noesis-flow-calendar-wrapper .noesis-flow-widget-actions {
+    gap: 1px;
+  }
+
+  .noesis-flow-calendar-wrapper .noesis-flow-calendar-today-button {
+    padding-left: 5px;
+    padding-right: 5px;
+  }
+}
+
+/* Theme-native integration: let the active Obsidian theme own the visual language. */
+:is(.noesis-flow-calendar-wrapper, .noesis-flow-time-shell, .noesis-flow-daily-brief-board, .noesis-flow-kanban-board, .noesis-flow-task-list, .noesis-flow-planning, .noesis-flow-timeline-shell, .noesis-flow-recurring-manager, .noesis-flow-settings-panel, .noesis-flow-dialog) {
+  --noesis-flow-ui-accent: var(--interactive-accent);
+  --noesis-flow-ui-surface: var(--background-secondary);
+  --noesis-flow-ui-surface-raised: var(--background-primary);
+  --noesis-flow-ui-surface-quiet: transparent;
+  --noesis-flow-ui-border: var(--background-modifier-border);
+  --noesis-flow-ui-border-strong: color-mix(in srgb, var(--interactive-accent) 44%, var(--background-modifier-border));
+  --noesis-flow-ui-radius: var(--radius-m, 6px);
+  --noesis-flow-ui-radius-small: var(--radius-s, 4px);
+  --noesis-flow-ui-shadow: none;
+  --noesis-flow-ui-focus: 0 0 0 2px color-mix(in srgb, var(--interactive-accent) 42%, transparent);
+}
+
+:is(.noesis-flow-time-shell, .noesis-flow-daily-brief-board, .noesis-flow-kanban-board, .noesis-flow-task-list, .noesis-flow-planning, .noesis-flow-timeline-shell, .noesis-flow-recurring-manager, .noesis-flow-dialog) button:not(.mod-cta):not(.mod-warning):not(.primary):not(:disabled):hover {
+  background: var(--background-modifier-hover);
+  border-color: var(--noesis-flow-ui-border-strong);
+  transform: none;
+}
+
+:is(.noesis-flow-calendar-shell, .noesis-flow-time-card, .noesis-flow-task-list-table-wrap, .noesis-flow-dialog),
+:is(.noesis-flow-kanban-lane, .noesis-flow-brief-panel, .noesis-flow-planning-day, .noesis-flow-recurring-card) {
+  box-shadow: none;
+}
+
+:is(.noesis-flow-calendar-shell, .noesis-flow-time-card, .noesis-flow-task-list-table-wrap) {
+  background: var(--background-primary);
+  border-color: var(--background-modifier-border);
+  border-radius: var(--noesis-flow-ui-radius);
+}
+
+:is(.noesis-flow-kanban-lane, .noesis-flow-brief-panel, .noesis-flow-planning-day, .noesis-flow-recurring-card) {
+  background: var(--background-secondary);
+  border-color: var(--background-modifier-border);
+  border-radius: var(--noesis-flow-ui-radius);
+}
+
+:is(.noesis-flow-kanban-card, .noesis-flow-planning-task, .noesis-flow-today-task-item) {
+  background: var(--background-primary);
+  box-shadow: none;
+}
+
+:is(.noesis-flow-kanban-card, .noesis-flow-planning-task):hover,
+:is(.noesis-flow-kanban-card, .noesis-flow-planning-task):focus-within {
+  box-shadow: none;
+}
+
+:is(.noesis-flow-kanban-card, .noesis-flow-planning-task):focus-visible {
+  box-shadow: var(--noesis-flow-ui-focus);
+}
+
+.noesis-flow-timeline-item {
+  background: transparent;
+  border-color: var(--background-modifier-border);
+  box-shadow: none;
+}
+
+.noesis-flow-task-list-table th {
+  background: var(--background-secondary);
+  border-color: var(--background-modifier-border);
+}
+
+.noesis-flow-task-list-row:hover td {
+  background: var(--background-modifier-hover);
+}
+
+.noesis-flow-calendar-day.active,
+.noesis-flow-calendar-week-number.active {
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--interactive-accent) 58%, transparent);
+}
+
+.noesis-flow-timer-circle {
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--interactive-accent) 24%, var(--background-modifier-border));
+}
+
+.noesis-flow-timer-digital-display {
+  background: var(--background-secondary);
+  box-shadow: none;
+}
+
+/* The optional timer display uses the full stage without borrowing the circle's height. */
+.noesis-flow-time-shell.noesis-flow-timer-display-digital-v2 .noesis-flow-timer-display-stage {
+  --noesis-flow-timer-display-size: clamp(68px, min(34cqw, 26cqh), 96px);
+}
+
+.noesis-flow-time-shell.noesis-flow-timer-display-digital-v2 .noesis-flow-timer-digital-display {
+  height: var(--noesis-flow-timer-display-size);
+  max-width: none;
+  width: 100%;
+}
+
+/* Borderless native widget layout: content fills the pane; controls keep meaningful edges. */
+.noesis-flow-calendar-wrapper .noesis-flow-widget-shell {
+  --noesis-flow-calendar-edge: clamp(8px, 3cqw, 12px);
+}
+
+.noesis-flow-time-shell {
+  padding-inline: clamp(8px, 3cqw, 12px);
+}
+
+.noesis-flow-timer-body {
+  margin-inline: 0;
+  width: 100%;
+}
+
+:is(.noesis-flow-calendar-shell, .noesis-flow-time-card, .noesis-flow-task-list-table-wrap, .noesis-flow-kanban-lane, .noesis-flow-brief-panel, .noesis-flow-planning-day, .noesis-flow-recurring-card) {
+  background: transparent;
+  border: 0;
+  border-radius: 0;
+  box-shadow: none;
+}
+
+.noesis-flow-time-card.noesis-flow-widget-shell {
+  width: 100%;
+}
+
+/* Dashboard main sections stay open, with native dividers defining columns. */
+.noesis-flow-daily-brief-board .noesis-flow-brief-main-grid {
+  gap: 0;
+}
+
+.noesis-flow-daily-brief-board .noesis-flow-brief-main-grid > .noesis-flow-brief-panel + .noesis-flow-brief-panel {
+  position: relative;
+}
+
+.noesis-flow-daily-brief-board .noesis-flow-brief-main-grid > .noesis-flow-brief-panel + .noesis-flow-brief-panel::before {
+  background: var(--background-modifier-border);
+  content: "";
+  inset-block: 0;
+  inset-inline-start: 0;
+  position: absolute;
+  width: 1px;
+}
+
+@container (max-width: 780px) {
+  .noesis-flow-daily-brief-board .noesis-flow-brief-main-grid {
+    gap: 18px;
+  }
+
+  .noesis-flow-daily-brief-board .noesis-flow-brief-main-grid > .noesis-flow-brief-panel + .noesis-flow-brief-panel {
+    position: static;
+  }
+
+  .noesis-flow-daily-brief-board .noesis-flow-brief-main-grid > .noesis-flow-brief-panel + .noesis-flow-brief-panel::before {
+    display: none;
+  }
+}
+
+
+/* Host-managed widget spacing ------------------------------------------------
+   Embedded widgets rely on Obsidian's view-content inset.  Keep spacing only
+   between the controls that belong together, never around the widget shell. */
+.noesis-flow-calendar-wrapper .noesis-flow-widget-shell,
+.noesis-flow-time-card.noesis-flow-widget-shell,
+.noesis-flow-timeline-shell.noesis-flow-widget-shell {
+  padding: 0;
+}
+
+.noesis-flow-calendar-wrapper .noesis-flow-widget-shell {
+  --noesis-flow-calendar-edge: 0px;
+}
+
+.noesis-flow-calendar-wrapper .noesis-flow-widget-header,
+.noesis-flow-timeline-shell .noesis-flow-widget-header {
+  margin: 0 0 8px;
+  padding-bottom: 8px;
+}
+
+.noesis-flow-calendar-wrapper .noesis-flow-widget-header {
+  min-height: 26px;
+}
+
+.noesis-flow-calendar-wrapper .noesis-flow-calendar-shell {
+  padding: 0;
+}
+
+.noesis-flow-time-shell,
+.noesis-flow-time-card.noesis-flow-widget-shell,
+.noesis-flow-timer-body {
+  padding: 0;
+}
+
+.noesis-flow-time-shell,
+.noesis-flow-timer-body {
+  margin: 0;
+}
+/* Host-managed view spacing --------------------------------------------------
+   Full Noesis Flow views use Obsidian's pane inset as their only outer gutter. */
+:is(.noesis-flow-daily-brief-board, .noesis-flow-kanban-board, .noesis-flow-task-list, .noesis-flow-planning, .noesis-flow-recurring-manager) {
+  box-sizing: border-box;
+  margin: 0;
+  max-width: none;
+  padding: 0;
+  width: 100%;
+}
+
+/* Timeline uses the same no-extra-edge contract as Calendar. */
+:is(.noesis-flow-timeline-shell) {
+  --noesis-flow-calendar-edge: 0px;
+}
+
+/* Keep one compact divider below a view heading, without a decorative frame. */
+:is(.noesis-flow-brief-hero, .noesis-flow-kanban-hero, .noesis-flow-task-list-header, .noesis-flow-planner-hero, .noesis-flow-recurring-header) {
+  border-bottom: 1px solid var(--background-modifier-border);
+  margin: 0 0 12px;
+  padding-bottom: 8px;
+}
+/* Timer mode is typographic, not an outlined field. ------------------------- */
+.noesis-flow-time-shell.noesis-flow-timer-display-digital-v2 .noesis-flow-timer-display-stage {
+  --noesis-flow-timer-display-size: clamp(72px, min(40cqw, 28cqh), 112px);
+  min-height: var(--noesis-flow-timer-display-size);
+}
+
+.noesis-flow-time-shell.noesis-flow-timer-display-digital-v2 .noesis-flow-timer-digital-display {
+  background: transparent;
+  border: 0;
+  border-radius: 0;
+  box-shadow: none;
+  height: auto;
+  min-height: 0;
+  padding: 0;
+}
+
+.noesis-flow-time-shell.noesis-flow-timer-display-digital-v2 .noesis-flow-timer-digital-time {
+  color: var(--text-normal);
+  font-size: clamp(2.25rem, min(16cqw, 11cqh), 4.25rem);
+  font-weight: 700;
+  letter-spacing: -0.045em;
+}
+
+.noesis-flow-time-shell.noesis-flow-timer-display-digital-v2 .noesis-flow-timer-digital-mode {
+  margin-top: 4px;
+}
+
+/* The timer card ends with its controls; the host owns any remaining pane area. */
+.noesis-flow-time-shell > .noesis-flow-time-card.noesis-flow-widget-shell,
+.noesis-flow-timer-card .noesis-flow-widget-body,
+.noesis-flow-timer-card .noesis-flow-timer-body {
+  align-self: flex-start;
+  flex: 0 0 auto;
+  min-height: 0;
+}
+/* Pomodoro follows the calendar's width-led, content-sized layout model. ---- */
+.noesis-flow-time-view-content,
+.noesis-flow-time-shell {
+  container-type: inline-size;
+}
+
+.noesis-flow-time-shell {
+  height: auto;
+  min-height: 0;
+  overflow: visible;
+}
+
+.noesis-flow-time-shell > .noesis-flow-time-card.noesis-flow-widget-shell {
+  height: auto;
+  margin: 0;
+  min-height: 0;
+  overflow: visible;
+  padding: 0;
+}
+
+.noesis-flow-timer-card .noesis-flow-widget-body,
+.noesis-flow-timer-card .noesis-flow-timer-body {
+  gap: clamp(6px, 2.4cqw, 10px);
+  margin: 0;
+  padding: 0;
+}
+
+/* Circle mode stays square, driven entirely by available pane width. */
+.noesis-flow-timer-display-stage {
+  --noesis-flow-timer-display-size: clamp(96px, 52cqw, 168px);
+  margin: 0;
+  min-height: var(--noesis-flow-timer-display-size);
+}
+
+.noesis-flow-timer-time {
+  font-size: clamp(1.75rem, 13cqw, 3.5rem);
+}
+
+/* Timer mode has no artificial stage height: its content defines the widget. */
+.noesis-flow-time-shell.noesis-flow-timer-display-digital-v2 .noesis-flow-timer-display-stage {
+  height: auto;
+  min-height: 0;
+}
+
+.noesis-flow-time-shell.noesis-flow-timer-display-digital-v2 .noesis-flow-timer-digital-time {
+  font-size: clamp(2.1rem, 16cqw, 4.25rem);
+}
+
+/* No timer-specific height breakpoint may reintroduce decorative outer space. */
+.noesis-flow-time-card {
+  justify-content: flex-start;
+}
+
+.noesis-flow-time-card,
+.noesis-flow-timer-display-stage {
+  margin-bottom: 0;
+  margin-top: 0;
+  padding-bottom: 0;
+  padding-top: 0;
+}
+
+/* Calendar uses the same compact, host-managed vertical edge. */
+.noesis-flow-calendar-wrapper,
+.noesis-flow-calendar-wrapper .noesis-flow-calendar-shell {
+  margin: 0;
+  padding-top: 0;
+  padding-bottom: 0;
+}
+
+.noesis-flow-calendar-wrapper .noesis-flow-widget-header {
+  margin-top: 0;
+  margin-bottom: 6px;
+  padding-bottom: 6px;
+}
+/* Calendar header owns no top padding; the host pane provides the outer inset. */
+.noesis-flow-calendar-wrapper .noesis-flow-calendar-header.noesis-flow-widget-header {
+  padding-top: 0;
+}
+/* Hero timer: time is the primary information; controls are supporting tools. */
+.noesis-flow-timer-card .noesis-flow-timer-display-stage {
+  align-items: center;
+  justify-content: center;
+}
+
+.noesis-flow-time-shell.noesis-flow-timer-display-digital-v2 .noesis-flow-timer-display-stage {
+  padding: 2px 0;
+}
+
+.noesis-flow-time-shell.noesis-flow-timer-display-digital-v2 .noesis-flow-timer-digital-display {
+  align-items: center;
+  width: 100%;
+}
+
+.noesis-flow-time-shell.noesis-flow-timer-display-digital-v2 .noesis-flow-timer-digital-time {
+  font-size: clamp(3rem, 24cqw, 5.75rem);
+  font-weight: 720;
+  letter-spacing: -0.06em;
+}
+
+:is(.noesis-flow-timer-digital-mode, .noesis-flow-timer-mode) {
+  font-size: 0.64em;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  margin-top: 3px;
+}
+
+/* Circle display gets the same visual priority without changing its progress meaning. */
+.noesis-flow-timer-card .noesis-flow-timer-display-stage {
+  --noesis-flow-timer-display-size: clamp(132px, 64cqw, 230px);
+}
+
+.noesis-flow-timer-circle .noesis-flow-timer-time {
+  font-size: clamp(2.5rem, 17cqw, 4.5rem);
+  font-weight: 720;
+  letter-spacing: -0.055em;
+}
+
+.noesis-flow-timer-cycle-row {
+  min-height: 10px;
+}
+
+.noesis-flow-timer-cycle-markers {
+  gap: 5px;
+}
+
+.noesis-flow-timer-cycle-marker {
+  height: 4px;
+  opacity: 0.72;
+  width: 4px;
+}
+
+.noesis-flow-timer-cycle-marker.current {
+  opacity: 1;
+  transform: scale(1.2);
+}
+
+.noesis-flow-pomodoro-actions {
+  align-items: center;
+  gap: 6px;
+}
+
+.noesis-flow-pomodoro-actions .noesis-flow-time-button.primary {
+  background: var(--interactive-accent) !important;
+  border-color: var(--interactive-accent) !important;
+  color: var(--text-on-accent) !important;
+  box-sizing: border-box;
+  font-size: var(--font-ui-small);
+  font-weight: 650;
+  height: 26px;
+  min-height: 26px !important;
+  padding-block: 0;
+  padding-inline: 12px;
+}
+
+.noesis-flow-pomodoro-actions .noesis-flow-time-button.primary:not(:disabled):hover {
+  background: color-mix(in srgb, var(--interactive-accent) 86%, var(--text-normal)) !important;
+  border-color: var(--interactive-accent) !important;
+  transform: none;
+}
+
+.noesis-flow-pomodoro-actions .noesis-flow-time-button.icon-only {
+  background: transparent;
+  flex-basis: 26px;
+  height: 26px;
+  min-height: 26px !important;
+  width: 26px;
+}
+
+.noesis-flow-pomodoro-actions .noesis-flow-time-button.icon-only svg {
+  height: 13px;
+  width: 13px;
+}
+
+
+
+/* Responsive native Kanban toolbar ------------------------------------------ */
+.noesis-flow-kanban-board {
+  container-type: inline-size;
+  min-width: 0;
+}
+
+.noesis-flow-kanban-hero,
+.noesis-flow-kanban-title-block,
+.noesis-flow-kanban-hero-actions {
+  min-width: 0;
+}
+
+.noesis-flow-kanban-hero-actions {
+  flex-wrap: wrap;
+  max-width: 100%;
+}
+
+/* Includes the unclassed source selector, which is intentionally a dropdown. */
+.noesis-flow-kanban-hero-actions :is(.noesis-flow-kanban-search, select.dropdown) {
+  background: var(--background-primary);
+  border: 1px solid var(--background-modifier-border);
+  border-radius: var(--radius-s, 4px);
+  box-sizing: border-box;
+  color: var(--text-normal);
+  height: 30px;
+  min-height: 30px !important;
+}
+
+.noesis-flow-kanban-hero-actions select.dropdown {
+  min-width: 116px;
+}
+
+.noesis-flow-kanban-hero-actions .noesis-flow-kanban-search {
+  min-width: 132px;
+}
+
+.noesis-flow-kanban-hero-actions :is(.noesis-flow-kanban-search, select.dropdown):focus-visible {
+  border-color: var(--interactive-accent);
+  box-shadow: 0 0 0 2px color-mix(in srgb, var(--interactive-accent) 38%, transparent);
+  outline: 0;
+}
+
+.noesis-flow-kanban-hero-actions > button:not(.mod-cta) {
+  background: var(--background-primary);
+  border: 1px solid var(--background-modifier-border);
+}
+
+.noesis-flow-kanban-hero-actions > button:not(.mod-cta):not(:disabled):hover {
+  background: var(--background-modifier-hover);
+  border-color: color-mix(in srgb, var(--interactive-accent) 44%, var(--background-modifier-border));
+  transform: none;
+}
+
+@container (max-width: 900px) {
+  .noesis-flow-kanban-hero {
+    align-items: start;
+    gap: 10px;
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .noesis-flow-kanban-hero-actions {
+    justify-content: flex-start;
+    padding-bottom: 0;
+    width: 100%;
+  }
+}
+
+@container (max-width: 620px) {
+  .noesis-flow-kanban-hero-actions {
+    gap: 6px;
+  }
+
+  .noesis-flow-kanban-hero-actions :is(.noesis-flow-kanban-search, select.dropdown) {
+    flex: 1 1 150px;
+    max-width: none;
+  }
+
+}
+@container (max-width: 380px) {
+  .noesis-flow-kanban-hero-actions :is(.noesis-flow-kanban-search, select.dropdown) {
+    flex-basis: 100%;
+    width: 100%;
+  }
+
+  .noesis-flow-kanban-title {
+    font-size: clamp(1.55rem, 9cqw, 2rem);
+  }
+}
+/* Kanban toolbar buttons share the field height at every pane width. */
+.noesis-flow-kanban-hero-actions > button {
+  box-sizing: border-box;
+  height: 30px;
+  min-height: 30px !important;
+}
+/* Native Kanban lane separators: section boundaries without lane cards. ----- */
+.noesis-flow-kanban-lanes {
+  gap: clamp(10px, 1.8cqw, 16px);
+}
+
+.noesis-flow-kanban-lane {
+  align-self: stretch;
+}
+
+.noesis-flow-kanban-lane + .noesis-flow-kanban-lane {
+  border-inline-start: 1px solid var(--background-modifier-border);
+  padding-inline-start: clamp(12px, 2cqw, 16px);
+}
+
+.noesis-flow-kanban-lane.is-holiday + .noesis-flow-kanban-lane,
+.noesis-flow-kanban-lane + .noesis-flow-kanban-lane.is-holiday {
+  border-inline-start-color: color-mix(in srgb, var(--noesis-flow-task-critical-color, var(--text-error)) 42%, var(--background-modifier-border));
+}
+
+.noesis-flow-kanban-lane.is-event + .noesis-flow-kanban-lane,
+.noesis-flow-kanban-lane + .noesis-flow-kanban-lane.is-event {
+  border-inline-start-color: color-mix(in srgb, var(--noesis-flow-kanban-event-color, var(--interactive-accent)) 42%, var(--background-modifier-border));
+}
+/* Minimal icon-only Pomodoro actions; outer spacing belongs to Obsidian. */
+.noesis-flow-pomodoro-actions .noesis-flow-time-button.primary {
+  align-items: center;
+  display: inline-flex;
+  flex: 0 0 26px;
+  justify-content: center;
+  padding: 0;
+  width: 26px;
+}
+
+.noesis-flow-timer-card .noesis-flow-timer-body {
+  gap: clamp(5px, 2cqw, 8px);
+}
+/* Pomodoro-only final rhythm: a small intentional inset, not a container frame. */
+.noesis-flow-timer-card .noesis-flow-widget-body {
+  padding-top: 8px;
+}
+
+:is(.noesis-flow-timer-digital-mode, .noesis-flow-timer-mode) {
+  font-size: 0.68em;
+  margin-top: 2px;
+}
+
+.noesis-flow-timer-cycle-markers {
+  gap: 4px;
+}
+
+.noesis-flow-timer-cycle-marker {
+  background: color-mix(in srgb, var(--text-muted) 38%, transparent);
+  height: 5px;
+  opacity: 0.8;
+  width: 5px;
+}
+
+.noesis-flow-timer-cycle-marker.current {
+  background: var(--interactive-accent);
+  opacity: 1;
+  transform: scale(1.15);
+}
+
+.noesis-flow-pomodoro-actions .noesis-flow-time-button.icon-only:not(.primary) {
+  background: var(--background-primary);
+  border-color: var(--background-modifier-border);
+  color: var(--text-muted);
+}
+
+.noesis-flow-pomodoro-actions .noesis-flow-time-button.icon-only:not(.primary):not(:disabled):hover {
+  background: var(--background-modifier-hover);
+  border-color: color-mix(in srgb, var(--interactive-accent) 38%, var(--background-modifier-border));
+  color: var(--text-normal);
+  transform: none;
+}
+/* Shared task-row rhythm: stable metadata spacing and compact square markers. */
+.noesis-flow-today-task-body {
+  display: grid;
+  gap: 3px;
+  min-width: 0;
+}
+
+.noesis-flow-task-meta-row {
+  margin-top: 0;
+}
+
+.noesis-flow-today-task-text.noesis-flow-markdown-inline > :is(p, div) {
+  line-height: inherit;
+  margin: 0;
+}
+
+.noesis-flow-task-meta-row .noesis-flow-today-task-meta {
+  line-height: 1.25;
+}
+
+.noesis-flow-today-task-marker {
+  aspect-ratio: 1;
+  border-radius: 2px;
+  box-sizing: border-box;
+  flex: 0 0 auto;
+}
+/* Height-adaptive Calendar month grid. Picker modes remain content-sized. */
+.noesis-flow-calendar-view-content {
+  container-type: size;
+}
+
+.noesis-flow-calendar-wrapper.picker-mode-day {
+  --noesis-flow-calendar-day-control-size: clamp(20px, max(10.5cqw, 7.5cqh), 44px);
+  --noesis-flow-calendar-week-control-size: clamp(16px, max(7cqw, 5.5cqh), 32px);
+  display: flex;
+  height: 100%;
+  min-height: min-content;
+}
+
+.noesis-flow-calendar-wrapper.picker-mode-day .noesis-flow-calendar-shell {
+  flex: 1 1 auto;
+  height: 100%;
+  min-height: min-content;
+}
+
+.noesis-flow-calendar-wrapper.picker-mode-day .noesis-flow-calendar-header {
+  flex: 0 0 auto;
+}
+
+.noesis-flow-calendar-wrapper.picker-mode-day .noesis-flow-calendar-body {
+  display: flex;
+  flex: 1 1 auto;
+  min-height: 0;
+}
+
+.noesis-flow-calendar-wrapper.picker-mode-day .noesis-flow-calendar-grid {
+  flex: 1 1 auto;
+  height: 100%;
+}
+
+.noesis-flow-calendar-wrapper.picker-mode-day .noesis-flow-calendar-grid tbody {
+  height: 100%;
+}
+
+.noesis-flow-calendar-wrapper.picker-mode-day :is(.noesis-flow-calendar-day, .noesis-flow-calendar-week-number) {
+  height: var(--noesis-flow-calendar-day-control-size);
+  min-height: var(--noesis-flow-calendar-day-control-size);
+  width: var(--noesis-flow-calendar-day-control-size);
+}
+
+.noesis-flow-calendar-wrapper.picker-mode-day .noesis-flow-calendar-week-number {
+  height: var(--noesis-flow-calendar-week-control-size);
+  min-height: var(--noesis-flow-calendar-week-control-size);
+  width: var(--noesis-flow-calendar-week-control-size);
+}
+/* Enforced task-marker geometry: host theme button minimums must not stretch it. */
+.noesis-flow-today-task-item {
+  --noesis-flow-task-marker-size: 22px;
+  grid-template-columns: var(--noesis-flow-task-marker-size) minmax(0, 1fr);
+}
+
+.noesis-flow-today-task-marker {
+  align-self: start;
+  aspect-ratio: 1;
+  block-size: var(--noesis-flow-task-marker-size) !important;
+  inline-size: var(--noesis-flow-task-marker-size) !important;
+  max-block-size: var(--noesis-flow-task-marker-size) !important;
+  max-height: var(--noesis-flow-task-marker-size) !important;
+  max-inline-size: var(--noesis-flow-task-marker-size) !important;
+  max-width: var(--noesis-flow-task-marker-size) !important;
+  min-block-size: var(--noesis-flow-task-marker-size) !important;
+  min-height: var(--noesis-flow-task-marker-size) !important;
+  min-inline-size: var(--noesis-flow-task-marker-size) !important;
+  min-width: var(--noesis-flow-task-marker-size) !important;
+}
+
+@container (max-width: 250px) {
+  .noesis-flow-today-task-item {
+    --noesis-flow-task-marker-size: 20px;
+  }
+}
+/* Compact task metadata: details controls no longer create vertical gaps. */
+.noesis-flow-today-task-item {
+  --noesis-flow-task-marker-size: 24px;
+}
+
+.noesis-flow-today-task-marker {
+  justify-content: center;
+  text-align: center;
+}
+
+@container (max-width: 250px) {
+  .noesis-flow-today-task-item {
+    --noesis-flow-task-marker-size: 22px;
+  }
+}
+
+.noesis-flow-today-task-item.actions-in-meta .noesis-flow-task-meta-row {
+  grid-template-columns: minmax(0, 1fr);
+  position: relative;
+}
+
+.noesis-flow-today-task-item.actions-in-meta .noesis-flow-task-metadata {
+  padding-inline-end: 26px;
+}
+
+.noesis-flow-today-task-item.actions-in-meta .noesis-flow-task-edit-actions {
+  inset-inline-end: 0;
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+.noesis-flow-today-task-item.actions-in-meta .noesis-flow-task-edit-button.noesis-flow-calendar-icon-button svg {
+  height: 14px;
+  width: 14px;
+}
+/* Center the square priority marker against the complete two-line task block. */
+.noesis-flow-today-task-marker {
+  align-self: center;
+}
+/* Center the details affordance against the entire task, not the Project line. */
+.noesis-flow-today-task-item.actions-in-meta {
+  position: relative;
+}
+
+.noesis-flow-today-task-item.actions-in-meta .noesis-flow-task-meta-row {
+  position: static;
+}
+
+.noesis-flow-today-task-item.actions-in-meta .noesis-flow-today-task-body {
+  padding-inline-end: 26px;
+}
+/* Height-adaptive Calendar header: the month grid remains the primary surface. */
+.noesis-flow-calendar-wrapper {
+  --noesis-flow-calendar-header-title-size: clamp(1em, 3.1cqh, 1.35em);
+  --noesis-flow-calendar-header-control-size: clamp(26px, 4.25cqh, 34px);
+  --noesis-flow-calendar-header-icon-size: clamp(14px, 2.25cqh, 17px);
+  --noesis-flow-calendar-header-gap: clamp(4px, 1.1cqh, 8px);
+  --noesis-flow-calendar-header-separator-gap: clamp(6px, 1.1cqh, 8px);
+}
+
+.noesis-flow-calendar-wrapper .noesis-flow-widget-title-row,
+.noesis-flow-calendar-wrapper .noesis-flow-calendar-actions {
+  gap: var(--noesis-flow-calendar-header-gap);
+}
+
+.noesis-flow-calendar-wrapper .noesis-flow-calendar-header.noesis-flow-widget-header {
+  container-type: inline-size;
+  margin-bottom: var(--noesis-flow-calendar-header-separator-gap);
+  min-height: var(--noesis-flow-calendar-header-control-size);
+  padding-bottom: var(--noesis-flow-calendar-header-separator-gap);
+}
+
+.noesis-flow-calendar-wrapper :is(.noesis-flow-calendar-title-button, .noesis-flow-calendar-year) {
+  font-size: var(--noesis-flow-calendar-header-title-size);
+  height: var(--noesis-flow-calendar-header-control-size);
+  min-height: var(--noesis-flow-calendar-header-control-size);
+}
+
+.noesis-flow-calendar-wrapper .noesis-flow-calendar-today-button {
+  font-size: clamp(0.72em, 1.75cqh, 0.85em);
+}
+
+.noesis-flow-calendar-wrapper :is(.noesis-flow-calendar-icon-button, .noesis-flow-calendar-today-button) {
+  height: var(--noesis-flow-calendar-header-control-size);
+  min-height: var(--noesis-flow-calendar-header-control-size);
+}
+
+.noesis-flow-calendar-wrapper .noesis-flow-calendar-icon-button {
+  flex-basis: var(--noesis-flow-calendar-header-control-size);
+  width: var(--noesis-flow-calendar-header-control-size);
+}
+
+.noesis-flow-calendar-wrapper .noesis-flow-calendar-icon-button svg {
+  height: var(--noesis-flow-calendar-header-icon-size);
+  width: var(--noesis-flow-calendar-header-icon-size);
+}
+/* Align the month label with the visible Monday weekday label. */
+.noesis-flow-calendar-wrapper.picker-mode-day {
+  --noesis-flow-calendar-weekday-label-half-width: 0.7em;
+  --noesis-flow-calendar-title-column-inset: max(0px, calc((100cqw / 14) - var(--noesis-flow-calendar-weekday-label-half-width)));
+}
+
+.noesis-flow-calendar-wrapper.picker-mode-day.week-numbers-left {
+  --noesis-flow-calendar-title-column-inset: max(0px, calc(11cqw + (89cqw / 14) - var(--noesis-flow-calendar-weekday-label-half-width)));
+}
+
+.noesis-flow-calendar-wrapper.picker-mode-day .noesis-flow-calendar-title-button {
+  box-sizing: border-box;
+  padding-inline-start: calc(1px + var(--noesis-flow-calendar-title-column-inset));
+}
+/* Two-tier Calendar header: centered month label above a weekday band. */
+
+.noesis-flow-calendar-wrapper.calendar-layout-centered-weekdays .noesis-flow-calendar-centered-title-row {
+  gap: var(--noesis-flow-calendar-header-gap);
+  grid-template-columns: minmax(0, 1fr) minmax(0, max-content) minmax(0, 1fr);
+}
+
+.noesis-flow-calendar-wrapper.calendar-layout-centered-weekdays .noesis-flow-calendar-centered-nav {
+  align-items: center;
+  display: flex;
+  min-width: 0;
+}
+
+.noesis-flow-calendar-wrapper.calendar-layout-centered-weekdays .noesis-flow-calendar-centered-nav-previous {
+  grid-column: 1;
+  justify-self: end;
+}
+
+.noesis-flow-calendar-wrapper.calendar-layout-centered-weekdays .noesis-flow-calendar-centered-title-row .noesis-flow-widget-title {
+  grid-column: 2;
+  min-width: 0;
+  text-align: center;
+}
+
+.noesis-flow-calendar-wrapper.calendar-layout-centered-weekdays .noesis-flow-calendar-centered-title-row .noesis-flow-calendar-title-button {
+  font-size: var(--noesis-flow-calendar-header-title-size);
+  justify-content: center;
+  max-width: calc(100cqw - (var(--noesis-flow-calendar-header-control-size) * 2) - (var(--noesis-flow-calendar-header-gap) * 2));
+  padding-inline: 1px;
+  text-align: center;
+}
+
+.noesis-flow-calendar-wrapper.calendar-layout-centered-weekdays .noesis-flow-calendar-title-date-full {
+  display: inline;
+}
+
+.noesis-flow-calendar-wrapper.calendar-layout-centered-weekdays .noesis-flow-calendar-title-date-short {
+  display: none;
+}
+
+.noesis-flow-calendar-wrapper.calendar-layout-centered-weekdays .noesis-flow-calendar-centered-title-row .noesis-flow-widget-actions {
+  grid-column: 3;
+  justify-self: start;
+  min-width: 0;
+  width: auto;
+}
+
+.noesis-flow-calendar-wrapper.calendar-layout-centered-weekdays .noesis-flow-calendar-header.noesis-flow-widget-header {
+  border-bottom: 0;
+  margin-bottom: 0;
+  padding-bottom: var(--noesis-flow-calendar-header-gap);
+}
+
+.noesis-flow-calendar-wrapper.calendar-layout-centered-weekdays .noesis-flow-calendar-grid thead th {
+  background: var(--background-secondary);
+  border-bottom: 1px solid var(--background-modifier-border);
+  border-top: 1px solid var(--background-modifier-border);
+  padding-block: clamp(4px, 0.9cqh, 7px);
+}
+
+.noesis-flow-calendar-wrapper.calendar-layout-centered-weekdays .noesis-flow-calendar-grid thead th:first-child {
+  border-bottom-left-radius: var(--noesis-flow-calendar-cell-radius, 6px);
+  border-top-left-radius: var(--noesis-flow-calendar-cell-radius, 6px);
+}
+
+.noesis-flow-calendar-wrapper.calendar-layout-centered-weekdays .noesis-flow-calendar-grid thead th:last-child {
+  border-bottom-right-radius: var(--noesis-flow-calendar-cell-radius, 6px);
+  border-top-right-radius: var(--noesis-flow-calendar-cell-radius, 6px);
+}
+/* Kanban card hierarchy: one compact project label and one aligned task row. */
+.noesis-flow-kanban-card .noesis-flow-kanban-card-date {
+  color: var(--text-muted);
+  font-size: var(--font-ui-smaller);
+  font-weight: 600;
+  line-height: 1.2;
+  margin: 0 0 7px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.noesis-flow-kanban-card .noesis-flow-task-meta-row > .noesis-flow-task-metadata:empty {
+  display: none;
+}
+
+.noesis-flow-kanban-card .noesis-flow-today-task-item {
+  align-items: center;
+  gap: 8px;
+}
+
+.noesis-flow-kanban-card .noesis-flow-today-task-body {
+  gap: 0;
+}
+
+.noesis-flow-kanban-card .noesis-flow-task-main-row {
+  align-items: center;
+  gap: 8px;
+}
+
+.noesis-flow-kanban-card .noesis-flow-today-task-marker {
+  align-self: center;
+  margin-top: 0;
+}
+
+.noesis-flow-kanban-card .noesis-flow-task-edit-actions {
+  align-self: center;
+}
+
+.noesis-flow-kanban-card .noesis-flow-task-edit-button.noesis-flow-calendar-icon-button {
+  flex-basis: 20px;
+  height: 20px;
+  min-height: 20px;
+  width: 20px;
+}
+
+.noesis-flow-kanban-board.is-compact-cards .noesis-flow-kanban-card-date {
+  margin-bottom: 4px;
+}
+
+.noesis-flow-kanban-board.is-compact-cards .noesis-flow-kanban-card .noesis-flow-today-task-item {
+  gap: 6px;
+}
+/* Every Noesis Flow dialog uses Obsidian's modal shell as its only surface. */
+.modal .noesis-flow-dialog,
+.modal.noesis-flow-dialog {
+  background: transparent !important;
+  border: 0;
+  box-shadow: none;
+}
+/* Daily Overview task rows are content, not nested card surfaces. */
+.noesis-flow-calendar-day-tasks-modal .noesis-flow-calendar-day-task-row,
+.noesis-flow-calendar-day-tasks-modal .noesis-flow-calendar-day-task-row:hover {
+  background: transparent;
+}
+/* Completed Daily Overview tasks use the shared board completion language. */
+.noesis-flow-calendar-day-tasks-modal .noesis-flow-calendar-day-task-row.is-completed .noesis-flow-today-task-text {
+  text-decoration: line-through;
+}
+/* Kanban balance: color-only markers and details controls share visual weight. */
+.noesis-flow-kanban-card .noesis-flow-today-task-item {
+  --noesis-flow-task-marker-size: 22px;
+}
+
+.noesis-flow-kanban-card .noesis-flow-today-task-marker {
+  background: color-mix(in srgb, var(--noesis-flow-task-priority-color) 24%, transparent) !important;
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--noesis-flow-task-priority-color) 48%, transparent) !important;
+}
+
+.noesis-flow-kanban-card .noesis-flow-task-edit-actions {
+  opacity: 0.72;
+}
+
+.noesis-flow-kanban-card .noesis-flow-task-edit-actions:focus-within {
+  opacity: 1;
+}
+
+.noesis-flow-kanban-card .noesis-flow-task-edit-button.noesis-flow-calendar-icon-button svg {
+  height: 13px;
+  width: 13px;
+}
+
+.noesis-flow-kanban-board.is-compact-cards .noesis-flow-kanban-card .noesis-flow-today-task-item {
+  --noesis-flow-task-marker-size: 20px;
+}
+
+@container (max-width: 250px) {
+  .noesis-flow-kanban-card .noesis-flow-today-task-item {
+    --noesis-flow-task-marker-size: 20px;
+  }
+}
+/* Kanban card appearance options ------------------------------------------ */
+.noesis-flow-kanban-board .noesis-flow-kanban-card {
+  border-radius: var(--noesis-flow-kanban-card-radius, var(--noesis-flow-calendar-cell-radius, 6px));
+}
+.noesis-flow-kanban-board.has-priority-borders .noesis-flow-kanban-card {
+  border-color: color-mix(in srgb, var(--noesis-flow-kanban-priority) 48%, var(--background-modifier-border));
+  border-inline-start-color: color-mix(in srgb, var(--noesis-flow-kanban-priority) 68%, var(--background-modifier-border));
+}
+
+.noesis-flow-kanban-board.has-top-accent-bar .noesis-flow-kanban-card {
+  border-inline-start-color: var(--background-modifier-border);
+  border-inline-start-width: 1px;
+  border-top: 3px solid color-mix(in srgb, var(--noesis-flow-kanban-priority) 68%, var(--background-modifier-border));
+  padding: 8px 10px 10px;
+}
+
+.noesis-flow-kanban-board.has-priority-borders.has-top-accent-bar .noesis-flow-kanban-card {
+  border-inline-start-color: color-mix(in srgb, var(--noesis-flow-kanban-priority) 48%, var(--background-modifier-border));
+  border-top-color: color-mix(in srgb, var(--noesis-flow-kanban-priority) 72%, var(--background-modifier-border));
+}
+
+.noesis-flow-kanban-card.has-centered-context .noesis-flow-kanban-card-date {
+  text-align: center;
+}
+
+.noesis-flow-kanban-board.has-context-divider .noesis-flow-kanban-card .noesis-flow-kanban-card-date {
+  border-bottom: 1px solid color-mix(in srgb, var(--noesis-flow-kanban-priority) 56%, var(--background-modifier-border));
+  margin-bottom: 6px;
+  margin-inline: -10px;
+  padding-inline: 10px;
+  padding-bottom: 5px;
+}
+
+.noesis-flow-kanban-card.has-bottom-context .noesis-flow-kanban-card-date {
+  margin: 7px 0 0;
+}
+
+.noesis-flow-kanban-board.has-context-divider .noesis-flow-kanban-card.has-bottom-context .noesis-flow-kanban-card-date {
+  border-bottom: 0;
+  border-top: 1px solid color-mix(in srgb, var(--noesis-flow-kanban-priority) 56%, var(--background-modifier-border));
+  margin: 6px -10px 0;
+  padding: 5px 10px 0;
+}
+
+.noesis-flow-kanban-board.is-compact-cards .noesis-flow-kanban-card.has-bottom-context .noesis-flow-kanban-card-date {
+  margin-top: 4px;
+}
+
+.noesis-flow-kanban-board.is-compact-cards.has-context-divider .noesis-flow-kanban-card.has-bottom-context .noesis-flow-kanban-card-date {
+  margin: 4px -8px 0;
+  padding: 3px 8px 0;
+}
+
+.noesis-flow-kanban-board.is-compact-cards.has-top-accent-bar .noesis-flow-kanban-card {
+  padding: 5px 8px 7px;
+}
+
+.noesis-flow-kanban-board.is-compact-cards.has-context-divider .noesis-flow-kanban-card .noesis-flow-kanban-card-date {
+  margin-bottom: 4px;
+  margin-inline: -8px;
+  padding-inline: 8px;
+  padding-bottom: 3px;
+}
+
+.noesis-flow-kanban-board.is-compact-cards.has-context-divider .noesis-flow-kanban-card.has-bottom-context .noesis-flow-kanban-card-date {
+  border-bottom: 0;
+  border-top: 1px solid color-mix(in srgb, var(--noesis-flow-kanban-priority) 56%, var(--background-modifier-border));
+  margin: 4px -8px 0;
+  padding: 3px 8px 0;
+}
+
+.noesis-flow-task-list-count { text-transform: uppercase; }
+
+/* Planner: title-led header and a quiet ruled month grid. */
+.noesis-flow-planner-title {
+  color: var(--text-normal);
+  text-transform: uppercase;
+}
+
+.noesis-flow-planner-kicker {
+  margin-top: 5px;
+}
+
+.noesis-flow-planning-month-grid {
+  gap: 0;
+}
+
+.noesis-flow-planning-month-weekday {
+  border-bottom: 1px solid var(--background-modifier-border);
+  padding: 6px 9px;
+}
+
+.noesis-flow-planning-month-weekday:not(:first-child) {
+  border-inline-start: 1px solid var(--background-modifier-border);
+}
+
+.noesis-flow-planning-day {
+  background: transparent;
+  border: 0;
+  border-block-end: 1px solid var(--background-modifier-border);
+  border-radius: 0;
+}
+
+.noesis-flow-planning-day:not(:nth-child(7n + 1)) {
+  border-inline-start: 1px solid var(--background-modifier-border);
+}
+
+.noesis-flow-planning-day.is-today {
+  background: color-mix(in srgb, var(--interactive-accent) 7%, transparent);
+  box-shadow: inset 0 2px 0 var(--interactive-accent);
+}
+
+/* Shared task lists: one predictable title line and one project line. */
+:is(.noesis-flow-brief-task-item, .noesis-flow-calendar-day-task-row) {
+  --noesis-flow-task-marker-size: 22px;
+}
+
+:is(.noesis-flow-brief-task-item, .noesis-flow-calendar-day-task-row) .noesis-flow-today-task-text,
+:is(.noesis-flow-brief-task-item, .noesis-flow-calendar-day-task-row) .noesis-flow-today-task-text > :is(p, div) {
+  display: block;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+:is(.noesis-flow-brief-task-item, .noesis-flow-calendar-day-task-row) .noesis-flow-today-task-text {
+  line-height: 1.3;
+}
+
+:is(.noesis-flow-brief-task-item, .noesis-flow-calendar-day-task-row) .noesis-flow-task-metadata {
+  flex-wrap: nowrap;
+}
+
+:is(.noesis-flow-brief-task-item, .noesis-flow-calendar-day-task-row) .noesis-flow-task-meta-detail {
+  display: none;
+}
+
+@container (max-width: 250px) {
+  :is(.noesis-flow-brief-task-item, .noesis-flow-calendar-day-task-row) {
+    --noesis-flow-task-marker-size: 20px;
+  }
+}
+/* Recurring Task Details keeps occurrence guidance and series actions together. */
+.noesis-flow-task-details-modal .noesis-flow-recurring-occurrence-controls {
+  display: grid;
+  gap: 8px;
+  margin-top: 2px;
+}
+
+.noesis-flow-task-details-modal .noesis-flow-recurring-occurrence-copy {
+  border-top: 1px solid var(--background-modifier-border);
+  color: var(--text-muted);
+  font-size: var(--font-ui-small);
+  line-height: 1.4;
+  padding-top: 12px;
+}
+
+.noesis-flow-task-details-modal .noesis-flow-recurring-occurrence-actions {
+  display: grid;
+  gap: 12px;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.noesis-flow-task-details-modal .noesis-flow-recurring-occurrence-actions button {
+  margin: 0;
+  width: 100%;
+}
+
+@container (max-width: 360px) {
+  .noesis-flow-task-details-modal .noesis-flow-recurring-occurrence-actions {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+

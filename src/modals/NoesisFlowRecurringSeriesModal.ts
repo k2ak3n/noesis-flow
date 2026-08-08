@@ -1,0 +1,213 @@
+import { Modal, Notice } from "obsidian";
+import { moment } from "../time";
+import { CALENDAR_TASK_PRIORITIES, CALENDAR_TASK_RECURRENCE_OPTIONS } from "../utils";
+import { getRecurringTaskDateKeys } from "../tasks/TaskRecurrence";
+import { enhanceNoesisFlowDatePicker, enhanceNoesisFlowDatePickers } from "../ui/NoesisFlowUi";
+
+export class NoesisFlowRecurringSeriesModal extends Modal {
+  series: any;
+  occurrenceLimit: number;
+  onSubmit: any;
+
+  constructor(app, series, occurrenceLimit, onSubmit) {
+    super(app);
+    this.series = series || {};
+    this.occurrenceLimit = Math.max(1, Math.min(52, Math.round(Number(occurrenceLimit) || 6)));
+    this.onSubmit = onSubmit;
+  }
+
+  onOpen() {
+    this.modalEl.addClass("noesis-flow-kanban-task-modal-container");
+    const { contentEl } = this;
+    contentEl.empty();
+    contentEl.addClass("noesis-flow-dialog", "noesis-flow-kanban-task-modal");
+    const header = contentEl.createDiv({ cls: "noesis-flow-modal-header" });
+    header.createEl("h2", { text: "Edit recurring task" });
+
+    const form = contentEl.createDiv({ cls: "noesis-flow-kanban-task-form" });
+    let fieldIndex = 0;
+    const createField = (parent, label, control, extraClass = "") => {
+      const field = parent.createDiv({ cls: `noesis-flow-kanban-task-field ${extraClass}`.trim() });
+      const labelEl = field.createEl("label", { text: label });
+      const controlId = `noesis-flow-recurring-task-${fieldIndex++}`;
+      control.id = controlId;
+      labelEl.htmlFor = controlId;
+      field.appendChild(control);
+      return field;
+    };
+    const taskInput = document.createElement("input");
+    taskInput.type = "text";
+    taskInput.value = this.series.text || "";
+    createField(form, "Task name", taskInput, "noesis-flow-kanban-task-name-field");
+
+    const fields = form.createDiv({ cls: "noesis-flow-kanban-task-fields" });
+    const projectInput = document.createElement("input");
+    projectInput.type = "text";
+    projectInput.value = this.series.section || "";
+    createField(fields, "Project", projectInput);
+
+    const prioritySelect = document.createElement("select");
+    for (const priority of CALENDAR_TASK_PRIORITIES) prioritySelect.add(new Option(priority.label, priority.marker));
+    prioritySelect.value = this.series.marker || " ";
+    createField(fields, "Priority", prioritySelect);
+
+    const recurrence = this.series.recurrence || {};
+    const repeatSelect = document.createElement("select");
+    for (const option of CALENDAR_TASK_RECURRENCE_OPTIONS.filter((option) => option.value !== "none")) {
+      repeatSelect.add(new Option(option.label, option.value));
+    }
+    repeatSelect.value = recurrence.rule || "weekly";
+    createField(fields, "Repeat", repeatSelect);
+
+    const completionUnitSelect = document.createElement("select");
+    for (const option of [["daily", "day"], ["weekly", "week"], ["monthly", "month"]]) {
+      completionUnitSelect.add(new Option(option[1], option[0]));
+    }
+    completionUnitSelect.value = recurrence.completionRule || "weekly";
+    const completionUnitField = createField(fields, "After completion", completionUnitSelect);
+
+    const intervalInput = document.createElement("input");
+    intervalInput.type = "number";
+    intervalInput.min = "1";
+    intervalInput.max = "52";
+    intervalInput.step = "1";
+    intervalInput.value = String(Math.max(1, Math.min(52, Math.round(Number(recurrence.interval) || 1))));
+    const intervalField = createField(fields, "Every", intervalInput);
+    const intervalUnit = intervalField.createSpan({ cls: "noesis-flow-kanban-repeat-interval-unit" });
+
+    const skipOptions = document.createElement("div");
+    skipOptions.classList.add("noesis-flow-kanban-recurrence-options");
+    const weekendLabel = document.createElement("label");
+    const skipWeekendsInput = document.createElement("input");
+    skipWeekendsInput.type = "checkbox";
+    skipWeekendsInput.checked = !!recurrence.skipWeekends;
+    weekendLabel.append(skipWeekendsInput, "Skip weekends");
+    const holidayLabel = document.createElement("label");
+    const skipHolidaysInput = document.createElement("input");
+    skipHolidaysInput.type = "checkbox";
+    skipHolidaysInput.checked = !!recurrence.skipHolidays;
+    holidayLabel.append(skipHolidaysInput, "Skip holidays");
+    skipOptions.append(weekendLabel, holidayLabel);
+    const skipField = createField(fields, "Skip", skipOptions, "noesis-flow-kanban-task-span-full");
+
+    const excludedDatesInput = document.createElement("input");
+    excludedDatesInput.type = "text";
+    excludedDatesInput.placeholder = "2026-12-25, 2026-12-31";
+    excludedDatesInput.value = getRecurringTaskDateKeys(recurrence.excludedDates).join(", ");
+    const excludedDatesField = createField(fields, "Skip dates", excludedDatesInput, "noesis-flow-kanban-task-span-full");
+
+    const includedDatesInput = document.createElement("input");
+    includedDatesInput.type = "text";
+    includedDatesInput.placeholder = "2026-12-24";
+    includedDatesInput.value = getRecurringTaskDateKeys(recurrence.includedDates).join(", ");
+    const includedDatesField = createField(fields, "Add dates", includedDatesInput, "noesis-flow-kanban-task-span-full");
+
+    const weekdaysInput = document.createElement("input");
+    weekdaysInput.type = "text";
+    weekdaysInput.placeholder = "Mon, Wed, Fri";
+    weekdaysInput.value = recurrence.weekdays || "";
+    const weekdaysField = createField(fields, "Weekdays", weekdaysInput, "noesis-flow-kanban-task-span-full");
+
+    const endsSelect = document.createElement("select");
+    endsSelect.add(new Option(`No end (extend in batches of ${this.occurrenceLimit})`, "limit"));
+    endsSelect.add(new Option("After a number of occurrences", "count"));
+    endsSelect.add(new Option("On a date", "date"));
+    endsSelect.value = recurrence.endMode === "count" || recurrence.endMode === "date" ? recurrence.endMode : "limit";
+    createField(fields, "Ends", endsSelect);
+
+    const endInput = document.createElement("input");
+    const endField = createField(fields, "Occurrences", endInput);
+    const updateFields = () => {
+      const rule = repeatSelect.value;
+      const unitRule = rule === "after-completion" ? completionUnitSelect.value : rule;
+      const unit = unitRule === "daily" ? "day" : unitRule === "monthly" ? "month" : "week";
+      const interval = Math.max(1, Math.min(52, Math.round(Number(intervalInput.value) || 1)));
+      intervalInput.value = String(interval);
+      intervalUnit.textContent = `${unit}${interval === 1 ? "" : "s"}`;
+      skipField.classList.remove("is-hidden");
+      excludedDatesField.classList.remove("is-hidden");
+      includedDatesField.classList.remove("is-hidden");
+      weekdaysField.classList.toggle("is-hidden", repeatSelect.value !== "custom-weekdays");
+      completionUnitField.classList.toggle("is-hidden", repeatSelect.value !== "after-completion");
+      const mode = endsSelect.value;
+      endField.classList.toggle("is-hidden", mode === "limit");
+      if (mode === "count") {
+        endField.querySelector("label").textContent = "Occurrences";
+        endInput.type = "number";
+        endInput.min = "1";
+        endInput.max = "52";
+        endInput.value = String(recurrence.endCount || this.series.occurrenceCount || this.occurrenceLimit);
+      } else if (mode === "date") {
+        endField.querySelector("label").textContent = "End date";
+        endInput.type = "date";
+        endInput.value = recurrence.endDate || this.series.startDate || "";
+      }
+      enhanceNoesisFlowDatePicker(endInput);
+    };
+    repeatSelect.addEventListener("change", updateFields);
+    completionUnitSelect.addEventListener("change", updateFields);
+    endsSelect.addEventListener("change", updateFields);
+    intervalInput.addEventListener("change", updateFields);
+    updateFields();
+
+    enhanceNoesisFlowDatePickers(contentEl);
+
+    const actions = contentEl.createDiv({ cls: "noesis-flow-kanban-task-actions" });
+    actions.createEl("button", { text: "Cancel", attr: { type: "button" } }).addEventListener("click", () => this.close());
+    const save = actions.createEl("button", { cls: "mod-cta", text: "Save changes", attr: { type: "button" } });
+    save.addEventListener("click", async () => {
+      const text = taskInput.value.trim();
+      const section = projectInput.value.trim();
+      const endMode = endsSelect.value;
+      const endValue = endInput.value.trim();
+      const interval = Number(intervalInput.value);
+      const excludedDates = getRecurringTaskDateKeys(excludedDatesInput.value);
+      const includedDates = getRecurringTaskDateKeys(includedDatesInput.value);
+      if (!text || !section) {
+        new Notice("Enter a task name and project.");
+        return;
+      }
+      if (repeatSelect.value === "custom-weekdays" && !weekdaysInput.value.trim()) {
+        new Notice("Enter at least one weekday for a custom repeat.");
+        return;
+      }
+      if (!Number.isInteger(interval) || interval < 1 || interval > 52) {
+        new Notice("Choose a repeat interval between 1 and 52.");
+        return;
+      }
+      const invalidExceptionDate = (value) => String(value || "").split(/[\s,|/]+/).filter(Boolean).some((dateKey) => !moment(dateKey, "YYYY-MM-DD", true).isValid());
+      if (invalidExceptionDate(excludedDatesInput.value) || invalidExceptionDate(includedDatesInput.value)) {
+        new Notice("Use YYYY-MM-DD for exception dates.");
+        return;
+      }
+      if (endMode === "count" && (!/^\d+$/.test(endValue) || Number(endValue) < 1 || Number(endValue) > 52)) {
+        new Notice("Choose between 1 and 52 occurrences.");
+        return;
+      }
+      if (endMode === "date" && !moment(endValue, "YYYY-MM-DD", true).isValid()) {
+        new Notice("Choose a valid end date.");
+        return;
+      }
+      save.disabled = true;
+      await this.onSubmit({
+        text,
+        section,
+        marker: prioritySelect.value,
+        recurrence: {
+          rule: repeatSelect.value,
+          completionRule: repeatSelect.value === "after-completion" ? completionUnitSelect.value : "",
+          interval,
+          weekdays: weekdaysInput.value.trim(),
+          skipWeekends: skipWeekendsInput.checked,
+          skipHolidays: skipHolidaysInput.checked,
+          excludedDates,
+          includedDates,
+          endMode,
+          endCount: endMode === "count" ? Number(endValue) : 0,
+          endDate: endMode === "date" ? endValue : ""
+        }
+      });
+      this.close();
+    });
+  }
+}
