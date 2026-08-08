@@ -176,7 +176,7 @@ export class NoesisFlowRecurringSeriesModal extends Modal {
         new Notice("Choose a repeat interval between 1 and 52.");
         return;
       }
-      const invalidExceptionDate = (value) => String(value || "").split(/[\s,|/]+/).filter(Boolean).some((dateKey) => !moment(dateKey, "YYYY-MM-DD", true).isValid());
+      const invalidExceptionDate = (value: unknown): boolean => String(value || "").split(/[\s,|/]+/).filter(Boolean).some((dateKey) => !moment(dateKey, "YYYY-MM-DD", true).isValid());
       if (invalidExceptionDate(excludedDatesInput.value) || invalidExceptionDate(includedDatesInput.value)) {
         new Notice("Use YYYY-MM-DD for exception dates.");
         return;

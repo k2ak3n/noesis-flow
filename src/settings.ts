@@ -1,5 +1,5 @@
 import { PluginSettingTab, Setting, Notice } from "obsidian";
-import type { SettingDefinitionItem } from "obsidian";
+import type { App, SettingDefinitionItem } from "obsidian";
 import { moment } from "./time";
 import { NoesisFlowMarkdownNoteChooserModal } from "./modals/NoesisFlowMarkdownNoteChooserModal";
 import { NoesisFlowCalendarSectionModal } from "./modals/NoesisFlowCalendarSectionModal";
@@ -11,11 +11,15 @@ import type NoesisFlowPlugin from "./main";
 import { DATE_TASK_FILTER_OPTIONS, KANBAN_TASK_VIEW_OPTIONS, CALENDAR_TASK_PRIORITIES, asVoidHandler, sanitizeCssText, clampNumber, getDateMarkerLabel, downloadText, DEFAULT_SETTINGS, normalizeDateTaskFilter, normalizeKanbanCardAccentPosition, normalizeKanbanCardContextPlacement, normalizeKanbanCardContextAlignment, normalizeKanbanTaskView, parseCalendarTaskIndex, parseKanbanSavedViewsExport, serializeKanbanSavedViews } from "./utils";
 import { getMarkdownH2Sections } from "./tasks/TaskMarkdown";
 
+type BooleanSettingKey = { [Key in keyof NoesisFlowSettings]: NoesisFlowSettings[Key] extends boolean ? Key : never }[keyof NoesisFlowSettings];
+type NumberSettingKey = { [Key in keyof NoesisFlowSettings]: NoesisFlowSettings[Key] extends number ? Key : never }[keyof NoesisFlowSettings];
+type ColorSettingKey = "calendarTaskCriticalColor" | "calendarTaskHighColor" | "calendarTaskMediumColor" | "calendarTaskLowColor";
+
 export class NoesisFlowSettingTab extends PluginSettingTab {
   openSettingsSections: Set<string>;
   plugin: NoesisFlowPlugin;
   settingsSearchQuery: string;
-  constructor(app, plugin) {
+  constructor(app: App, plugin: NoesisFlowPlugin) {
     super(app, plugin);
     this.plugin = plugin;
     this.openSettingsSections = new Set();
@@ -75,7 +79,7 @@ export class NoesisFlowSettingTab extends PluginSettingTab {
     return resetKeys[title] || [];
   }
 
-  renderSectionResetAction(details, title: string) {
+  renderSectionResetAction(details: HTMLDetailsElement, title: string): void {
     const keys = this.getSectionResetKeys(title);
     if (!keys.length) return;
     const action = details.createDiv({ cls: "noesis-flow-settings-section-action" });
@@ -93,7 +97,7 @@ export class NoesisFlowSettingTab extends PluginSettingTab {
           const updates = {} as Partial<NoesisFlowSettings>;
           for (const key of keys) {
             const value = DEFAULT_SETTINGS[key];
-            Object.assign(updates, { [key]: value && typeof value === "object" ? JSON.parse(JSON.stringify(value)) : value });
+            Object.assign(updates, { [key]: value && typeof value === "object" ? structuredClone(value) : value });
           }
           await this.plugin.applyPluginSettingsSnapshot(updates);
           new Notice(`${title} settings reset.`);
@@ -103,14 +107,14 @@ export class NoesisFlowSettingTab extends PluginSettingTab {
     });
   }
 
-  renderSettingsSectionHeading(containerEl, title) {
+  renderSettingsSectionHeading(containerEl: HTMLElement, title: string): void {
     new Setting(containerEl)
       .setName(title)
       .setHeading()
       .setClass("noesis-flow-settings-group-heading");
   }
 
-  renderSettingsSearch(containerEl) {
+  renderSettingsSearch(containerEl: HTMLElement): void {
     const wrapper = containerEl.createDiv({ cls: "noesis-flow-settings-search" });
     const input = wrapper.createEl("input", {
       type: "search",
@@ -154,7 +158,7 @@ export class NoesisFlowSettingTab extends PluginSettingTab {
     }
 
     for (const heading of headings) {
-      const nextSections = [];
+      const nextSections: Element[] = [];
       let cursor = heading.nextElementSibling;
       while (cursor && !cursor.matches(".noesis-flow-settings-group-heading, hr.noesis-flow-settings-divider")) {
         if (cursor.matches && cursor.matches("details.noesis-flow-settings-section")) nextSections.push(cursor);
@@ -202,7 +206,7 @@ export class NoesisFlowSettingTab extends PluginSettingTab {
     this.applySettingsSearch();
   }
 
-  renderDisabledFeatureDiscovery(containerEl, feature: string, parent: string, onEnable: () => Promise<void>) {
+  renderDisabledFeatureDiscovery(containerEl: HTMLElement, feature: string, parent: string, onEnable: () => Promise<void>): void {
     const setting = new Setting(containerEl)
       .setName(`${feature} requires ${parent}`)
       .setDesc(`Enable ${parent} to configure ${feature}.`);
@@ -234,7 +238,7 @@ export class NoesisFlowSettingTab extends PluginSettingTab {
     return count;
   }
 
-  renderModuleOnboarding(containerEl) {
+  renderModuleOnboarding(containerEl: HTMLElement): void {
     const onboarding = this.createSettingsDetails(containerEl, "Quick setup", "Set up the core task workflow, then enable only the extras you need.");
     const inboxPath = this.plugin.settings.taskInboxNote || this.plugin.settings.calendarTaskTargetNote;
     if (!inboxPath) {
@@ -338,7 +342,7 @@ export class NoesisFlowSettingTab extends PluginSettingTab {
     }
   }
 
-  renderDateParserSettings(containerEl) {
+  renderDateParserSettings(containerEl: HTMLElement): void {
     const parserGroup = this.createSettingsDetails(
       containerEl,
       "Date Parser",
@@ -380,7 +384,7 @@ export class NoesisFlowSettingTab extends PluginSettingTab {
       });
   }
 
-  renderDailyBriefAddons(containerEl) {
+  renderDailyBriefAddons(containerEl: HTMLElement): void {
     const briefGroup = this.createSettingsDetails(
       containerEl,
       "Dashboard",
@@ -422,7 +426,7 @@ export class NoesisFlowSettingTab extends PluginSettingTab {
         });
       });
 
-    const briefSections = [
+    const briefSections: Array<{ key: BooleanSettingKey; name: string; desc: string }> = [
       {
         key: "dailyBriefShowTodayTasks",
         name: "Today tasks",
@@ -467,7 +471,7 @@ export class NoesisFlowSettingTab extends PluginSettingTab {
 
 
 
-  renderCalendarAddons(containerEl) {
+  renderCalendarAddons(containerEl: HTMLElement): void {
     containerEl = this.createSettingsDetails(
       containerEl,
       "Calendar",
@@ -619,7 +623,7 @@ export class NoesisFlowSettingTab extends PluginSettingTab {
       "Calendar appearance",
       "Fine-tune Calendar typography, date-cell geometry, and weekend color."
     );
-    const addAppearanceSlider = (name, desc, key, min, max, step, fallback) => {
+    const addAppearanceSlider = (name: string, desc: string, key: NumberSettingKey, min: number, max: number, step: number, fallback: number): void => {
       new Setting(appearanceGroup)
         .setName(name)
         .setDesc(desc)
@@ -658,7 +662,7 @@ export class NoesisFlowSettingTab extends PluginSettingTab {
     this.renderCalendarEvents(containerEl);
   }
 
-  renderTaskAddons(containerEl) {
+  renderTaskAddons(containerEl: HTMLElement): void {
     const taskGroup = this.createSettingsDetails(
       containerEl,
       "Tasks",
@@ -787,7 +791,7 @@ export class NoesisFlowSettingTab extends PluginSettingTab {
           .setName("Recurring task note")
           .setDesc("Vault markdown note that receives recurring calendar-created tasks.")
           .addText((text) => {
-            const applyRecurringTaskNote = async (value) => {
+            const applyRecurringTaskNote = async (value: string): Promise<void> => {
               this.plugin.settings.recurringTaskTargetNote = value.trim();
               await this.plugin.saveSettings();
               await this.plugin.refreshCalendarTaskCounts(true);
@@ -894,19 +898,19 @@ export class NoesisFlowSettingTab extends PluginSettingTab {
       "Recognized task checkbox priorities."
     );
     for (const priority of CALENDAR_TASK_PRIORITIES) {
-      priorityDetails.createEl("div", {
+      priorityDetails.createDiv({
         cls: "noesis-flow-priority-row",
         text: `${priority.marker === " " ? "[ ]" : `[${priority.marker}]`} ${priority.label} - ${priority.description}`
       });
     }
-    priorityDetails.createEl("div", {
+    priorityDetails.createDiv({
       cls: "noesis-flow-priority-row muted",
       text: "[x] Completed tasks are ignored by indicators."
     });
   }
 
   renderTaskPanelSettings(taskGroup: HTMLElement) {
-    const priorityColors = [
+    const priorityColors: Array<[string, ColorSettingKey, string]> = [
       ["Critical task color", "calendarTaskCriticalColor", "#ea4458"],
       ["High task color", "calendarTaskHighColor", "#fd884b"],
       ["Medium task color", "calendarTaskMediumColor", "#f1c24d"],
@@ -1070,7 +1074,7 @@ export class NoesisFlowSettingTab extends PluginSettingTab {
     }
   }
 
-  renderKanbanAddons(containerEl) {
+  renderKanbanAddons(containerEl: HTMLElement): void {
     const kanbanGroup = this.createSettingsDetails(
       containerEl,
       "Kanban",
@@ -1250,7 +1254,7 @@ export class NoesisFlowSettingTab extends PluginSettingTab {
     this.renderKanbanSavedViews(kanbanGroup);
   }
 
-  renderKanbanSavedViews(containerEl) {
+  renderKanbanSavedViews(containerEl: HTMLElement): void {
     const savedViews = Array.isArray(this.plugin.settings.kanbanSavedViews) ? this.plugin.settings.kanbanSavedViews : [];
     const savedGroup = this.createSettingsDetails(
       containerEl,
@@ -1290,7 +1294,8 @@ export class NoesisFlowSettingTab extends PluginSettingTab {
               new Notice(`Imported ${imported.length} Kanban ${imported.length === 1 ? "view" : "views"}.`);
               this.update();
             } catch (error) {
-              new Notice(`Import failed: ${error.message || error}`);
+              const message = error instanceof Error ? error.message : String(error);
+              new Notice(`Import failed: ${message}`);
             } finally {
               input.remove();
             }
@@ -1486,7 +1491,7 @@ export class NoesisFlowSettingTab extends PluginSettingTab {
     }
   }
 
-  renderTimelineAddons(containerEl) {
+  renderTimelineAddons(containerEl: HTMLElement): void {
     const timelineGroup = this.createSettingsDetails(
       containerEl,
       "Timeline Widget",
@@ -1558,7 +1563,7 @@ export class NoesisFlowSettingTab extends PluginSettingTab {
       });
   }
 
-  renderCalendarEvents(containerEl) {
+  renderCalendarEvents(containerEl: HTMLElement): void {
     const eventGroup = this.createSettingsDetails(
       containerEl,
       "Milestones / Events",
@@ -1625,7 +1630,7 @@ export class NoesisFlowSettingTab extends PluginSettingTab {
 
 
 
-  renderHolidayCalendar(containerEl) {
+  renderHolidayCalendar(containerEl: HTMLElement): void {
     const holidayGroup = this.createSettingsDetails(
       containerEl,
       "Holidays",
@@ -1651,7 +1656,7 @@ export class NoesisFlowSettingTab extends PluginSettingTab {
       .setName("Holiday note")
       .setDesc("Markdown note with dates like 2026-12-25 Holiday name.")
       .addText((text) => {
-        const applyHolidayNote = async (value) => {
+        const applyHolidayNote = async (value: string): Promise<void> => {
           this.plugin.settings.holidayCalendarNote = value.trim();
           await this.plugin.saveSettings();
           await this.plugin.refreshHolidayCalendar(true);
@@ -1682,7 +1687,7 @@ export class NoesisFlowSettingTab extends PluginSettingTab {
 
 
 
-  renderTimerAddons(containerEl) {
+  renderTimerAddons(containerEl: HTMLElement): void {
     const timerGroup = this.createSettingsDetails(
       containerEl,
       "Pomodoro Timer",

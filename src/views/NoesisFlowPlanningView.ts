@@ -5,7 +5,7 @@ import { NoesisFlowTimedView } from "./NoesisFlowTimedView";
 import { moment } from "../time";
 import { asVoidHandler, NOESIS_FLOW_PLANNING_VIEW_TYPE } from "../utils";
 
-const PRIORITY_NAMES = { "!": "Critical", H: "High", M: "Medium", L: "Low", " ": "Normal" };
+const PRIORITY_NAMES: Record<string, string> = { "!": "Critical", H: "High", M: "Medium", L: "Low", " ": "Normal" };
 
 interface PlanningDayOptions {
   month?: boolean;

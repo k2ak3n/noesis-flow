@@ -49,7 +49,7 @@ export class NoesisFlowKanbanFilterModal extends Modal {
 
     const makeGroup = <Value extends string>(container: HTMLElement, title: string, items: readonly (readonly [Value, string])[], selected: readonly Value[]): Map<Value, HTMLInputElement> => {
       const group = container.createDiv({ cls: "noesis-flow-kanban-filter-group" });
-      group.createEl("div", { cls: "noesis-flow-kanban-filter-group-title", text: title });
+      group.createDiv({ cls: "noesis-flow-kanban-filter-group-title", text: title });
       const values = new Map<Value, HTMLInputElement>();
       for (const [value, label] of items) {
         const row = group.createEl("label", { cls: "noesis-flow-kanban-filter-option" });
@@ -67,7 +67,7 @@ export class NoesisFlowKanbanFilterModal extends Modal {
     let unscheduledInput: HTMLInputElement | null = null;
     if (this.showDateFilter) {
       const scheduleGroup = rightColumn.createDiv({ cls: "noesis-flow-kanban-filter-group" });
-      scheduleGroup.createEl("div", { cls: "noesis-flow-kanban-filter-group-title", text: "Date" });
+      scheduleGroup.createDiv({ cls: "noesis-flow-kanban-filter-group-title", text: "Date" });
       const unscheduledRow = scheduleGroup.createEl("label", { cls: "noesis-flow-kanban-filter-option" });
       unscheduledInput = unscheduledRow.createEl("input", { type: "checkbox" });
       unscheduledInput.checked = this.unscheduledFilter === "include" || (this.unscheduledFilter === "auto" && this.dateFilter === "all");
@@ -76,7 +76,7 @@ export class NoesisFlowKanbanFilterModal extends Modal {
     let dateSelect: HTMLSelectElement | null = null;
     if (this.showDateFilter) {
       const dateGroup = leftColumn.createDiv({ cls: "noesis-flow-kanban-filter-group" });
-      dateGroup.createEl("div", { cls: "noesis-flow-kanban-filter-group-title", text: "Date range" });
+      dateGroup.createDiv({ cls: "noesis-flow-kanban-filter-group-title", text: "Date range" });
       dateSelect = dateGroup.createEl("select", { cls: "dropdown", attr: { "aria-label": "Kanban date range" } });
       for (const option of DATE_TASK_FILTER_OPTIONS) {
         dateSelect.createEl("option", { text: option.label, attr: { value: option.value } });

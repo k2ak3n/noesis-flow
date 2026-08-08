@@ -32,7 +32,7 @@ export class NoesisFlowKanbanSavedViewModal extends Modal {
 
     const form = contentEl.createDiv({ cls: "noesis-flow-kanban-task-form" });
     let fieldIndex = 0;
-    const createField = (label, control) => {
+    const createField = (label: string, control: HTMLElement): HTMLElement => {
       const field = form.createDiv({ cls: "noesis-flow-kanban-task-field" });
       const labelEl = field.createEl("label", { text: label });
       const controlId = `noesis-flow-kanban-saved-view-${fieldIndex++}`;
@@ -68,7 +68,7 @@ export class NoesisFlowKanbanSavedViewModal extends Modal {
         this.close();
       } catch (error) {
         save.disabled = false;
-        new Notice(`Could not save view: ${error.message || error}`);
+        new Notice(`Could not save view: ${error instanceof Error ? error.message : String(error)}`);
       }
     }));
     window.setTimeout(() => nameInput.focus(), 0);

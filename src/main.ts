@@ -1,7 +1,8 @@
 
-import { CalendarTask, CalendarTaskStats, NoesisFlowProject, NoesisFlowSettings, RecurringTaskRecurrence, RecurringTaskRule, RecurringTaskSeries, TimerSoundFile, TimelineEntry } from "./types";
+import { CalendarTask, CalendarTaskStats, DateTaskFilter, KanbanSavedView, NoesisFlowProject, NoesisFlowSettings, RecurringTaskRecurrence, RecurringTaskRule, RecurringTaskSeries, TimerSoundFile, TimelineEntry } from "./types";
 import { NOESIS_FLOW_CALENDAR_VIEW_TYPE, NOESIS_FLOW_TIMER_VIEW_TYPE, NOESIS_FLOW_TASK_LIST_VIEW_TYPE, NOESIS_FLOW_PLANNING_VIEW_TYPE, NOESIS_FLOW_KANBAN_VIEW_TYPE, NOESIS_FLOW_RECURRING_VIEW_TYPE, NOESIS_FLOW_DAILY_BRIEF_VIEW_TYPE, NOESIS_FLOW_TIMELINE_VIEW_TYPE, NOESIS_FLOW_VIEW_TYPES, DEFAULT_VIEW_PLACEMENTS, DEFAULT_SETTINGS, DATE_TASK_FILTER_VALUES, KANBAN_TASK_VIEW_VALUES, TASK_LIST_COLUMN_IDS, BUILT_IN_SLOW_TICK_SOUND_PATH, BUILT_IN_TIMER_SOUNDS, normalizeTimerSoundPath, normalizeTaskListColumnOrder, normalizeTaskListVisibleColumns, normalizeTaskListColumnWidths, unique, sanitizeCssText, clampNumber, normalizeMarkdownPath, normalizeCalendarTaskText, getCalendarTaskDateKey, createCalendarTaskLine, createCalendarTaskId, createNoesisFlowProjectId, getCalendarTaskDuplicateKeys, normalizePomodoroMode, normalizeKanbanCardAccentPosition, normalizeKanbanCardContextPlacement, normalizeKanbanCardContextAlignment } from "./utils";
 import { getRecurringTaskDates, getRecurringTaskLabel } from "./tasks/TaskRecurrence";
+import type { RecurrenceDateSettings } from "./tasks/TaskRecurrence";
 import { getMarkdownH2Sections, insertCalendarTasksInSection } from "./tasks/TaskMarkdown";
 import { createTimelineEventLine, deleteTimelineEventInContent, getTimelineEntries, insertTimelineEventInSection, parseTimelineEntries, serializeTimelineEntries, updateTimelineEventInContent } from "./timeline/TimelineMarkdown";
 import { parseHolidayEntries, serializeHolidayEntries } from "./calendar/HolidayMarkdown";
@@ -31,8 +32,9 @@ import { NoesisFlowCalendarDayTasksModal } from "./modals/NoesisFlowCalendarDayT
 import { NoesisFlowConfirmModal } from "./modals/NoesisFlowConfirmModal";
 import { NoesisFlowTimelineEventModal } from "./modals/NoesisFlowTimelineEventModal";
 import { MarkdownView, Plugin, Notice, TFile } from "obsidian";
+import type { WorkspaceLeaf } from "obsidian";
 import { moment } from "./time";
-import type { Moment } from "moment";
+import type { Moment, MomentInput } from "moment";
 import { getTaskCaptureSection } from "./utils";
 import { queryTasks, resolveTaskProject } from "./tasks/TaskQuery";
 import { RefreshScheduler } from "./services/RefreshScheduler";
@@ -61,6 +63,10 @@ interface ObsidianSettingsApp {
     open(): void;
     openTabById(id: string): void;
   };
+}
+
+function isRecord(value: unknown): value is Record<string, unknown> {
+  return !!value && typeof value === "object" && !Array.isArray(value);
 }
 
 export class NoesisFlowPlugin extends Plugin {
@@ -239,7 +245,7 @@ export class NoesisFlowPlugin extends Plugin {
 
   setupViewPlacementTracking() {
     const rememberAll = () => this.rememberVisibleViewPlacements();
-    const rememberLeaf = (leaf) => {
+    const rememberLeaf = (leaf: WorkspaceLeaf | null) => {
       const type = leaf && leaf.view && typeof leaf.view.getViewType === "function"
         ? leaf.view.getViewType()
         : "";
@@ -267,7 +273,7 @@ export class NoesisFlowPlugin extends Plugin {
     }
   }
 
-  getLeafPlacement(leaf) {
+  getLeafPlacement(leaf: WorkspaceLeaf | null): string {
     const container = leaf && leaf.view && leaf.view.containerEl ? leaf.view.containerEl : null;
     if (!container || typeof container.closest !== "function") return "";
     if (container.closest(".mod-left-split")) return "left";
@@ -276,11 +282,11 @@ export class NoesisFlowPlugin extends Plugin {
     return "";
   }
 
-  isMainLeaf(leaf) {
+  isMainLeaf(leaf: WorkspaceLeaf | null): boolean {
     return this.getLeafPlacement(leaf) === "main";
   }
 
-  rememberLeafPlacement(type, leaf) {
+  rememberLeafPlacement(type: string, leaf: WorkspaceLeaf): void {
     const placement = this.getLeafPlacement(leaf);
     if (!placement) return;
     if (type === NOESIS_FLOW_DAILY_BRIEF_VIEW_TYPE && placement !== "main") return;
@@ -300,7 +306,7 @@ export class NoesisFlowPlugin extends Plugin {
     }, 500);
       }
 
-  getPreferredLeafForView(type) {
+  getPreferredLeafForView(type: string): WorkspaceLeaf {
     const placements = Object.assign({}, DEFAULT_VIEW_PLACEMENTS, this.settings.viewPlacements || {});
     const placement = placements[type] || "right";
 
@@ -447,7 +453,7 @@ export class NoesisFlowPlugin extends Plugin {
     return this.timerSoundFiles || [];
   }
 
-  async createTimerSoundObjectUrl(path) {
+  async createTimerSoundObjectUrl(path: string): Promise<string> {
     if (normalizeTimerSoundPath(path) !== BUILT_IN_SLOW_TICK_SOUND_PATH) {
       throw new Error("Unsupported timer sound.");
     }
@@ -499,7 +505,7 @@ export class NoesisFlowPlugin extends Plugin {
     return this.app.workspace.getLeavesOfType(NOESIS_FLOW_TIMELINE_VIEW_TYPE) || [];
   }
 
-  async ensureView(type, enabled, disabledNotice, openNotice, reveal = true) {
+  async ensureView(type: string, enabled: boolean, disabledNotice: string, openNotice: string, reveal = true) {
     if (!enabled) {
       new Notice(disabledNotice);
       return null;
@@ -600,7 +606,7 @@ export class NoesisFlowPlugin extends Plugin {
     this.rememberLeafPlacement(NOESIS_FLOW_PLANNING_VIEW_TYPE, leaf);
   }
 
-  async applyKanbanSavedView(saved) {
+  async applyKanbanSavedView(saved: KanbanSavedView & { status?: "active" | "completed" }): Promise<boolean> {
     if (!saved || typeof saved !== "object") return false;
     this.settings.kanbanTaskFilter = saved.filter || "all";
     this.settings.kanbanTaskView = saved.view || "sections";
@@ -841,7 +847,7 @@ export class NoesisFlowPlugin extends Plugin {
     return files;
   }
 
-  getCalendarTaskFileForTask(task, showNotice = true) {
+  getCalendarTaskFileForTask(task: CalendarTask, showNotice = true): TFile | null {
     const sourcePath = normalizeMarkdownPath(task && task.sourcePath);
     if (sourcePath) {
       const file = this.app.vault.getAbstractFileByPath(sourcePath);
@@ -890,7 +896,7 @@ export class NoesisFlowPlugin extends Plugin {
     return null;
   }
 
-  getTimelineEventFile(entry, showNotice = true) {
+  getTimelineEventFile(entry: TimelineEntry, showNotice = true): TFile | null {
     const path = normalizeMarkdownPath(entry && entry.sourcePath) || this.getTimelineTargetPath();
     const file = path ? this.app.vault.getAbstractFileByPath(path) : null;
     if (file instanceof TFile && file.extension === "md") return file;
@@ -898,7 +904,7 @@ export class NoesisFlowPlugin extends Plugin {
     return null;
   }
 
-  async getTimelineEventSections(file) {
+  async getTimelineEventSections(file: TFile): Promise<string[] | null> {
     try {
       return getMarkdownH2Sections(await this.app.vault.read(file));
     } catch (error) {
@@ -908,7 +914,7 @@ export class NoesisFlowPlugin extends Plugin {
     }
   }
 
-  async openTimelineEventEditor(entry, onSaved: (() => void | Promise<void>) | null = null) {
+  async openTimelineEventEditor(entry: TimelineEntry, onSaved: (() => void | Promise<void>) | null = null): Promise<void> {
     if (!entry || entry.type === "holiday") return;
     const file = this.getTimelineEventFile(entry, true);
     if (!file) return;
@@ -1077,7 +1083,8 @@ export class NoesisFlowPlugin extends Plugin {
       return true;
     } catch (error) {
       console.error(error);
-      new Notice(`Could not create task note: ${error.message || error}`);
+      const message = error instanceof Error ? error.message : String(error);
+      new Notice(`Could not create task note: ${message}`);
       return false;
     }
   }
@@ -1156,7 +1163,7 @@ export class NoesisFlowPlugin extends Plugin {
     }
     const file = this.getCalendarTaskTargetFile(true);
     if (!file) return false;
-    const hasInitialDate = Object.prototype.hasOwnProperty.call(options, "initialDate");
+    const hasInitialDate = "initialDate" in options;
     return await this.openTaskCaptureForm(file, hasInitialDate ? options.initialDate : moment(), {
       defaultUndated: !hasInitialDate,
       defaultRecurrence: options.defaultRecurrence
@@ -1185,12 +1192,12 @@ export class NoesisFlowPlugin extends Plugin {
     return await this.openTaskCaptureForm(file, moment());
   }
 
-  openTaskDetails(task) {
+  openTaskDetails(task: CalendarTask): void {
     if (!task) return;
     new NoesisFlowTaskDetailsModal(this.app, this, task).open();
   }
 
-  async openTaskSource(task) {
+  async openTaskSource(task: CalendarTask): Promise<boolean> {
     const file = this.getCalendarTaskFileForTask(task, true);
     if (!file) return false;
     const leaf = this.app.workspace.getLeaf(true);
@@ -1211,7 +1218,7 @@ export class NoesisFlowPlugin extends Plugin {
     return true;
   }
 
-  openCalendarTaskDayDialog(date) {
+  openCalendarTaskDayDialog(date: Moment): void {
     new NoesisFlowCalendarDayTasksModal(this.app, this, date).open();
   }
 
@@ -1226,7 +1233,7 @@ export class NoesisFlowPlugin extends Plugin {
   }
 
   async openTaskCaptureForm(file: TFile, initialDate: Moment | null, options: TaskCaptureOptions = {}) {
-    let sections = [];
+    let sections: string[] = [];
     try {
       sections = unique([
         ...getMarkdownH2Sections(await this.app.vault.read(file)),
@@ -1275,15 +1282,15 @@ export class NoesisFlowPlugin extends Plugin {
     return this.recurringTaskService.recoverSeriesFromConfiguredSources(force);
   }
 
-  getRecurringTaskDateSettings(overrides: Record<string, unknown> = {}) {
+  getRecurringTaskDateSettings(overrides: Record<string, unknown> = {}): RecurrenceDateSettings {
     return Object.assign({}, this.settings, overrides, {
       recurringTaskHolidayDates: Array.from(this.holidayCalendarEntries.keys())
     });
   }
 
-  getRecurringTaskSeriesDates(series): string[] {
+  getRecurringTaskSeriesDates(series: RecurringTaskSeries): string[] {
     const recorded = Array.isArray(series && series.occurrenceDates)
-      ? series.occurrenceDates.filter((dateKey) => moment(dateKey, "YYYY-MM-DD", true).isValid())
+      ? series.occurrenceDates.filter((dateKey: string) => moment(dateKey, "YYYY-MM-DD", true).isValid())
       : [];
     if (recorded.length) return Array.from(new Set(recorded as string[])).sort();
 
@@ -1297,7 +1304,7 @@ export class NoesisFlowPlugin extends Plugin {
     })).map((date) => getCalendarTaskDateKey(date));
   }
 
-  getRecurringTaskSeriesProgress(series) {
+  getRecurringTaskSeriesProgress(series: RecurringTaskSeries): { completedCount: number; plannedCount: number } {
     const completedTasks = [
       ...Array.from(this.getCompletedCalendarTasksByDate().values()).flat(),
       ...this.getCompletedUndatedCalendarTasks(0)
@@ -1307,7 +1314,7 @@ export class NoesisFlowPlugin extends Plugin {
     return { completedCount: Math.min(completedCount, plannedCount), plannedCount };
   }
 
-  getRecurringTaskSeriesUpcomingDates(series, limit = 3) {
+  getRecurringTaskSeriesUpcomingDates(series: RecurringTaskSeries, limit = 3): Moment[] {
     const today = moment().startOf("day");
     return this.getRecurringTaskSeriesDates(series)
       .map((dateKey) => moment(dateKey, "YYYY-MM-DD", true).startOf("day"))
@@ -1315,7 +1322,7 @@ export class NoesisFlowPlugin extends Plugin {
       .slice(0, Math.max(1, limit));
   }
 
-  async openRecurringTaskSeriesEditor(series) {
+  async openRecurringTaskSeriesEditor(series: RecurringTaskSeries): Promise<void> {
     new NoesisFlowRecurringSeriesModal(this.app, series, this.settings.recurringTaskOccurrenceLimit, async (updates) => {
       await this.updateRecurringTaskSeries(series.id, updates);
       new Notice("Recurring task updated.");
@@ -1373,7 +1380,7 @@ export class NoesisFlowPlugin extends Plugin {
       return;
     }
 
-    const externalDuplicateKeys = new Set();
+    const externalDuplicateKeys = new Set<string>();
     const sourceFiles = this.getCalendarTaskSourceFiles(false);
     if (!sourceFiles.some((sourceFile) => sourceFile.path === targetFile.path)) {
       sourceFiles.push(targetFile);
@@ -1392,8 +1399,8 @@ export class NoesisFlowPlugin extends Plugin {
     }
 
     const taskDates = !date && recurrenceRule === "none" ? [null] : getRecurringTaskDates(date, recurrence, this.getRecurringTaskDateSettings());
-    let taskLines = [];
-    const addedDateKeys = [];
+    let taskLines: string[] = [];
+    const addedDateKeys: string[] = [];
 
     await this.processTaskFile(targetFile, (content) => {
       const existingKeys = new Set(externalDuplicateKeys);
@@ -1401,7 +1408,7 @@ export class NoesisFlowPlugin extends Plugin {
         existingKeys.add(key);
       }
 
-      const nextTaskLines = [];
+      const nextTaskLines: string[] = [];
       for (const taskDate of taskDates) {
         const dateKey = taskDate ? getCalendarTaskDateKey(taskDate) : "";
         const duplicateKey = `${section.toLowerCase()}\t${dateKey}\t${cleanTaskText.toLowerCase()}`;
@@ -1506,7 +1513,7 @@ export class NoesisFlowPlugin extends Plugin {
     return this.taskMutationService.updateCalendarTask(task, updates, noticeText, options);
   }
 
-  openCalendarTaskDateEditor(task) {
+  openCalendarTaskDateEditor(task: CalendarTask): void {
     new NoesisFlowTextPromptModal(
       this.app,
       "Schedule task",
@@ -1527,13 +1534,13 @@ export class NoesisFlowPlugin extends Plugin {
     ).open();
   }
 
-  openCalendarTaskPriorityEditor(task) {
+  openCalendarTaskPriorityEditor(task: CalendarTask): void {
     new NoesisFlowCalendarPriorityModal(this.app, async (priority) => {
       await this.updateCalendarTask(task, { marker: priority.marker }, "Task priority updated.");
     }).open();
   }
 
-  openCalendarTaskRenameEditor(task) {
+  openCalendarTaskRenameEditor(task: CalendarTask): void {
     new NoesisFlowTextPromptModal(
       this.app,
       "Task name",
@@ -1554,11 +1561,11 @@ export class NoesisFlowPlugin extends Plugin {
     ).open();
   }
 
-  async openCalendarTaskSectionEditor(task) {
+  async openCalendarTaskSectionEditor(task: CalendarTask): Promise<void> {
     const file = this.getCalendarTaskFileForTask(task, true);
     if (!file) return;
 
-    let sections = [];
+    let sections: string[] = [];
     try {
       const content = await this.app.vault.read(file);
       sections = getMarkdownH2Sections(content);
@@ -1578,7 +1585,7 @@ export class NoesisFlowPlugin extends Plugin {
   }
 
   setupCalendarTaskCounts() {
-    const refreshForFile = (file) => {
+    const refreshForFile = (file: TFile | null) => {
       const targetPaths = this.getCalendarTaskSourcePaths();
       if (!targetPaths.length || !file || targetPaths.includes(file.path)) {
         if (file?.path) this.taskService.invalidate(file.path);
@@ -1603,11 +1610,6 @@ export class NoesisFlowPlugin extends Plugin {
   }
 
   async refreshCalendarTaskCounts(refreshViews = false) {
-    let nextCounts = new Map();
-    let nextTasksByDate = new Map();
-    let nextUndatedTasks = [];
-    let nextCompletedTasksByDate = new Map();
-    let nextCompletedUndatedTasks = [];
     const shouldReadTasks = !!this.settings.tasksAddonEnabled
       && (!!this.settings.calendarShowTaskCounts
         || !!this.settings.kanbanTasksAddonEnabled
@@ -1616,11 +1618,11 @@ export class NoesisFlowPlugin extends Plugin {
         || !!this.settings.dailyBriefAddonEnabled);
     const files = shouldReadTasks ? this.getCalendarTaskSourceFiles(false) : [];
     const taskIndex = await this.taskService.refresh(files, this.settings);
-    nextCounts = taskIndex.counts;
-    nextTasksByDate = taskIndex.tasksByDate;
-    nextUndatedTasks = taskIndex.undatedTasks;
-    nextCompletedTasksByDate = taskIndex.completedTasksByDate;
-    nextCompletedUndatedTasks = taskIndex.completedUndatedTasks;
+    const nextCounts = taskIndex.counts;
+    const nextTasksByDate = taskIndex.tasksByDate;
+    const nextUndatedTasks = taskIndex.undatedTasks;
+    const nextCompletedTasksByDate = taskIndex.completedTasksByDate;
+    const nextCompletedUndatedTasks = taskIndex.completedUndatedTasks;
 
     const signature = getTaskRepositoryIndexSignature(taskIndex);
     if (signature === this.calendarTaskCountsSignature) return;
@@ -1640,14 +1642,14 @@ export class NoesisFlowPlugin extends Plugin {
     }
   }
 
-  getCalendarTaskSignalForDate(date) {
+  getCalendarTaskSignalForDate(date: MomentInput) {
     if (!this.settings.tasksAddonEnabled || !this.settings.calendarShowTaskCounts || !this.calendarTaskCounts) {
       return getCalendarTaskSignal(null, this.settings, date);
     }
     return getCalendarTaskSignal(this.calendarTaskCounts.get(getCalendarTaskDateKey(date)), this.settings, date);
   }
 
-  getCalendarTasksForDate(date) {
+  getCalendarTasksForDate(date: MomentInput): CalendarTask[] {
     if (!this.settings.tasksAddonEnabled || !this.calendarTasksByDate) return [];
     return this.calendarTasksByDate.get(getCalendarTaskDateKey(date)) || [];
   }
@@ -1656,7 +1658,7 @@ export class NoesisFlowPlugin extends Plugin {
     return this.getCalendarTasksForDate(moment());
   }
 
-  getDateTaskGroups(filter = "today", today = moment()) {
+  getDateTaskGroups(filter: DateTaskFilter = "today", today: Moment = moment()) {
     if (!this.settings.tasksAddonEnabled || !this.calendarTasksByDate) return [];
     const actionableTasksByDate = new Map<string, CalendarTask[]>();
     for (const task of this.getTaskQuery(today).actionable) {
@@ -1693,11 +1695,11 @@ export class NoesisFlowPlugin extends Plugin {
     return limit && Number.isFinite(limit) ? tasks.slice(0, limit) : tasks;
   }
 
-  getCompletedCalendarTasksByDate() {
-    return this.completedCalendarTasksByDate || new Map();
+  getCompletedCalendarTasksByDate(): Map<string, CalendarTask[]> {
+    return this.completedCalendarTasksByDate || new Map<string, CalendarTask[]>();
   }
 
-  getCompletedUndatedCalendarTasks(limit = 12) {
+  getCompletedUndatedCalendarTasks(limit = 12): CalendarTask[] {
     const tasks = Array.isArray(this.completedCalendarUndatedTasks) ? this.completedCalendarUndatedTasks.slice() : [];
     return limit && Number.isFinite(limit) ? tasks.slice(0, limit) : tasks;
   }
@@ -1725,7 +1727,7 @@ export class NoesisFlowPlugin extends Plugin {
   }
 
   setupHolidayCalendar() {
-    const refreshForFile = (file) => {
+    const refreshForFile = (file: TFile | null) => {
       const targetPath = this.getHolidayCalendarTargetPath();
       if (!targetPath || !file || file.path === targetPath) this.holidayRefreshScheduler.schedule();
     };
@@ -1741,7 +1743,7 @@ export class NoesisFlowPlugin extends Plugin {
   }
 
   async refreshHolidayCalendar(refreshViews = false) {
-    const nextEntries = new Map();
+    const nextEntries = new Map<string, string[]>();
     const file = this.settings.holidayCalendarEnabled ? this.getHolidayCalendarTargetFile(false) : null;
 
     if (file) {
@@ -1767,7 +1769,7 @@ export class NoesisFlowPlugin extends Plugin {
     }
   }
 
-  getHolidayEntriesForDate(date) {
+  getHolidayEntriesForDate(date: MomentInput): string[] {
     if (!this.settings.holidayCalendarEnabled || !this.holidayCalendarEntries) return [];
     return this.holidayCalendarEntries.get(getCalendarTaskDateKey(date)) || [];
   }
@@ -1775,7 +1777,7 @@ export class NoesisFlowPlugin extends Plugin {
 
 
   setupTimelineEvents() {
-    const refreshForFile = (file) => {
+    const refreshForFile = (file: TFile | null) => {
       const targetPath = this.getTimelineTargetPath();
       if (!targetPath || !file || file.path === targetPath) this.timelineRefreshScheduler.schedule();
     };
@@ -1791,7 +1793,7 @@ export class NoesisFlowPlugin extends Plugin {
   }
 
   async refreshTimelineEntries(refreshViews = false) {
-    let nextEntries = [];
+    let nextEntries: TimelineEntry[] = [];
     const shouldReadEvents = !!this.settings.calendarEventsEnabled
       || !!this.settings.timelineAddonEnabled
       || !!this.settings.dailyBriefAddonEnabled;
@@ -1822,7 +1824,7 @@ export class NoesisFlowPlugin extends Plugin {
     return getTimelineEntries(this.timelineEntries, this.holidayCalendarEntries, this.settings, moment());
   }
 
-  getCalendarEventsForDate(date) {
+  getCalendarEventsForDate(date: MomentInput): TimelineEntry[] {
     if (!this.settings.calendarEventsEnabled || !Array.isArray(this.timelineEntries)) return [];
     const dateKey = getCalendarTaskDateKey(date);
     return this.timelineEntries.filter((entry) => entry && entry.dateKey === dateKey);
@@ -2088,7 +2090,8 @@ export class NoesisFlowPlugin extends Plugin {
       await callback();
     } catch (error) {
       console.error(error);
-      new Notice(`Noesis Flow command failed: ${error.message || error}`);
+      const message = error instanceof Error ? error.message : String(error);
+      new Notice(`Noesis Flow command failed: ${message}`);
     }
   }
 
@@ -2126,9 +2129,10 @@ export class NoesisFlowPlugin extends Plugin {
   }
 
   async loadSettings() {
-    const loaded = await this.loadData();
+    const loaded: unknown = await this.loadData();
+    const rawSettings = isRecord(loaded) ? loaded : {};
 
-    this.settings = Object.assign({}, DEFAULT_SETTINGS, loaded || {});
+    this.settings = Object.assign({}, DEFAULT_SETTINGS, sanitizeSettingsSnapshot(loaded));
     normalizeSettingsSchema(this.settings, loaded);
     if (!["tag", "double-hash"].includes(this.settings.dateMarkerStyle)) {
       this.settings.dateMarkerStyle = "tag";
@@ -2206,8 +2210,8 @@ export class NoesisFlowPlugin extends Plugin {
     this.settings.timerCompletionSoundEnabled = this.settings.timerCompletionSoundEnabled !== false;
     this.settings.timerDesktopNotifications = !!this.settings.timerDesktopNotifications;
     this.settings.timerDisplayStyle = this.settings.timerDisplayStyle === "timer" ? "timer" : "circle";
-    const storedTimerSession = loaded && loaded.timerSessionState;
-    if (storedTimerSession && typeof storedTimerSession === "object") {
+    const storedTimerSession = rawSettings.timerSessionState;
+    if (isRecord(storedTimerSession)) {
       this.settings.timerSessionState = {
         mode: normalizePomodoroMode(storedTimerSession.mode),
         completedFocusCycles: Math.max(0, Math.min(this.settings.timerFocusCycles, Math.round(Number(storedTimerSession.completedFocusCycles) || 0))),
@@ -2253,10 +2257,14 @@ export class NoesisFlowPlugin extends Plugin {
     this.settings.calendarTaskHighColor = sanitizeCssText(this.settings.calendarTaskHighColor, "#fd884b");
     this.settings.calendarTaskMediumColor = sanitizeCssText(this.settings.calendarTaskMediumColor, "#f1c24d");
     this.settings.calendarTaskLowColor = sanitizeCssText(this.settings.calendarTaskLowColor, "#5cdf95");
+    const storedViewPlacements = isRecord(rawSettings.viewPlacements)
+      ? Object.fromEntries(Object.entries(rawSettings.viewPlacements)
+        .filter((entry): entry is [string, string] => typeof entry[1] === "string"))
+      : {};
     this.settings.viewPlacements = Object.assign(
       {},
       DEFAULT_VIEW_PLACEMENTS,
-      loaded && loaded.viewPlacements && typeof loaded.viewPlacements === "object" ? loaded.viewPlacements : {}
+      storedViewPlacements
     );
     this.settings.viewPlacements = Object.fromEntries(Object.entries(this.settings.viewPlacements)
       .filter(([type]) => NOESIS_FLOW_VIEW_TYPES.includes(type)));
@@ -2275,7 +2283,7 @@ export class NoesisFlowPlugin extends Plugin {
     await this.saveData(this.getPersistedSettings());
   }
 
-  async applyPluginSettingsSnapshot(pluginSettings) {
+  async applyPluginSettingsSnapshot(pluginSettings: unknown): Promise<boolean> {
     const cleanSettings = sanitizeSettingsSnapshot(pluginSettings);
     if (!Object.keys(cleanSettings).length) return false;
 

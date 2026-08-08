@@ -47,11 +47,11 @@ export class NoesisFlowChoiceModal<Choice = ChoiceDescriptor | string> extends M
     for (const choice of this.choices) {
       const item = list.createEl("button", { cls: "noesis-flow-dialog-chooser-item" });
       item.type = "button";
-      item.createEl("span", {
+      item.createSpan({
         cls: "noesis-flow-dialog-chooser-title",
         text: this.renderTitle(choice)
       });
-      item.createEl("span", {
+      item.createSpan({
         cls: "noesis-flow-dialog-chooser-meta",
         text: this.renderMeta(choice)
       });

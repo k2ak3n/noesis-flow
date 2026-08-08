@@ -1,4 +1,11 @@
 import { moment } from "../time";
+import type { Moment, MomentInput } from "moment";
+import type { RecurringTaskRecurrence, RecurringTaskSeries } from "../types";
+
+export type RecurrenceDateSettings = {
+  recurringTaskOccurrenceLimit?: number;
+  recurringTaskHolidayDates?: unknown;
+};
 
 const WEEKDAY_ALIASES = new Map([
   ["sun", 0], ["sunday", 0], ["su", 0], ["0", 0],
@@ -20,25 +27,25 @@ function clampNumber(value: unknown, min: number, max: number, fallback: number)
   return Math.min(max, Math.max(min, number));
 }
 
-export function getRecurringTaskWeekdays(value) {
+export function getRecurringTaskWeekdays(value: unknown): number[] {
   const weekdays = String(value || "")
     .split(/[,\s|/]+/)
     .map((token) => WEEKDAY_ALIASES.get(token.trim().toLowerCase()))
-    .filter((day) => Number.isInteger(day) && day >= 0 && day <= 6);
+    .filter((day): day is number => typeof day === "number" && Number.isInteger(day) && day >= 0 && day <= 6);
   return unique(weekdays);
 }
 
-export function getMonthlyRecurringDate(startDate, offset) {
+export function getMonthlyRecurringDate(startDate: Moment, offset: number): Moment {
   const desiredDay = startDate.date();
   const candidate = startDate.clone().startOf("month").add(offset, "month");
   return candidate.date(Math.min(desiredDay, candidate.daysInMonth())).startOf("day");
 }
 
-export function getRecurringTaskInterval(recurrence) {
+export function getRecurringTaskInterval(recurrence: Partial<RecurringTaskRecurrence> | null | undefined): number {
   return Math.round(clampNumber(recurrence && recurrence.interval, 1, 52, 1));
 }
 
-export function getRecurringTaskDateKeys(value) {
+export function getRecurringTaskDateKeys(value: unknown): string[] {
   const rawValues = Array.isArray(value) ? value : String(value || "").split(/[\s,|/]+/);
   return unique(rawValues
     .map((dateKey) => String(dateKey || "").trim())
@@ -46,37 +53,41 @@ export function getRecurringTaskDateKeys(value) {
     .sort();
 }
 
-export function getRecurringTaskDates(startDate, recurrence, settings) {
-  const start = startDate && typeof startDate.clone === "function"
+export function getRecurringTaskDates(
+  startDate: MomentInput | Moment,
+  recurrence: Partial<RecurringTaskRecurrence> = {},
+  settings: RecurrenceDateSettings = {}
+): Moment[] {
+  const start = moment.isMoment(startDate)
     ? startDate.clone().startOf("day")
     : moment(startDate).startOf("day");
   if (!start.isValid()) return [];
 
-  const rule = recurrence && recurrence.rule ? recurrence.rule : "none";
+  const rule = recurrence.rule || "none";
   const interval = getRecurringTaskInterval(recurrence);
   // Runtime continuation may request a larger temporary window than the UI exposes.
-  const configuredLimit = clampNumber(settings && settings.recurringTaskOccurrenceLimit, 1, 5000, 6);
-  const endMode = recurrence && recurrence.endMode === "count"
+  const configuredLimit = clampNumber(settings.recurringTaskOccurrenceLimit, 1, 5000, 6);
+  const endMode = recurrence.endMode === "count"
     ? "count"
-    : recurrence && recurrence.endMode === "date"
+    : recurrence.endMode === "date"
       ? "date"
       : "limit";
-  const requestedCount = clampNumber(recurrence && recurrence.endCount, 1, configuredLimit, configuredLimit);
+  const requestedCount = clampNumber(recurrence.endCount, 1, configuredLimit, configuredLimit);
   const limit = rule === "none" ? 1 : endMode === "count" ? requestedCount : configuredLimit;
   const endDate = endMode === "date"
-    ? moment(recurrence && recurrence.endDate, "YYYY-MM-DD", true).startOf("day")
+    ? moment(recurrence.endDate, "YYYY-MM-DD", true).startOf("day")
     : null;
-  const holidayDates = new Set(getRecurringTaskDateKeys(settings && settings.recurringTaskHolidayDates));
-  const excludedDates = new Set(getRecurringTaskDateKeys(recurrence && recurrence.excludedDates));
-  const includedDates = new Set(getRecurringTaskDateKeys(recurrence && recurrence.includedDates));
-  const skipWeekends = !!(recurrence && recurrence.skipWeekends);
-  const skipHolidays = !!(recurrence && recurrence.skipHolidays);
-  const dates = [];
+  const holidayDates = new Set(getRecurringTaskDateKeys(settings.recurringTaskHolidayDates));
+  const excludedDates = new Set(getRecurringTaskDateKeys(recurrence.excludedDates));
+  const includedDates = new Set(getRecurringTaskDateKeys(recurrence.includedDates));
+  const skipWeekends = !!recurrence.skipWeekends;
+  const skipHolidays = !!recurrence.skipHolidays;
+  const dates: Moment[] = [];
 
-  const isWithinRange = (date) => date && date.isValid()
+  const isWithinRange = (date: Moment): boolean => date.isValid()
     && !date.isBefore(start, "day")
     && (!endDate || !endDate.isValid() || !date.isAfter(endDate, "day"));
-  const shouldInclude = (date) => {
+  const shouldInclude = (date: Moment): boolean => {
     if (!isWithinRange(date)) return false;
     const dateKey = date.format("YYYY-MM-DD");
     if (includedDates.has(dateKey)) return true;
@@ -85,7 +96,7 @@ export function getRecurringTaskDates(startDate, recurrence, settings) {
     if (skipHolidays && holidayDates.has(dateKey)) return false;
     return true;
   };
-  const addDate = (date) => {
+  const addDate = (date: Moment): void => {
     if (shouldInclude(date)) dates.push(date.clone().startOf("day"));
   };
 
@@ -139,24 +150,29 @@ export function getRecurringTaskDates(startDate, recurrence, settings) {
  * changing its explicit end date/count. The generated dates are intentionally
  * bounded so a very old daily series never creates an unbounded write.
  */
-export function getRecurringTaskContinuationDates(series, settings, today = moment()) {
+export function getRecurringTaskContinuationDates(
+  series: RecurringTaskSeries,
+  settings: RecurrenceDateSettings,
+  today: MomentInput | Moment = moment()
+): string[] {
   if (!series || series.status === "paused") return [];
   if (series.recurrence && series.recurrence.rule === "after-completion") return [];
   const start = moment(series.startDate, "YYYY-MM-DD", true).startOf("day");
   if (!start.isValid()) return [];
 
-  const horizon = clampNumber(settings && settings.recurringTaskOccurrenceLimit, 1, 26, 6);
-  const now = (today && typeof today.clone === "function" ? today.clone() : moment(today)).startOf("day");
+  const horizon = clampNumber(settings.recurringTaskOccurrenceLimit, 1, 26, 6);
+  const now = (moment.isMoment(today) ? today.clone() : moment(today)).startOf("day");
   if (!now.isValid()) return [];
 
-  const recurrence = Object.assign({}, series.recurrence || {});
+  const recurrence: RecurringTaskRecurrence = { ...series.recurrence };
   const recordedDates = getRecurringTaskDateKeys(series.occurrenceDates);
   const existingDates = recordedDates.length
     ? recordedDates
-    : getRecurringTaskDates(start, Object.assign({}, recurrence, {
+    : getRecurringTaskDates(start, {
+      ...recurrence,
       endMode: "count",
       endCount: Math.max(1, Number(series.occurrenceCount) || 1)
-    }), Object.assign({}, settings, {
+    }, Object.assign({}, settings, {
       recurringTaskOccurrenceLimit: Math.max(1, Number(series.occurrenceCount) || 1)
     })).map((date) => date.format("YYYY-MM-DD"));
   const existing = new Set(existingDates);
@@ -169,11 +185,11 @@ export function getRecurringTaskContinuationDates(series, settings, today = mome
   let generationLimit = Math.min(maximum, Math.max(existingDates.length + horizon, horizon, 16));
 
   while (generationLimit > 0) {
-    const candidateRecurrence = explicitCount
-      ? Object.assign({}, recurrence, { endMode: "count", endCount: explicitCount })
+    const candidateRecurrence: Partial<RecurringTaskRecurrence> = explicitCount
+      ? { ...recurrence, endMode: "count", endCount: explicitCount }
       : recurrence.endMode === "date"
         ? recurrence
-        : Object.assign({}, recurrence, { endMode: "count", endCount: generationLimit });
+        : { ...recurrence, endMode: "count", endCount: generationLimit };
     const allDates = getRecurringTaskDates(start, candidateRecurrence, Object.assign({}, settings, {
       recurringTaskOccurrenceLimit: generationLimit
     })).map((date) => date.format("YYYY-MM-DD"));
@@ -186,8 +202,8 @@ export function getRecurringTaskContinuationDates(series, settings, today = mome
   return [];
 }
 
-export function getRecurringTaskLabel(recurrence) {
-  const rule = recurrence && recurrence.rule ? recurrence.rule : "none";
+export function getRecurringTaskLabel(recurrence: Partial<RecurringTaskRecurrence> = {}): string {
+  const rule = recurrence.rule || "none";
   const interval = getRecurringTaskInterval(recurrence);
   let label = "";
   if (interval > 1) {
@@ -203,22 +219,27 @@ export function getRecurringTaskLabel(recurrence) {
   if (!label && rule === "weekdays") label = "weekdays";
   if (!label && rule === "custom-weekdays") label = "custom weekdays";
   if (!label && rule === "after-completion") {
-    const completionRule = recurrence && recurrence.completionRule || "weekly";
+    const completionRule = recurrence.completionRule || "weekly";
     const unit = completionRule === "daily" ? "day" : completionRule === "monthly" ? "month" : "week";
     label = interval > 1 ? `${interval} ${unit}s after completion` : `${unit} after completion`;
   }
   if (!label) return "";
-  const skips = [recurrence && recurrence.skipWeekends ? "weekends" : "", recurrence && recurrence.skipHolidays ? "holidays" : ""].filter(Boolean);
+  const skips = [recurrence.skipWeekends ? "weekends" : "", recurrence.skipHolidays ? "holidays" : ""].filter(Boolean);
   return skips.length ? `${label}, skipping ${skips.join(" and ")}` : label;
 }
 
 /** Computes one post-completion date without materializing a future horizon. */
-export function getNextAfterCompletionDate(completedDate, recurrence, settings) {
+export function getNextAfterCompletionDate(
+  completedDate: MomentInput | Moment,
+  recurrence: Partial<RecurringTaskRecurrence>,
+  settings: RecurrenceDateSettings
+): Moment | null {
   const completed = moment(completedDate).startOf("day");
   if (!completed.isValid()) return null;
-  const completionRule = recurrence && recurrence.completionRule || "weekly";
-  const candidateRecurrence = Object.assign({}, recurrence, {
-    rule: ["daily", "weekly", "monthly"].includes(completionRule) ? completionRule : "weekly",
+  const completionRule = recurrence.completionRule || "weekly";
+  const rule: RecurringTaskRecurrence["rule"] = ["daily", "weekly", "monthly"].includes(completionRule) ? completionRule : "weekly";
+  const candidateRecurrence: Partial<RecurringTaskRecurrence> = Object.assign({}, recurrence, {
+    rule,
     endMode: "count",
     endCount: 2
   });

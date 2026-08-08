@@ -1,6 +1,7 @@
 import { Notice, setIcon } from "obsidian";
+import type { WorkspaceLeaf } from "obsidian";
 import type NoesisFlowPlugin from "../main";
-import type { DateTaskFilter, KanbanTaskStatus, KanbanUnscheduledFilter } from "../types";
+import type { CalendarTask, DateTaskFilter, KanbanTaskStatus, KanbanUnscheduledFilter } from "../types";
 import { NoesisFlowTimedView } from "./NoesisFlowTimedView";
 import { moment } from "../time";
 import {
@@ -15,7 +16,15 @@ import { renderNoesisFlowMarkdown } from "../ui/NoesisFlowUi";
 import { NoesisFlowKanbanFilterModal } from "../modals/NoesisFlowKanbanFilterModal";
 import type { TaskUpdates } from "../tasks/TaskMutationService";
 
-const COLUMN_LABELS = { text: "Task", date: "Date", section: "Project", priority: "Priority", actions: "Actions" };
+type TaskListColumn = "text" | "date" | "section" | "priority" | "actions";
+type EditableTextProperty = "text" | "section";
+
+const COLUMN_LABELS: Record<TaskListColumn, string> = { text: "Task", date: "Date", section: "Project", priority: "Priority", actions: "Actions" };
+const ALL_TASK_LIST_COLUMNS: TaskListColumn[] = ["text", "date", "section", "priority", "actions"];
+
+function isTaskListColumn(value: string): value is TaskListColumn {
+  return ALL_TASK_LIST_COLUMNS.includes(value as TaskListColumn);
+}
 
 export class NoesisFlowTaskListView extends NoesisFlowTimedView {
   plugin: NoesisFlowPlugin;
@@ -24,11 +33,11 @@ export class NoesisFlowTaskListView extends NoesisFlowTimedView {
   priorities: string[];
   unscheduledFilter: KanbanUnscheduledFilter;
   columnFilters: Record<string, string>;
-  draggedColumn: string;
+  draggedColumn: TaskListColumn | "";
   selectedTaskKeys: Set<string>;
   columnChooserOpen: boolean;
 
-  constructor(leaf, plugin) {
+  constructor(leaf: WorkspaceLeaf, plugin: NoesisFlowPlugin) {
     super(leaf);
     this.plugin = plugin;
     this.filter = this.plugin.settings.taskListFilter || "all";
@@ -59,36 +68,36 @@ export class NoesisFlowTaskListView extends NoesisFlowTimedView {
     this.contentEl.removeClass("noesis-flow-task-list-view-content");
   }
 
-  taskKey(task) {
+  taskKey(task: CalendarTask): string {
     return task.id ? `${task.sourcePath || ""}\t${task.id}` : `${task.sourcePath || ""}\t${task.lineIndex || 0}`;
   }
 
-  getColumnOrder() {
+  getColumnOrder(): TaskListColumn[] {
     const stored = Array.isArray(this.plugin.settings.taskListColumnOrder)
-      ? this.plugin.settings.taskListColumnOrder.filter((column) => TASK_LIST_COLUMN_IDS.includes(column))
+      ? this.plugin.settings.taskListColumnOrder.filter((column): column is TaskListColumn => TASK_LIST_COLUMN_IDS.includes(column))
       : [];
-    return Array.from(new Set([...stored, ...TASK_LIST_COLUMN_IDS]));
+    return Array.from(new Set([...stored, ...ALL_TASK_LIST_COLUMNS]));
   }
 
-  getVisibleColumns() {
+  getVisibleColumns(): TaskListColumn[] {
     const visible = Array.isArray(this.plugin.settings.taskListVisibleColumns)
       ? this.plugin.settings.taskListVisibleColumns
-      : TASK_LIST_COLUMN_IDS;
+      : ALL_TASK_LIST_COLUMNS;
     return this.getColumnOrder().filter((column) => visible.includes(column));
   }
 
-  getColumnWidth(column) {
+  getColumnWidth(column: TaskListColumn): number {
     const width = Number(this.plugin.settings.taskListColumnWidths && this.plugin.settings.taskListColumnWidths[column]);
     return Number.isFinite(width) && width >= 32 ? width : 0;
   }
 
-  getAutomaticColumnWidth(column, tasks) {
-    const values = {
+  getAutomaticColumnWidth(column: TaskListColumn, tasks: CalendarTask[]): number {
+    const values: Partial<Record<TaskListColumn, string[]>> = {
       date: [COLUMN_LABELS.date, ...tasks.map((task) => task.dateKey || "")],
       section: [COLUMN_LABELS.section, ...tasks.map((task) => this.plugin.getProjectLabel(task))],
       priority: [COLUMN_LABELS.priority, ...tasks.map((task) => task.priorityLabel || "No priority")]
     };
-    const minimums = { date: 136, section: 145, priority: 106, actions: 148 };
+    const minimums: Partial<Record<TaskListColumn, number>> = { date: 136, section: 145, priority: 106, actions: 148 };
     if (column === "actions") return minimums.actions;
     const canvas = this.contentEl.createEl("canvas");
     const measure = canvas.getContext("2d");
@@ -100,7 +109,7 @@ export class NoesisFlowTaskListView extends NoesisFlowTimedView {
     return Math.max(minimums[column] || 96, Math.ceil(widest + 32));
   }
 
-  async moveColumn(column, target) {
+  async moveColumn(column: TaskListColumn, target: TaskListColumn): Promise<void> {
     if (!column || !target || column === target) return;
     const order = this.getColumnOrder();
     const sourceIndex = order.indexOf(column);
@@ -113,7 +122,7 @@ export class NoesisFlowTaskListView extends NoesisFlowTimedView {
     this.render();
   }
 
-  async moveColumnByOffset(column, offset) {
+  async moveColumnByOffset(column: TaskListColumn, offset: number): Promise<void> {
     const order = this.getColumnOrder();
     const sourceIndex = order.indexOf(column);
     const targetIndex = sourceIndex + offset;
@@ -125,7 +134,7 @@ export class NoesisFlowTaskListView extends NoesisFlowTimedView {
     this.render();
   }
 
-  async setColumnVisibility(column, visible) {
+  async setColumnVisibility(column: TaskListColumn, visible: boolean): Promise<void> {
     const current = Array.isArray(this.plugin.settings.taskListVisibleColumns)
       ? this.plugin.settings.taskListVisibleColumns.filter((value) => TASK_LIST_COLUMN_IDS.includes(value))
       : [...TASK_LIST_COLUMN_IDS];
@@ -135,7 +144,7 @@ export class NoesisFlowTaskListView extends NoesisFlowTimedView {
     this.render();
   }
 
-  async setColumnWidth(column, value) {
+  async setColumnWidth(column: TaskListColumn, value: number | string): Promise<void> {
     const width = Math.round(Number(value));
     if (!Number.isFinite(width) || width < 80 || width > 1000) {
       new Notice("Column widths must be between 80 and 1000 pixels.");
@@ -147,7 +156,7 @@ export class NoesisFlowTaskListView extends NoesisFlowTimedView {
     this.render();
   }
 
-  async resetColumnWidth(column) {
+  async resetColumnWidth(column: TaskListColumn): Promise<void> {
     const widths = Object.assign({}, this.plugin.settings.taskListColumnWidths);
     delete widths[column];
     this.plugin.settings.taskListColumnWidths = widths;
@@ -161,7 +170,7 @@ export class NoesisFlowTaskListView extends NoesisFlowTimedView {
     this.render();
   }
 
-  getTasks() {
+  getTasks(): CalendarTask[] {
     const today = moment().startOf("day");
     const range = getDateTaskFilterRange(this.filter, today);
     const taskQuery = this.plugin.getTaskQuery(today);
@@ -186,16 +195,16 @@ export class NoesisFlowTaskListView extends NoesisFlowTimedView {
       .sort((a, b) => this.compareTasks(a, b));
   }
 
-  matchesColumnFilters(task) {
+  matchesColumnFilters(task: CalendarTask): boolean {
     const filters = this.columnFilters;
-    const includes = (value, query) => !query || String(value || "").toLowerCase().includes(query.toLowerCase());
+    const includes = (value: unknown, query: string): boolean => !query || String(value || "").toLowerCase().includes(query.toLowerCase());
     return includes(task.text, filters.text)
       && includes(task.dateKey, filters.date)
       && includes(this.plugin.getProjectLabel(task), filters.section)
       && includes(`${task.priorityLabel || ""} ${task.marker || ""}`, filters.priority);
   }
 
-  async setFilterValues(statuses: KanbanTaskStatus[], priorities: string[], filter: string, unscheduledFilter: string) {
+  async setFilterValues(statuses: KanbanTaskStatus[], priorities: string[], filter: string, unscheduledFilter: string): Promise<void> {
     this.statuses = statuses;
     this.priorities = priorities;
     this.filter = normalizeDateTaskFilter(filter);
@@ -220,14 +229,16 @@ export class NoesisFlowTaskListView extends NoesisFlowTimedView {
     ).open();
   }
 
-  compareTasks(a, b) {
-    const column = this.plugin.settings.taskListSortColumn || "date";
+  compareTasks(a: CalendarTask, b: CalendarTask): number {
+    const storedColumn = this.plugin.settings.taskListSortColumn || "date";
+    const column: TaskListColumn = isTaskListColumn(storedColumn) ? storedColumn : "date";
     const direction = this.plugin.settings.taskListSortDirection === "desc" ? -1 : 1;
-    const values = {
+    const priorityOrder: Record<string, string> = { "!": "0", H: "1", M: "2", L: "3", " ": "4", X: "5" };
+    const values: Record<TaskListColumn, (task: CalendarTask) => string> = {
       text: (task) => String(task.text || ""),
       date: (task) => String(task.dateKey || "9999-12-31"),
       section: (task) => this.plugin.getProjectLabel(task),
-      priority: (task) => ({ "!": "0", H: "1", M: "2", L: "3", " ": "4", X: "5" }[task.marker] || "5"),
+      priority: (task) => priorityOrder[task.marker] || "5",
       actions: () => ""
     };
     const result = String(values[column] ? values[column](a) : "").localeCompare(String(values[column] ? values[column](b) : ""));
@@ -235,20 +246,20 @@ export class NoesisFlowTaskListView extends NoesisFlowTimedView {
     return String(a.text || "").localeCompare(String(b.text || ""));
   }
 
-  async updateTask(task, updates) {
+  async updateTask(task: CalendarTask, updates: TaskUpdates): Promise<void> {
     try {
       await this.plugin.updateCalendarTask(task, updates, "Task updated.");
     } catch (error) {
       console.error(error);
-      new Notice(`Could not update task: ${error.message || error}`);
+      new Notice(`Could not update task: ${error instanceof Error ? error.message : String(error)}`);
       this.render();
     }
   }
 
-  registerKeyboardNavigation(control, rowIndex, column, columns) {
+  registerKeyboardNavigation(control: HTMLInputElement | HTMLSelectElement, rowIndex: number, column: TaskListColumn, columns: TaskListColumn[]): void {
     control.dataset.taskListRow = String(rowIndex);
     control.dataset.taskListColumn = column;
-    control.addEventListener("keydown", (event) => {
+    control.addEventListener("keydown", (event: KeyboardEvent) => {
       if ((event.ctrlKey || event.metaKey) && event.key === "Enter") {
         event.preventDefault();
         control.dispatchEvent(new Event("change"));
@@ -278,13 +289,13 @@ export class NoesisFlowTaskListView extends NoesisFlowTimedView {
     });
   }
 
-  focusCell(rowIndex, column) {
+  focusCell(rowIndex: number, column: TaskListColumn): void {
     const selector = `[data-task-list-row="${rowIndex}"][data-task-list-column="${column}"]`;
     const next = this.contentEl.querySelector<HTMLElement>(selector);
     if (next) next.focus();
   }
 
-  createTextCell(row, task, property, projects, rowIndex, columns) {
+  createTextCell(row: HTMLTableRowElement, task: CalendarTask, property: EditableTextProperty, projects: string, rowIndex: number, columns: TaskListColumn[]): void {
     const cell = row.createEl("td", { cls: `noesis-flow-task-list-cell noesis-flow-task-list-${property}-cell` });
     if (property === "text") {
       const preview = cell.createDiv({ cls: "noesis-flow-task-list-text-preview", attr: { tabindex: "0", "aria-label": `Task: ${task.text}. Press Enter to edit.` } });
@@ -313,7 +324,7 @@ export class NoesisFlowTaskListView extends NoesisFlowTimedView {
     }));
   }
 
-  renderTaskTextEditor(cell, task, rowIndex, columns) {
+  renderTaskTextEditor(cell: HTMLTableCellElement, task: CalendarTask, rowIndex: number, columns: TaskListColumn[]): void {
     cell.empty();
     const input = cell.createEl("input", { attr: { type: "text", value: String(task.text || ""), "aria-label": "Edit task" } });
     this.registerKeyboardNavigation(input, rowIndex, "text", columns);
@@ -336,7 +347,7 @@ export class NoesisFlowTaskListView extends NoesisFlowTimedView {
     input.select();
   }
 
-  renderDateCell(row, task, rowIndex, columns) {
+  renderDateCell(row: HTMLTableRowElement, task: CalendarTask, rowIndex: number, columns: TaskListColumn[]): void {
     const cell = row.createEl("td", { cls: "noesis-flow-task-list-cell noesis-flow-task-list-date-cell" });
     const input = cell.createEl("input", { attr: { type: "date", value: task.dateKey || "", "aria-label": `Date ${task.text}` } });
     this.registerKeyboardNavigation(input, rowIndex, "date", columns);
@@ -345,7 +356,7 @@ export class NoesisFlowTaskListView extends NoesisFlowTimedView {
     }));
   }
 
-  renderPriorityCell(row, task, rowIndex, columns) {
+  renderPriorityCell(row: HTMLTableRowElement, task: CalendarTask, rowIndex: number, columns: TaskListColumn[]): void {
     const cell = row.createEl("td", { cls: "noesis-flow-task-list-cell noesis-flow-task-list-priority-cell" });
     const select = cell.createEl("select", { attr: { "aria-label": `Priority for ${task.text}` } });
     if (task.completed) select.createEl("option", { text: "Completed", attr: { value: "X" } });
@@ -359,7 +370,7 @@ export class NoesisFlowTaskListView extends NoesisFlowTimedView {
     }));
   }
 
-  renderActionsCell(row, task) {
+  renderActionsCell(row: HTMLTableRowElement, task: CalendarTask): void {
     const cell = row.createEl("td", { cls: "noesis-flow-task-list-cell noesis-flow-task-list-actions-cell" });
     const controls = cell.createDiv({ cls: "noesis-flow-task-list-row-actions" });
     const details = controls.createEl("button", { cls: "noesis-flow-task-list-action-button", attr: { type: "button", "aria-label": `Open task details: ${task.text}`, title: "Task details" } });
@@ -379,7 +390,7 @@ export class NoesisFlowTaskListView extends NoesisFlowTimedView {
     button.addEventListener("click", () => void this.plugin.requestCalendarTaskDelete(task));
   }
 
-  renderSelectionCell(row, task) {
+  renderSelectionCell(row: HTMLTableRowElement, task: CalendarTask): void {
     const cell = row.createEl("td", { cls: "noesis-flow-task-list-cell noesis-flow-task-list-select-cell" });
     const input = cell.createEl("input", { attr: { type: "checkbox", "aria-label": `Select task for bulk editing: ${task.text}`, title: "Select for bulk editing" } });
     input.checked = this.selectedTaskKeys.has(this.taskKey(task));
@@ -391,7 +402,7 @@ export class NoesisFlowTaskListView extends NoesisFlowTimedView {
     });
   }
 
-  renderTaskRow(body, task, projects, columns, rowIndex) {
+  renderTaskRow(body: HTMLTableSectionElement, task: CalendarTask, projects: string, columns: TaskListColumn[], rowIndex: number): void {
     const row = body.createEl("tr", { cls: "noesis-flow-task-list-row" });
     row.classList.toggle("is-completed", !!task.completed);
     this.renderSelectionCell(row, task);
@@ -404,7 +415,7 @@ export class NoesisFlowTaskListView extends NoesisFlowTimedView {
     }
   }
 
-  renderColumnHeader(head, column) {
+  renderColumnHeader(head: HTMLTableRowElement, column: TaskListColumn): void {
     const header = head.createEl("th", { cls: `noesis-flow-task-list-${column}-column`, text: COLUMN_LABELS[column] || "" });
     const width = this.getColumnWidth(column);
     if (width) header.style.width = `${width}px`;
@@ -459,9 +470,10 @@ export class NoesisFlowTaskListView extends NoesisFlowTimedView {
     header.addEventListener("drop", asVoidHandler(async (event: DragEvent) => {
       event.preventDefault();
       header.removeClass("is-drop-target");
-      await this.moveColumn(this.draggedColumn, column);
+      const draggedColumn = this.draggedColumn;
+      if (draggedColumn) await this.moveColumn(draggedColumn, column);
     }));
-    const resizer = header.createEl("div", {
+    const resizer = header.createDiv({
       cls: "noesis-flow-task-list-column-resizer",
       attr: { role: "separator", tabindex: "0", "aria-label": `Resize ${COLUMN_LABELS[column]} column` }
     });
@@ -509,7 +521,7 @@ export class NoesisFlowTaskListView extends NoesisFlowTimedView {
     resizer.addEventListener("pointercancel", finish);
   }
 
-  renderColumnDefinitions(table, columns, tasks, availableWidth) {
+  renderColumnDefinitions(table: HTMLTableElement, columns: TaskListColumn[], tasks: CalendarTask[], availableWidth: number): void {
     const selectionWidth = 28;
     const widths: Record<string, number> = {};
     let nonTextWidth = selectionWidth;
@@ -541,7 +553,7 @@ export class NoesisFlowTaskListView extends NoesisFlowTimedView {
     this.render();
   }
 
-  renderColumnSearchRow(head, columns) {
+  renderColumnSearchRow(head: HTMLTableSectionElement, columns: TaskListColumn[]): void {
     const row = head.createEl("tr", { cls: "noesis-flow-task-list-column-filter-row" });
     row.createEl("th", { cls: "noesis-flow-task-list-select-column", text: "" });
     for (const column of columns) {
@@ -571,7 +583,7 @@ export class NoesisFlowTaskListView extends NoesisFlowTimedView {
     }
   }
 
-  renderBulkActions(root, tasks, projects) {
+  renderBulkActions(root: HTMLElement, tasks: CalendarTask[], projects: string): void {
     const selected = tasks.filter((task) => this.selectedTaskKeys.has(this.taskKey(task)));
     if (!selected.length) return;
     const bar = root.createDiv({ cls: "noesis-flow-task-list-bulk-actions" });
@@ -618,7 +630,7 @@ export class NoesisFlowTaskListView extends NoesisFlowTimedView {
     clear.addEventListener("click", () => { this.selectedTaskKeys.clear(); this.render(); });
   }
 
-  renderColumnChooser(root) {
+  renderColumnChooser(root: HTMLElement): void {
     if (!this.columnChooserOpen) return;
     const panel = root.createDiv({ cls: "noesis-flow-task-list-column-chooser" });
     const header = panel.createDiv({ cls: "noesis-flow-task-list-column-chooser-header" });

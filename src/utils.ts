@@ -78,7 +78,7 @@ export function normalizeTaskListColumnWidths(value: unknown): Record<string, nu
     .filter(([, width]) => Number.isFinite(width) && width >= 32 && width <= 1000));
 }
 
-export const DEFAULT_SETTINGS = {
+export const DEFAULT_SETTINGS: NoesisFlowSettings = {
   taskSchemaVersion: 2,
   taskInboxNote: "",
   taskSourceNotes: [],
@@ -300,7 +300,7 @@ export function getPomodoroNextStep(
   };
 }
 
-export function makeCssUrl(value) {
+export function makeCssUrl(value: unknown): string {
   return `url("${String(value).replace(/\\/g, "\\\\").replace(/"/g, '\\"')}")`;
 }
 
@@ -367,7 +367,7 @@ export function getCalendarMonthRows(displayedMonth: Moment, weekStart: number):
   return rows;
 }
 
-export function getCalendarQuarter(monthIndex) {
+export function getCalendarQuarter(monthIndex: number): number {
   return Math.floor(monthIndex / 3) + 1;
 }
 
@@ -380,7 +380,7 @@ export function normalizeWeekendDays(value: unknown): number[] {
 }
 
 
-export function normalizeMarkdownPath(value) {
+export function normalizeMarkdownPath(value: unknown): string {
   let path = String(value || "")
     .trim()
     .replace(/^!?(?:\[\[|\[)(.*?)(?:\]\]|\])$/g, "$1")
@@ -393,7 +393,7 @@ export function normalizeMarkdownPath(value) {
   return path;
 }
 
-export function normalizeCalendarSectionName(value) {
+export function normalizeCalendarSectionName(value: unknown): string {
   return String(value || "")
     .replace(/[\r\n]+/g, " ")
     .replace(/^#+\s*/, "")
@@ -402,46 +402,46 @@ export function normalizeCalendarSectionName(value) {
 
 export const DEFAULT_TASK_UNASSIGNED_SECTION = "Unassigned";
 
-export function getTaskCaptureSection(value) {
+export function getTaskCaptureSection(value: unknown): string {
   return normalizeCalendarSectionName(value) || DEFAULT_TASK_UNASSIGNED_SECTION;
 }
 
-export function normalizeCalendarTaskText(value) {
+export function normalizeCalendarTaskText(value: unknown): string {
   return String(value || "")
     .replace(/[\r\n]+/g, " ")
     .trim();
 }
 
-export function escapeRegExp(value) {
+export function escapeRegExp(value: unknown): string {
   return String(value || "").replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
 }
 
-export function getDateMarkerPrefix(settings) {
+export function getDateMarkerPrefix(settings: Partial<Pick<NoesisFlowSettings, "dateMarkerStyle">> | null | undefined): string {
   const style = settings && settings.dateMarkerStyle;
   return style === "double-hash" ? "##" : "#";
 }
 
-export function getDateMarkerLabel(settings) {
+export function getDateMarkerLabel(settings: Partial<Pick<NoesisFlowSettings, "dateMarkerStyle">> | null | undefined): string {
   return `${getDateMarkerPrefix(settings)}YYYY-MM-DD`;
 }
 
-export function formatDateMarker(dateKey, settings) {
+export function formatDateMarker(dateKey: unknown, settings: Partial<Pick<NoesisFlowSettings, "dateMarkerStyle">> | null | undefined): string {
   return `${getDateMarkerPrefix(settings)}${dateKey}`;
 }
 
-export function getDateMarkerPattern(settings) {
+export function getDateMarkerPattern(settings: Partial<Pick<NoesisFlowSettings, "dateMarkerStyle">> | null | undefined): string {
   const style = settings && settings.dateMarkerStyle;
   if (style === "double-hash") return "##";
   return "#(?!#)";
 }
 
-export function isMarkdownCodeFenceLine(line) {
+export function isMarkdownCodeFenceLine(line: unknown): boolean {
   return /^\s*(?:```|~~~)/.test(String(line || ""));
 }
 
 const _dateMarkerRegexCache = new Map<string, RegExp>();
 
-export function findNoesisFlowDateMarker(text: string | null | undefined, settings: unknown) {
+export function findNoesisFlowDateMarker(text: string | null | undefined, settings: Partial<Pick<NoesisFlowSettings, "dateMarkerStyle">> | null | undefined) {
   if (!text) return null;
   const str = typeof text === "string" ? text : String(text);
 
@@ -529,11 +529,11 @@ export function createNoesisFlowProjectId() {
   return `project-${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 10)}`;
 }
 
-export function getCalendarTaskId(text) {
+export function getCalendarTaskId(text: unknown): string {
   return parseTaskMetadata(String(text || "")).taskId;
 }
 
-export function normalizeCalendarTaskMarker(marker) {
+export function normalizeCalendarTaskMarker(marker: unknown): string {
   const cleanMarker = String(marker || "").trim().toUpperCase();
   if (!cleanMarker) return " ";
   if (cleanMarker === "CRITICAL" || cleanMarker === "URGENT") return "!";
@@ -544,7 +544,7 @@ export function normalizeCalendarTaskMarker(marker) {
   return cleanMarker;
 }
 
-export function normalizeCalendarTaskPriorityMarker(marker) {
+export function normalizeCalendarTaskPriorityMarker(marker: unknown): string {
   const normalized = normalizeCalendarTaskMarker(marker);
   return CALENDAR_TASK_PRIORITY_ORDER.includes(normalized) ? normalized : " ";
 }
@@ -563,7 +563,7 @@ export function getCalendarTaskPriorityLabel(marker: unknown): string {
   return CALENDAR_TASK_PRIORITY_LABELS.get(value) || value || "No priority";
 }
 
-export function cleanCalendarTaskText(text, dateKey, settings) {
+export function cleanCalendarTaskText(text: string, dateKey: string, settings: NoesisFlowSettings): string {
   return stripNoesisFlowDateMarker(text, dateKey, settings)
     .replace(/\s*<!--\s*noesis-flow-series:[^>]+-->/gi, "")
     .replace(/\s*<!--\s*noesis-flow-task:[^>]+-->/gi, "")
@@ -706,7 +706,7 @@ export function markCalendarTaskCompletedInContent(content: string, task: Calend
 
 export function findCalendarTaskLineIndex(lines: string[], task: CalendarTask, settings: NoesisFlowSettings): number {
   const taskId = String(task && task.id || "").trim();
-  const lineHasTaskId = (line) => taskId && getCalendarTaskId(line) === taskId;
+  const lineHasTaskId = (line: string): boolean => !!taskId && getCalendarTaskId(line) === taskId;
   const preferredIndex = Number(task && task.lineIndex);
   if (Number.isInteger(preferredIndex) && preferredIndex >= 0 && preferredIndex < lines.length
     && (lineHasTaskId(lines[preferredIndex]) || (!taskId && isCompletableCalendarTaskLine(lines[preferredIndex], task, settings)))) {
@@ -743,7 +743,7 @@ export function updateCalendarTaskInContent(content: string, task: CalendarTask,
   const nextText = normalizeCalendarTaskText(
     Object.prototype.hasOwnProperty.call(updates, "text") ? updates.text : task.text
   );
-  const hasMarkerUpdate = Object.prototype.hasOwnProperty.call(updates, "marker");
+  const hasMarkerUpdate = "marker" in updates;
   const nextMarker = normalizeCalendarTaskMarker(
     hasMarkerUpdate ? updates.marker : task.marker
   );
@@ -807,7 +807,7 @@ export function serializeCalendarTaskCounts(counts: Map<string, CalendarTaskStat
     .sort(([a], [b]) => a.localeCompare(b)));
 }
 
-export function getCalendarTaskThresholds(settings) {
+export function getCalendarTaskThresholds(settings: Partial<NoesisFlowSettings> | null | undefined) {
   return {
     workload: clampNumber(settings && settings.calendarTaskWorkloadThreshold, 1, 50, 5),
     orangePriority: clampNumber(settings && settings.calendarTaskOrangePriorityThreshold, 1, 20, 1),
@@ -815,7 +815,7 @@ export function getCalendarTaskThresholds(settings) {
   };
 }
 
-export function formatCalendarPrioritySummary(stats) {
+export function formatCalendarPrioritySummary(stats: CalendarTaskStats | null | undefined): string {
   if (!stats || !stats.priorities) return "";
   return CALENDAR_TASK_PRIORITY_ORDER
     .map((marker) => {
@@ -826,12 +826,12 @@ export function formatCalendarPrioritySummary(stats) {
     .join(", ");
 }
 
-export function normalizeDateTaskFilter(value): DateTaskFilter {
+export function normalizeDateTaskFilter(value: unknown): DateTaskFilter {
   const filter = String(value || "today").trim();
   return DATE_TASK_FILTER_VALUES.has(filter) ? filter as DateTaskFilter : "today";
 }
 
-export function getDateTaskFilterLabel(value) {
+export function getDateTaskFilterLabel(value: unknown): string {
   const filter = normalizeDateTaskFilter(value);
   const option = DATE_TASK_FILTER_OPTIONS.find((item) => item.value === filter);
   return option ? option.label : "Today";
@@ -879,7 +879,7 @@ export function getDaysUntil(date: MomentInput, today: Moment = moment()): numbe
   return target.diff(today.clone().startOf("day"), "days");
 }
 
-export function getNextWeekendDate(settings, today = moment()) {
+export function getNextWeekendDate(settings: Partial<Pick<NoesisFlowSettings, "calendarWeekendDays">> | null | undefined, today: Moment = moment()): Moment | null {
   const weekendDays = normalizeWeekendDays(settings && settings.calendarWeekendDays);
   const cursor = today.clone().startOf("day");
   for (let offset = 0; offset <= 14; offset += 1) {
@@ -891,8 +891,8 @@ export function getNextWeekendDate(settings, today = moment()) {
 
 
 
-export function getCalendarTaskDuplicateKeys(content, settings) {
-  const keys = new Set();
+export function getCalendarTaskDuplicateKeys(content: string, settings: NoesisFlowSettings): Set<string> {
+  const keys = new Set<string>();
   const lines = String(content || "").split(/\r?\n/);
   let section = "";
   let inCodeBlock = false;
@@ -924,7 +924,7 @@ export function getCalendarTaskDuplicateKeys(content, settings) {
 }
 
 /** Determines the single, predictable action for a Calendar date click. */
-export function getCalendarDateClickAction(openTaskCount, canCaptureTask, isPastDate) {
+export function getCalendarDateClickAction(openTaskCount: number, canCaptureTask: boolean, isPastDate: boolean): "tasks" | "create" | "select" {
   if (Number(openTaskCount) > 0) return "tasks";
   if (canCaptureTask && !isPastDate) return "create";
   return "select";
@@ -948,7 +948,7 @@ export const KANBAN_TASK_VIEW_OPTIONS = [
 export const KANBAN_TASK_VIEW_VALUES = new Set(KANBAN_TASK_VIEW_OPTIONS.map((option) => option.value));
 export const KANBAN_CARD_ACCENT_POSITION_VALUES = new Set(["left", "top"]);
 
-export function normalizeKanbanCardAccentPosition(value): NoesisFlowSettings["kanbanCardAccentPosition"] {
+export function normalizeKanbanCardAccentPosition(value: unknown): NoesisFlowSettings["kanbanCardAccentPosition"] {
   const position = String(value || "left").trim();
   return KANBAN_CARD_ACCENT_POSITION_VALUES.has(position)
     ? position as NoesisFlowSettings["kanbanCardAccentPosition"]
@@ -957,7 +957,7 @@ export function normalizeKanbanCardAccentPosition(value): NoesisFlowSettings["ka
 
 export const KANBAN_CARD_CONTEXT_PLACEMENT_VALUES = new Set(["top", "bottom"]);
 
-export function normalizeKanbanCardContextPlacement(value): NoesisFlowSettings["kanbanCardContextPlacement"] {
+export function normalizeKanbanCardContextPlacement(value: unknown): NoesisFlowSettings["kanbanCardContextPlacement"] {
   const placement = String(value || "top").trim();
   return KANBAN_CARD_CONTEXT_PLACEMENT_VALUES.has(placement)
     ? placement as NoesisFlowSettings["kanbanCardContextPlacement"]
@@ -966,19 +966,19 @@ export function normalizeKanbanCardContextPlacement(value): NoesisFlowSettings["
 
 export const KANBAN_CARD_CONTEXT_ALIGNMENT_VALUES = new Set(["left", "center"]);
 
-export function normalizeKanbanCardContextAlignment(value): NoesisFlowSettings["kanbanCardContextAlignment"] {
+export function normalizeKanbanCardContextAlignment(value: unknown): NoesisFlowSettings["kanbanCardContextAlignment"] {
   const alignment = String(value || "left").trim();
   return KANBAN_CARD_CONTEXT_ALIGNMENT_VALUES.has(alignment)
     ? alignment as NoesisFlowSettings["kanbanCardContextAlignment"]
     : "left";
 }
 
-export function normalizeKanbanTaskView(value): NoesisFlowSettings["kanbanTaskView"] {
+export function normalizeKanbanTaskView(value: unknown): NoesisFlowSettings["kanbanTaskView"] {
   const view = String(value || "sections").trim();
   return KANBAN_TASK_VIEW_VALUES.has(view) ? view as NoesisFlowSettings["kanbanTaskView"] : "sections";
 }
 
-export function downloadText(filename, text) {
+export function downloadText(filename: string, text: string): void {
   const blob = new Blob([text], { type: "application/json;charset=utf-8" });
   const url = URL.createObjectURL(blob);
   const link = document.body.createEl("a");
@@ -1023,8 +1023,9 @@ export function serializeKanbanSavedViews(views: unknown[]) {
 }
 
 export function parseKanbanSavedViewsExport(text: string): KanbanSavedView[] {
-  const raw = JSON.parse(String(text || ""));
-  const candidates = Array.isArray(raw) ? raw : raw && Array.isArray(raw.views) ? raw.views : null;
+  const raw: unknown = JSON.parse(String(text || ""));
+  const record = raw && typeof raw === "object" && !Array.isArray(raw) ? raw as Record<string, unknown> : null;
+  const candidates = Array.isArray(raw) ? raw : record && Array.isArray(record.views) ? record.views : null;
   if (!candidates) throw new Error("Choose a Kanban saved views JSON file.");
   const names = new Set<string>();
   const views: KanbanSavedView[] = [];

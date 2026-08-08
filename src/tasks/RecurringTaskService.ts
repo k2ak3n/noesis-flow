@@ -11,6 +11,7 @@ import {
   updateCalendarTaskInContent
 } from "../utils";
 import { getRecurringTaskContinuationDates, getRecurringTaskDates } from "./TaskRecurrence";
+import type { RecurrenceDateSettings } from "./TaskRecurrence";
 import { insertCalendarTasksInSection } from "./TaskMarkdown";
 import { TaskDocumentProcessor } from "./TaskDocumentStore";
 
@@ -19,7 +20,7 @@ export interface RecurringTaskHost {
   readonly settings: NoesisFlowSettings;
   processTaskFile(file: TFile, processor: TaskDocumentProcessor): Promise<void>;
   refreshCalendarTaskCounts(refreshViews?: boolean): Promise<void>;
-  getRecurringTaskDateSettings(overrides?: Record<string, unknown>): unknown;
+  getRecurringTaskDateSettings(overrides?: Record<string, unknown>): RecurrenceDateSettings;
   getRecurringTaskSeriesDates(series: RecurringTaskSeries): string[];
   getRecurringTaskSourceFiles(): TFile[];
   saveSettings(): Promise<void>;
@@ -150,7 +151,7 @@ export class RecurringTaskService {
   private async recoverSeriesFromConfiguredSourcesInternal(force: boolean): Promise<number> {
     if (!force && (this.series.length || this.host.settings.recurringTaskRecoveryVersion >= RECURRING_RECOVERY_VERSION)) return 0;
     const groups = new Map<string, RecoveredOccurrence[]>();
-    const parserSettings = { ...this.host.settings, recurringTaskSeries: [] };
+    const parserSettings: NoesisFlowSettings = { ...this.host.settings, recurringTaskSeries: [] };
     for (const file of this.host.getRecurringTaskSourceFiles()) {
       try {
         const index = parseCalendarTaskIndex(await this.host.vault.read(file), parserSettings, file.path);

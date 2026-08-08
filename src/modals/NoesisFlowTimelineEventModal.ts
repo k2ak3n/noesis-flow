@@ -31,7 +31,7 @@ export class NoesisFlowTimelineEventModal extends Modal {
     const header = contentEl.createDiv({ cls: "noesis-flow-modal-header" });
     header.createEl("h2", { text: this.title });
     const form = contentEl.createDiv({ cls: "noesis-flow-kanban-task-form" });
-    const createField = (label, input) => {
+    const createField = (label: string, input: HTMLElement): HTMLElement => {
       const field = form.createDiv({ cls: "noesis-flow-kanban-task-field" });
       field.createEl("label", { text: label });
       field.appendChild(input);

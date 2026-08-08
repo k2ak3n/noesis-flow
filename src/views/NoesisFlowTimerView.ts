@@ -1,4 +1,5 @@
 import { ItemView, Notice, setIcon } from "obsidian";
+import type { WorkspaceLeaf } from "obsidian";
 import type NoesisFlowPlugin from "../main";
 import type { PomodoroMode } from "../utils";
 import {
@@ -22,7 +23,7 @@ export class NoesisFlowTimerView extends ItemView {
   running: boolean;
   timer: number | null;
 
-  constructor(leaf, plugin) {
+  constructor(leaf: WorkspaceLeaf, plugin: NoesisFlowPlugin) {
     super(leaf);
     this.plugin = plugin;
     this.mode = "focus";
@@ -144,7 +145,7 @@ export class NoesisFlowTimerView extends ItemView {
     return `Cycle ${currentFocus} of ${session.totalCycles}`;
   }
 
-  setMode(mode) {
+  setMode(mode: PomodoroMode) {
     this.mode = normalizePomodoroMode(mode);
     this.running = false;
     this.endsAt = 0;
@@ -287,7 +288,7 @@ export class NoesisFlowTimerView extends ItemView {
     }
   }
 
-  notifyCompletion(message) {
+  notifyCompletion(message: string): void {
     new Notice(message, 8000);
     if (!this.plugin.settings.timerDesktopNotifications || !("Notification" in window) || Notification.permission !== "granted") return;
     new Notification("Pomodoro Timer", { body: message });
@@ -330,7 +331,7 @@ export class NoesisFlowTimerView extends ItemView {
     }
   }
 
-  formatTime(seconds) {
+  formatTime(seconds: number): string {
     const minutes = Math.floor(seconds / 60);
     const remainder = seconds % 60;
     return `${String(minutes).padStart(2, "0")}:${String(remainder).padStart(2, "0")}`;

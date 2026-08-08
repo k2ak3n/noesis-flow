@@ -1,6 +1,8 @@
 import { Notice, setIcon } from "obsidian";
+import type { WorkspaceLeaf } from "obsidian";
+import type { Moment } from "moment";
 import type NoesisFlowPlugin from "../main";
-import type { CalendarTask } from "../types";
+import type { CalendarTask, DateTaskFilter, KanbanTaskStatus, KanbanTaskView, KanbanUnscheduledFilter } from "../types";
 import { NoesisFlowTimedView } from "./NoesisFlowTimedView";
 import { moment } from "../time";
 import {
@@ -36,7 +38,7 @@ export class NoesisFlowKanbanView extends NoesisFlowTimedView {
   searchQuery: string;
   weekOffset: number;
 
-  constructor(leaf, plugin) {
+  constructor(leaf: WorkspaceLeaf, plugin: NoesisFlowPlugin) {
     super(leaf);
     this.plugin = plugin;
     this.draggedTask = null;
@@ -72,13 +74,13 @@ export class NoesisFlowKanbanView extends NoesisFlowTimedView {
     this.contentEl.removeClass("noesis-flow-kanban-view-content");
   }
 
-  async completeTask(task, button) {
+  async completeTask(task: CalendarTask, button?: HTMLButtonElement | null): Promise<void> {
     if (button) button.disabled = true;
     try {
       await this.plugin.completeCalendarTask(task);
     } catch (error) {
       console.error(error);
-      new Notice(`Could not complete task: ${error.message || error}`);
+      new Notice(`Could not complete task: ${error instanceof Error ? error.message : String(error)}`);
       if (button) button.disabled = false;
     }
   }
@@ -96,7 +98,7 @@ export class NoesisFlowKanbanView extends NoesisFlowTimedView {
   }
 
 
-  renderTaskView(container, view) {
+  renderTaskView(container: HTMLElement, view: KanbanTaskView): void {
     const select = container.createEl("select", {
       cls: "dropdown noesis-flow-kanban-view-select",
       attr: { "aria-label": "Kanban grouping" }
@@ -121,7 +123,7 @@ export class NoesisFlowKanbanView extends NoesisFlowTimedView {
     ).open();
   }
 
-  async setFilterValues(statuses, priorities, filter: string = this.plugin.settings.kanbanTaskFilter, unscheduledFilter = this.plugin.settings.kanbanUnscheduledFilter) {
+  async setFilterValues(statuses: KanbanTaskStatus[], priorities: string[], filter: string = this.plugin.settings.kanbanTaskFilter, unscheduledFilter: KanbanUnscheduledFilter = this.plugin.settings.kanbanUnscheduledFilter): Promise<void> {
     this.plugin.settings.kanbanTaskStatuses = statuses;
     this.plugin.settings.kanbanPriorityFilters = priorities;
     this.plugin.settings.kanbanTaskFilter = normalizeDateTaskFilter(filter);
@@ -130,7 +132,7 @@ export class NoesisFlowKanbanView extends NoesisFlowTimedView {
     this.render();
   }
 
-  renderSearch(container) {
+  renderSearch(container: HTMLElement): void {
     const input = container.createEl("input", {
       cls: "noesis-flow-kanban-search",
       attr: { type: "search", placeholder: "Search tasks", "aria-label": "Search Kanban tasks" }
@@ -146,7 +148,7 @@ export class NoesisFlowKanbanView extends NoesisFlowTimedView {
     });
   }
 
-  renderSavedViews(container) {
+  renderSavedViews(container: HTMLElement): void {
     const views = Array.isArray(this.plugin.settings.kanbanSavedViews) ? this.plugin.settings.kanbanSavedViews : [];
     const select = container.createEl("select", { cls: "dropdown noesis-flow-kanban-saved-select", attr: { "aria-label": "Saved Kanban views" } });
     select.createEl("option", { text: "Saved views", attr: { value: "" } });
@@ -166,7 +168,7 @@ export class NoesisFlowKanbanView extends NoesisFlowTimedView {
     }).open());
   }
 
-  getTaskDateLabel(task, today) {
+  getTaskDateLabel(task: Pick<CalendarTask, "dateKey">, today: Moment): string {
     if (!task.dateKey) return "Unscheduled";
     const date = moment(task.dateKey, "YYYY-MM-DD", true).startOf("day");
     if (!date.isValid()) return "Unscheduled";
@@ -176,20 +178,20 @@ export class NoesisFlowKanbanView extends NoesisFlowTimedView {
     return date.format("ddd, MMM D");
   }
 
-  getTaskPriorityOrder(task) {
-    const order = { "!": 0, H: 1, M: 2, L: 3, " ": 4 };
+  getTaskPriorityOrder(task: CalendarTask): number {
+    const order: Record<string, number> = { "!": 0, H: 1, M: 2, L: 3, " ": 4 };
     return Object.prototype.hasOwnProperty.call(order, task.marker) ? order[task.marker] : 4;
   }
 
-  shouldShowUnscheduled(filter, view = "sections") {
+  shouldShowUnscheduled(filter: DateTaskFilter, view: KanbanTaskView = "sections"): boolean {
     if (view === "date") return false;
     const setting = this.plugin.settings.kanbanUnscheduledFilter || "auto";
     if (setting === "include") return true;
     if (setting === "exclude") return false;
-    return view !== "date" && filter === "all";
+    return filter === "all";
   }
 
-  getVisibleTasks(filter, status = "active", includeUnscheduled = this.shouldShowUnscheduled(filter)) {
+  getVisibleTasks(filter: DateTaskFilter, status: KanbanTaskStatus = "active", includeUnscheduled = this.shouldShowUnscheduled(filter)): CalendarTask[] {
     const today = moment().startOf("day");
     const taskQuery = this.plugin.getTaskQuery(today);
     const candidates = status === "completed" ? taskQuery.completed : taskQuery.actionable;
@@ -206,7 +208,7 @@ export class NoesisFlowKanbanView extends NoesisFlowTimedView {
     return tasks;
   }
 
-  sortTasks(tasks, view) {
+  sortTasks(tasks: CalendarTask[], view: KanbanTaskView): CalendarTask[] {
     return tasks.sort((a, b) => {
       if (this.plugin.settings.kanbanCardOrder === "custom" && view === "sections") {
         const source = String(a.sourcePath || "").localeCompare(String(b.sourcePath || ""));
@@ -224,7 +226,7 @@ export class NoesisFlowKanbanView extends NoesisFlowTimedView {
     });
   }
 
-  getColumns(filter, view, statuses) {
+  getColumns(filter: DateTaskFilter, view: KanbanTaskView, statuses: KanbanTaskStatus[]): KanbanColumn[] {
     const query = this.searchQuery.trim().toLowerCase();
     const weekStart = moment().startOf("isoWeek").add(this.weekOffset, "week");
     const weekEnd = weekStart.clone().add(6, "day");
@@ -289,7 +291,7 @@ export class NoesisFlowKanbanView extends NoesisFlowTimedView {
       });
   }
 
-  setCardDragEvents(card, task) {
+  setCardDragEvents(card: HTMLElement, task: CalendarTask): void {
     if (task.completed) return;
     card.draggable = true;
     card.addEventListener("dragstart", (event) => {
@@ -309,7 +311,7 @@ export class NoesisFlowKanbanView extends NoesisFlowTimedView {
     });
   }
 
-  setCardReorderEvents(card, task, view) {
+  setCardReorderEvents(card: HTMLElement, task: CalendarTask, view: KanbanTaskView): void {
     if (this.plugin.settings.kanbanCardOrder !== "custom" || view !== "sections" || task.completed) return;
     card.addEventListener("dragover", (event) => {
       if (!this.draggedTask || this.draggedTask === task) return;
@@ -330,7 +332,7 @@ export class NoesisFlowKanbanView extends NoesisFlowTimedView {
     }));
   }
 
-  async moveTaskToColumn(task, column, view) {
+  async moveTaskToColumn(task: CalendarTask, column: KanbanColumn, view: KanbanTaskView): Promise<void> {
     if (view === "sections") {
       if (!column.value) {
         new Notice("Use a named project to move a task.");
@@ -356,7 +358,7 @@ export class NoesisFlowKanbanView extends NoesisFlowTimedView {
     await this.plugin.updateCalendarTask(task, { marker: column.value }, "Task priority updated.");
   }
 
-  setLaneDropEvents(lane, column, view) {
+  setLaneDropEvents(lane: HTMLElement, column: KanbanColumn, view: KanbanTaskView): void {
     lane.addEventListener("dragover", (event) => {
       if (!this.draggedTask) return;
       event.preventDefault();
@@ -375,7 +377,7 @@ export class NoesisFlowKanbanView extends NoesisFlowTimedView {
     }));
   }
 
-  getTaskCardHeader(task, view, today) {
+  getTaskCardHeader(task: CalendarTask, view: KanbanTaskView, today: Moment): string {
     const project = this.plugin.getProjectLabel(task);
     const date = this.getTaskDateLabel(task, today);
     const priority = PRIORITY_COLUMNS.find((column) => column.value === task.marker)?.title || "No priority";
@@ -385,7 +387,7 @@ export class NoesisFlowKanbanView extends NoesisFlowTimedView {
     return [date, priority].filter(Boolean).join(separator);
   }
 
-  renderTask(container, task, today, view) {
+  renderTask(container: HTMLElement, task: CalendarTask, today: Moment, view: KanbanTaskView): void {
     const card = container.createDiv({ cls: "noesis-flow-kanban-card" });
     card.tabIndex = 0;
     card.setAttribute("role", "group");
@@ -430,7 +432,7 @@ export class NoesisFlowKanbanView extends NoesisFlowTimedView {
     const columns = this.getColumns(filter, view, statuses);
     const taskCount = columns.reduce((total, column) => total + column.tasks.length, 0);
     const visibleFilter = view === "date" ? "all" : filter;
-    const isInVisibleDateWeek = (task) => {
+    const isInVisibleDateWeek = (task: CalendarTask): boolean => {
       if (view !== "date") return true;
       const date = moment(task.dateKey, "YYYY-MM-DD", true);
       if (!date.isValid() || !date.isBetween(moment().startOf("isoWeek").add(this.weekOffset, "week"), moment().startOf("isoWeek").add(this.weekOffset, "week").add(6, "day"), "day", "[]")) return false;

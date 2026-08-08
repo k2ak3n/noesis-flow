@@ -5,6 +5,7 @@
     "lib": ["DOM", "ES2022"],
     "moduleResolution": "node",
     "strict": false,
+    "noImplicitAny": true,
     "noImplicitReturns": true,
     "noUnusedLocals": true,
     "noUnusedParameters": true,

@@ -59,7 +59,7 @@ export class NoesisFlowKanbanTaskModal extends Modal {
     header.createDiv({ cls: "noesis-flow-kanban-task-date", text: this.defaultUndated ? "Unscheduled" : moment(this.initialDate, "YYYY-MM-DD").format("ddd, MMM D") });
 
     const form = contentEl.createDiv({ cls: "noesis-flow-kanban-task-form" });
-    const createField = (label, control) => {
+    const createField = (label: string, control: HTMLElement): HTMLElement => {
       const field = form.createDiv({ cls: "noesis-flow-kanban-task-field" });
       field.createEl("label", { text: label });
       field.appendChild(control);
@@ -73,7 +73,7 @@ export class NoesisFlowKanbanTaskModal extends Modal {
     createField("Task name", taskInput).addClass("noesis-flow-kanban-task-name-field");
 
     const fields = form.createDiv({ cls: "noesis-flow-kanban-task-fields" });
-    const createMetaField = (label, control) => {
+    const createMetaField = (label: string, control: HTMLElement): HTMLElement => {
       const field = fields.createDiv({ cls: "noesis-flow-kanban-task-field" });
       field.createEl("label", { text: label });
       field.appendChild(control);
@@ -305,7 +305,7 @@ export class NoesisFlowKanbanTaskModal extends Modal {
         new Notice("Choose a repeat interval between 1 and 52.");
         return;
       }
-      const invalidExceptionDate = (value) => String(value || "").split(/[\s,|/]+/).filter(Boolean).some((dateKey) => !moment(dateKey, "YYYY-MM-DD", true).isValid());
+      const invalidExceptionDate = (value: unknown): boolean => String(value || "").split(/[\s,|/]+/).filter(Boolean).some((dateKey) => !moment(dateKey, "YYYY-MM-DD", true).isValid());
       if (recurrence !== "none" && (invalidExceptionDate(excludedDatesInput && excludedDatesInput.value) || invalidExceptionDate(includedDatesInput && includedDatesInput.value))) {
         new Notice("Use YYYY-MM-DD for exception dates.");
         return;
@@ -350,7 +350,7 @@ export class NoesisFlowKanbanTaskModal extends Modal {
         this.close();
       } catch (error) {
         console.error(error);
-        new Notice(`Could not add task: ${error.message || error}`);
+        new Notice(`Could not add task: ${error instanceof Error ? error.message : String(error)}`);
       }
     };
 

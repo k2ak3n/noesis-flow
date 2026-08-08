@@ -196,8 +196,7 @@ export function renderNoesisFlowTaskRow(
   };
   if (actionsPlacement === "top") renderActions(main.createDiv({ cls: "noesis-flow-task-edit-actions" }));
 
-  const taskMeta = [
-  ].filter(Boolean);
+  const taskMeta: string[] = [];
   if (task.section || taskMeta.length || actionsPlacement === "meta") {
     const metaRow = body.createDiv({ cls: "noesis-flow-task-meta-row" });
     const metadata = metaRow.createDiv({ cls: "noesis-flow-task-metadata" });

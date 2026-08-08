@@ -21,9 +21,9 @@ export class TaskDocumentStore {
     const path = file.path;
     const previous = this.writeQueues.get(path) ?? Promise.resolve();
     const work = previous
-      .catch(() => undefined)
+      .catch((): void => undefined)
       .then(() => this.vault.process(file, processor));
-    const settled = work.then(() => undefined, () => undefined);
+    const settled = work.then((): void => undefined, (): void => undefined);
 
     this.writeQueues.set(path, settled);
     try {
@@ -40,8 +40,8 @@ export class TaskDocumentStore {
   async processFiles(files: TFile[], operation: () => Promise<void>): Promise<void> {
     const paths = Array.from(new Set(files.map((file) => file.path))).sort();
     const previous = paths.map((path) => this.writeQueues.get(path) ?? Promise.resolve());
-    const work = Promise.all(previous.map((entry) => entry.catch(() => undefined))).then(operation);
-    const settled = work.then(() => undefined, () => undefined);
+    const work = Promise.all(previous.map((entry) => entry.catch((): void => undefined))).then(operation);
+    const settled = work.then((): void => undefined, (): void => undefined);
 
     for (const path of paths) this.writeQueues.set(path, settled);
     try {

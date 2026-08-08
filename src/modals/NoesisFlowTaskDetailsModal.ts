@@ -28,7 +28,7 @@ export class NoesisFlowTaskDetailsModal extends Modal {
     header.createEl("h2", { text: "Task details" });
     const form = contentEl.createDiv({ cls: "noesis-flow-kanban-task-form" });
     let fieldIndex = 0;
-    const field = (label, control) => {
+    const field = (label: string, control: HTMLElement): HTMLElement => {
       const wrap = form.createDiv({ cls: "noesis-flow-kanban-task-field" });
       const labelEl = wrap.createEl("label", { text: label });
       const controlId = `noesis-flow-task-details-${fieldIndex++}`;
@@ -42,7 +42,7 @@ export class NoesisFlowTaskDetailsModal extends Modal {
     title.value = this.task.text || "";
     field("Task", title).addClass("noesis-flow-kanban-task-name-field");
     const fields = form.createDiv({ cls: "noesis-flow-kanban-task-fields" });
-    const meta = (label, control) => {
+    const meta = (label: string, control: HTMLElement): HTMLElement => {
       const wrap = fields.createDiv({ cls: "noesis-flow-kanban-task-field" });
       const labelEl = wrap.createEl("label", { text: label });
       const controlId = `noesis-flow-task-details-${fieldIndex++}`;

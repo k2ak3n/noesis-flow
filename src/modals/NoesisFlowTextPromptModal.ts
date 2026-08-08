@@ -59,7 +59,7 @@ export class NoesisFlowTextPromptModal extends Modal {
         await this.onSubmit(value);
       } catch (error) {
         console.error(error);
-        new Notice(`Noesis Flow command failed: ${error.message || error}`);
+        new Notice(`Noesis Flow command failed: ${error instanceof Error ? error.message : String(error)}`);
       }
     };
 

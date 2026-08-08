@@ -1,9 +1,19 @@
 import { ItemView } from "obsidian";
+import type { WorkspaceLeaf } from "obsidian";
 import type { Moment } from "moment";
 import type NoesisFlowPlugin from "../main";
+import type { CalendarTask, CalendarTaskStats, TimelineEntry } from "../types";
 import { moment } from "../time";
 import { NOESIS_FLOW_CALENDAR_VIEW_TYPE, DEFAULT_SETTINGS, asVoidHandler, getCalendarWeekStart, getCalendarWeekdays, getCalendarWeekdayLabel, isSameCalendarWeek, getCalendarMonthRows, getCalendarQuarter, normalizeWeekendDays } from "../utils";
 import { createCalendarIconButton, createNoesisFlowWidgetShell, setTooltip } from "../ui/NoesisFlowUi";
+
+type CalendarWeek = { weekNum: number; days: Moment[] };
+
+function isCalendarTask(value: unknown): value is CalendarTask {
+  if (!value || typeof value !== "object") return false;
+  const task = value as Partial<CalendarTask>;
+  return typeof task.text === "string" && typeof task.sourcePath === "string" && typeof task.lineIndex === "number";
+}
 
 export class NoesisFlowCalendarView extends ItemView {
   dayTimer: number | null;
@@ -12,7 +22,7 @@ export class NoesisFlowCalendarView extends ItemView {
   plugin: NoesisFlowPlugin;
   selectedDate: Moment;
   today: Moment;
-  constructor(leaf, plugin) {
+  constructor(leaf: WorkspaceLeaf, plugin: NoesisFlowPlugin) {
     super(leaf);
     this.plugin = plugin;
     this.today = moment();
@@ -64,12 +74,12 @@ export class NoesisFlowCalendarView extends ItemView {
     this.render();
   }
 
-  setDisplayedMonth(date) {
+  setDisplayedMonth(date: Moment): void {
     this.displayedMonth = date.clone().startOf("month");
     this.render();
   }
 
-  shiftDisplayedMonth(amount) {
+  shiftDisplayedMonth(amount: number): void {
     this.setDisplayedMonth(this.displayedMonth.clone().add(amount, "month"));
   }
 
@@ -96,7 +106,7 @@ export class NoesisFlowCalendarView extends ItemView {
     return Math.floor(this.displayedMonth.year() / 10) * 10;
   }
 
-  shiftPicker(amount) {
+  shiftPicker(amount: number): void {
     if (this.pickerMode === "month") {
       this.displayedMonth = this.displayedMonth.clone().add(amount, "year").startOf("month");
     } else if (this.pickerMode === "year") {
@@ -107,19 +117,19 @@ export class NoesisFlowCalendarView extends ItemView {
     this.render();
   }
 
-  selectMonth(month) {
+  selectMonth(month: number): void {
     this.displayedMonth = this.displayedMonth.clone().month(month).startOf("month");
     this.pickerMode = "day";
     this.render();
   }
 
-  selectYear(year) {
+  selectYear(year: number): void {
     this.displayedMonth = this.displayedMonth.clone().year(year).startOf("month");
     this.pickerMode = "month";
     this.render();
   }
 
-  selectDate(date) {
+  selectDate(date: Moment): void {
     this.selectedDate = date.clone().startOf("day");
     if (!date.isSame(this.displayedMonth, "month")) {
       this.displayedMonth = date.clone().startOf("month");
@@ -127,12 +137,12 @@ export class NoesisFlowCalendarView extends ItemView {
     this.render();
   }
 
-  handleDateClick(date) {
+  handleDateClick(date: Moment): void {
     this.selectDate(date);
     this.plugin.openCalendarTaskDayDialog(date);
   }
 
-  getDateHoverLines(date, taskSignal, holidayEntries, eventEntries) {
+  getDateHoverLines(date: Moment, taskSignal: CalendarTaskStats, holidayEntries: string[], eventEntries: TimelineEntry[]): Array<{ text: string; kind: string }> {
     const lines: Array<{ text: string; kind: string }> = [];
     const tasks = taskSignal.tasks || [];
 
@@ -233,7 +243,7 @@ export class NoesisFlowCalendarView extends ItemView {
     }
   }
 
-  renderHeader(container) {
+  renderHeader(container: HTMLElement): ReturnType<typeof createNoesisFlowWidgetShell> {
     const centeredLayout = this.settings.calendarLayoutStyle === "centered-weekdays";
     const pickerLabel = this.pickerMode === "year" ? "decade" : this.pickerMode === "month" ? "year" : "month";
     const widget = createNoesisFlowWidgetShell(container, {
@@ -296,7 +306,7 @@ export class NoesisFlowCalendarView extends ItemView {
     return widget;
   }
 
-  renderMonthPicker(container) {
+  renderMonthPicker(container: HTMLElement): void {
     const picker = container.createDiv({ cls: "noesis-flow-calendar-picker noesis-flow-calendar-month-picker" });
     for (let month = 0; month < 12; month += 1) {
       const date = this.displayedMonth.clone().month(month);
@@ -310,7 +320,7 @@ export class NoesisFlowCalendarView extends ItemView {
     }
   }
 
-  renderYearPicker(container) {
+  renderYearPicker(container: HTMLElement): void {
     const picker = container.createDiv({ cls: "noesis-flow-calendar-picker noesis-flow-calendar-year-picker" });
     const decadeStart = this.getYearPickerStart();
     for (let year = decadeStart - 2; year <= decadeStart + 13; year += 1) {
@@ -325,7 +335,7 @@ export class NoesisFlowCalendarView extends ItemView {
     }
   }
 
-  renderQuarters(container) {
+  renderQuarters(container: HTMLElement): void {
     const quarters = container.createDiv({ cls: "noesis-flow-calendar-quarters" });
     const activeQuarter = getCalendarQuarter(this.displayedMonth.month());
 
@@ -343,7 +353,7 @@ export class NoesisFlowCalendarView extends ItemView {
     }
   }
 
-  renderMonthGrid(container, weekStart, weekendDays) {
+  renderMonthGrid(container: HTMLElement, weekStart: number, weekendDays: number[]): void {
     const showWeekNumbers = !!this.settings.calendarShowWeekNumbers;
     const showWeekNumbersRight = !!this.settings.calendarShowWeekNumbersRight;
     const table = container.createEl("table", { cls: "noesis-flow-calendar-grid" });
@@ -390,7 +400,7 @@ export class NoesisFlowCalendarView extends ItemView {
     }
   }
 
-  renderWeekNumber(row, week, weekStart, gridRight) {
+  renderWeekNumber(row: HTMLTableRowElement, week: CalendarWeek, weekStart: number, gridRight: boolean): void {
     const cell = row.createEl("td", { cls: "noesis-flow-calendar-week-cell" });
     cell.classList.toggle("grid-right", gridRight);
 
@@ -404,7 +414,7 @@ export class NoesisFlowCalendarView extends ItemView {
     setTooltip(button, `Week ${week.weekNum}, starting ${week.days[0].format("MMMM D, YYYY")}`);
   }
 
-  renderDayCell(row, date, weekendDays) {
+  renderDayCell(row: HTMLTableRowElement, date: Moment, weekendDays: number[]): void {
     const cell = row.createEl("td", { cls: "noesis-flow-calendar-cell" });
     cell.classList.toggle("weekend", weekendDays.includes(date.day()));
 
@@ -452,7 +462,8 @@ export class NoesisFlowCalendarView extends ItemView {
       const rawTask = event.dataTransfer ? event.dataTransfer.getData("application/x-noesis-flow-task") : "";
       if (!rawTask) return;
       try {
-        const task = JSON.parse(rawTask);
+        const task: unknown = JSON.parse(rawTask);
+        if (!isCalendarTask(task)) return;
         await this.plugin.updateCalendarTask(task, { dateKey: date.format("YYYY-MM-DD") }, `Task moved to ${date.format("MMM D")}.`);
       } catch (error) {
         console.error(error);

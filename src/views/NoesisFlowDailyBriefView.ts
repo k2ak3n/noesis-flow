@@ -1,6 +1,8 @@
 import { Notice } from "obsidian";
+import type { WorkspaceLeaf } from "obsidian";
+import type { Moment } from "moment";
 import type NoesisFlowPlugin from "../main";
-import type { DateTaskFilter } from "../types";
+import type { CalendarTask, DateTaskFilter } from "../types";
 import { NoesisFlowTimedView } from "./NoesisFlowTimedView";
 import { moment } from "../time";
 import {
@@ -12,11 +14,15 @@ import {
 } from "../utils";
 import { renderNoesisFlowMarkdown, renderNoesisFlowTaskRow } from "../ui/NoesisFlowUi";
 import { getNextHolidayCounterEntry } from "../calendar/HolidayMarkdown";
+import type { CalendarTaskGroup } from "../calendar/CalendarTaskData";
+
+type BriefStat = { label: string; value: string; meta?: string; type?: string };
+type BriefEventItem = { type: string; value: string; unit: string; label: string; meta: string; sourcePath?: string };
 
 export class NoesisFlowDailyBriefView extends NoesisFlowTimedView {
   plugin: NoesisFlowPlugin;
 
-  constructor(leaf, plugin) {
+  constructor(leaf: WorkspaceLeaf, plugin: NoesisFlowPlugin) {
     super(leaf);
     this.plugin = plugin;
   }
@@ -61,18 +67,18 @@ export class NoesisFlowDailyBriefView extends NoesisFlowTimedView {
     this.contentEl.removeClass("noesis-flow-daily-brief-view-content");
   }
 
-  async completeTask(task, button) {
+  async completeTask(task: CalendarTask, button?: HTMLButtonElement | null): Promise<void> {
     if (button) button.disabled = true;
     try {
       await this.plugin.completeCalendarTask(task);
     } catch (error) {
       console.error(error);
-      new Notice(`Could not complete task: ${error.message || error}`);
+      new Notice(`Could not complete task: ${error instanceof Error ? error.message : String(error)}`);
       if (button) button.disabled = false;
     }
   }
 
-  getSectionTitle(group) {
+  getSectionTitle(group: CalendarTaskGroup): string {
     if (group.isToday) return `TODAY - ${group.date.format("MMM D")}`.toUpperCase();
     if (group.isTomorrow) return `TOMORROW - ${group.date.format("MMM D")}`.toUpperCase();
     return group.date.format("ddd, MMM D").toUpperCase();
@@ -92,7 +98,7 @@ export class NoesisFlowDailyBriefView extends NoesisFlowTimedView {
     this.render();
   }
 
-  renderTaskFilter(container, filter) {
+  renderTaskFilter(container: HTMLElement, filter: DateTaskFilter): void {
     const select = container.createEl("select", {
       cls: "dropdown noesis-flow-brief-filter-select",
       attr: { "aria-label": "Dashboard task filter" }
@@ -104,8 +110,8 @@ export class NoesisFlowDailyBriefView extends NoesisFlowTimedView {
     select.addEventListener("change", () => this.setTaskFilter(select.value));
   }
 
-  getPriorityCounts(tasks) {
-    const counts = { "!": 0, H: 0, M: 0, L: 0, " ": 0 };
+  getPriorityCounts(tasks: CalendarTask[]): Record<string, number> {
+    const counts: Record<string, number> = { "!": 0, H: 0, M: 0, L: 0, " ": 0 };
     for (const task of tasks) {
       const marker = Object.prototype.hasOwnProperty.call(counts, task.marker) ? task.marker : " ";
       counts[marker] += 1;
@@ -113,17 +119,17 @@ export class NoesisFlowDailyBriefView extends NoesisFlowTimedView {
     return counts;
   }
 
-  renderSignal(container, label, value, meta = "", type = "") {
+  renderSignal(container: HTMLElement, label: string, value: string, meta = "", type = ""): void {
     const signal = container.createDiv({ cls: `noesis-flow-brief-signal ${type ? `type-${type}` : ""}`.trim() });
     signal.createDiv({ cls: "noesis-flow-brief-signal-label", text: label });
     signal.createDiv({ cls: "noesis-flow-brief-signal-value", text: value });
     if (meta) signal.createDiv({ cls: "noesis-flow-brief-signal-meta", text: meta });
   }
 
-  renderPriorityStrip(container, tasks) {
+  renderPriorityStrip(container: HTMLElement, tasks: CalendarTask[]): void {
     const counts = this.getPriorityCounts(tasks);
     const strip = container.createDiv({ cls: "noesis-flow-brief-priority-strip" });
-    const priorities = [
+    const priorities: Array<[string, string]> = [
       ["!", "CRITICAL"],
       ["H", "HIGH"],
       ["M", "MEDIUM"],
@@ -140,7 +146,7 @@ export class NoesisFlowDailyBriefView extends NoesisFlowTimedView {
     }
   }
 
-  renderTaskLane(container, title, tasks, emptyText, extraClass = "") {
+  renderTaskLane(container: HTMLElement, title: string, tasks: CalendarTask[], emptyText: string, extraClass = ""): void {
     const lane = container.createDiv({ cls: `noesis-flow-brief-task-lane ${extraClass}`.trim() });
     const header = lane.createDiv({ cls: "noesis-flow-brief-lane-header" });
     header.createDiv({ cls: "noesis-flow-brief-lane-title", text: title });
@@ -173,7 +179,7 @@ export class NoesisFlowDailyBriefView extends NoesisFlowTimedView {
     }
   }
 
-  renderOverduePanel(container, tasks, enabled) {
+  renderOverduePanel(container: HTMLElement, tasks: CalendarTask[], enabled: boolean): void {
     const panel = container.createDiv({ cls: "noesis-flow-brief-panel noesis-flow-brief-overdue-panel" });
     const header = panel.createDiv({ cls: "noesis-flow-brief-panel-header" });
     header.createDiv({ cls: "noesis-flow-brief-panel-title", text: "OVERDUE" });
@@ -202,7 +208,7 @@ export class NoesisFlowDailyBriefView extends NoesisFlowTimedView {
     if (tasks.length > 8) panel.createDiv({ cls: "noesis-flow-brief-more-line", text: `${tasks.length - 8} MORE TASKS` });
   }
 
-  renderTaskGroups(container, groups, filter) {
+  renderTaskGroups(container: HTMLElement, groups: CalendarTaskGroup[], filter: DateTaskFilter): void {
     const list = container.createDiv({ cls: "noesis-flow-brief-task-groups" });
     if (!groups.length) {
       list.createDiv({ cls: "noesis-flow-brief-empty-line", text: this.getEmptyText(filter) });
@@ -239,7 +245,7 @@ export class NoesisFlowDailyBriefView extends NoesisFlowTimedView {
     }
   }
 
-  renderStatsPanel(container, stats, tasks) {
+  renderStatsPanel(container: HTMLElement, stats: BriefStat[], tasks: CalendarTask[]): void {
     const panel = container.createDiv({ cls: "noesis-flow-brief-panel noesis-flow-brief-stats-panel" });
     const signalGrid = panel.createDiv({ cls: "noesis-flow-brief-signal-grid" });
     for (const stat of stats) {
@@ -251,7 +257,7 @@ export class NoesisFlowDailyBriefView extends NoesisFlowTimedView {
     }
   }
 
-  renderEventsPanel(container, items) {
+  renderEventsPanel(container: HTMLElement, items: BriefEventItem[]): void {
     const panel = container.createDiv({ cls: "noesis-flow-brief-panel noesis-flow-brief-events-panel" });
     const header = panel.createDiv({ cls: "noesis-flow-brief-panel-header" });
     header.createDiv({ cls: "noesis-flow-brief-panel-title", text: "EVENTS / HOLIDAYS" });
@@ -280,7 +286,7 @@ export class NoesisFlowDailyBriefView extends NoesisFlowTimedView {
     }
   }
 
-  renderEventuallyPanel(container, tasks, totalCount) {
+  renderEventuallyPanel(container: HTMLElement, tasks: CalendarTask[], totalCount: number): void {
     const panel = container.createDiv({ cls: "noesis-flow-brief-panel noesis-flow-brief-eventually-panel" });
     const header = panel.createDiv({ cls: "noesis-flow-brief-panel-header" });
     header.createDiv({ cls: "noesis-flow-brief-panel-title", text: "UNSCHEDULED" });
@@ -313,7 +319,7 @@ export class NoesisFlowDailyBriefView extends NoesisFlowTimedView {
     }
   }
 
-  getEventItems(today, showNextHoliday, showWeekend) {
+  getEventItems(today: Moment, showNextHoliday: boolean, showWeekend: boolean): BriefEventItem[] {
     const entries = this.plugin.getTimelineEntries()
       .filter((entry) => entry.type !== "holiday" || showNextHoliday);
     const items = entries.slice(0, 8).map((entry) => {

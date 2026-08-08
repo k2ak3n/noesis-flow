@@ -1,5 +1,7 @@
 import { ItemView, Notice, setIcon } from "obsidian";
+import type { IconName, WorkspaceLeaf } from "obsidian";
 import type NoesisFlowPlugin from "../main";
+import type { RecurringTaskSeries } from "../types";
 import { moment } from "../time";
 import { asVoidHandler, NOESIS_FLOW_RECURRING_VIEW_TYPE } from "../utils";
 import { getRecurringTaskLabel } from "../tasks/TaskRecurrence";
@@ -8,7 +10,7 @@ import { NoesisFlowConfirmModal } from "../modals/NoesisFlowConfirmModal";
 export class NoesisFlowRecurringView extends ItemView {
   plugin: NoesisFlowPlugin;
 
-  constructor(leaf, plugin) {
+  constructor(leaf: WorkspaceLeaf, plugin: NoesisFlowPlugin) {
     super(leaf);
     this.plugin = plugin;
   }
@@ -35,7 +37,7 @@ export class NoesisFlowRecurringView extends ItemView {
     this.contentEl.removeClass("noesis-flow-recurring-view-content");
   }
 
-  renderIconButton(container, icon, label, onClick, cls = "") {
+  renderIconButton(container: HTMLElement, icon: IconName, label: string, onClick: (event: MouseEvent) => void, cls = ""): HTMLButtonElement {
     const button = container.createEl("button", {
       cls: `clickable-icon noesis-flow-recurring-icon-button ${cls}`,
       attr: { type: "button", "aria-label": label, title: label }
@@ -94,7 +96,7 @@ export class NoesisFlowRecurringView extends ItemView {
     for (const series of seriesList) this.renderSeries(list, series);
   }
 
-  renderSeries(container, series) {
+  renderSeries(container: HTMLElement, series: RecurringTaskSeries): void {
     const card = container.createDiv({ cls: `noesis-flow-recurring-card is-${series.status === "paused" ? "paused" : "active"}` });
     const top = card.createDiv({ cls: "noesis-flow-recurring-card-top" });
     top.createDiv({ cls: "noesis-flow-recurring-task-name", text: series.text || "Untitled task" });
@@ -114,7 +116,7 @@ export class NoesisFlowRecurringView extends ItemView {
     ].filter(Boolean);
     card.createDiv({ cls: "noesis-flow-recurring-details", text: details.join(separator) });
     if (series.sourcePath) card.createDiv({ cls: "noesis-flow-recurring-source", text: series.sourcePath });
-    const recurrence = series.recurrence || {};
+    const recurrence = series.recurrence;
     const exceptions = [
       recurrence.skipWeekends ? "Skip weekends" : "",
       recurrence.skipHolidays ? "Skip holidays" : "",

@@ -55,7 +55,7 @@ export class TaskRepository {
 
   async refresh(files: TFile[], settings: NoesisFlowSettings, force = false): Promise<TaskRepositoryIndex> {
     const work = this.refreshQueue
-      .catch(() => undefined)
+      .catch((): void => undefined)
       .then(async () => {
         const activePaths = new Set(files.map((file) => file.path));
         for (const path of Array.from(this.cachedSources.keys())) {

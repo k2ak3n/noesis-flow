@@ -16,6 +16,7 @@ import {
   updateCalendarTaskInContent
 } from "../utils";
 import { getNextAfterCompletionDate } from "./TaskRecurrence";
+import type { RecurrenceDateSettings } from "./TaskRecurrence";
 import { insertCalendarTasksInSection } from "./TaskMarkdown";
 import { preserveTaskLineComments, updateTaskMetadataInText } from "./TaskMetadata";
 import { TaskDocumentProcessor } from "./TaskDocumentStore";
@@ -51,7 +52,7 @@ export interface TaskMutationHost {
   getCalendarTaskFileForTask(task: CalendarTask, showNotice?: boolean): TFile | null;
   getTaskSourcePaths(): string[];
   getRecurringTaskSeries(): RecurringTaskSeries[];
-  getRecurringTaskDateSettings(overrides?: Record<string, unknown>): unknown;
+  getRecurringTaskDateSettings(overrides?: Record<string, unknown>): RecurrenceDateSettings;
   getRecurringTaskSeriesDates(series: RecurringTaskSeries): string[];
   saveSettings(): Promise<void>;
   refreshRecurringTaskManagerViews(): void;

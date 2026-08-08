@@ -1,11 +1,12 @@
 import type NoesisFlowPlugin from "../main";
+import type { WorkspaceLeaf } from "obsidian";
 import { NoesisFlowTimedView } from "./NoesisFlowTimedView";
 import { NOESIS_FLOW_TIMELINE_VIEW_TYPE, clampNumber } from "../utils";
 import { createCalendarIconButton, createNoesisFlowWidgetEmpty, createNoesisFlowWidgetShell, renderNoesisFlowMarkdown } from "../ui/NoesisFlowUi";
 
 export class NoesisFlowTimelineView extends NoesisFlowTimedView {
   plugin: NoesisFlowPlugin;
-  constructor(leaf, plugin) {
+  constructor(leaf: WorkspaceLeaf, plugin: NoesisFlowPlugin) {
     super(leaf);
     this.plugin = plugin;
   }

@@ -34,7 +34,7 @@ export class NoesisFlowMarkdownNoteChooserModal extends Modal {
         await this.onChoose(file);
       } catch (error) {
         console.error(error);
-        new Notice(`Could not select note: ${error.message || error}`);
+        new Notice(`Could not select note: ${error instanceof Error ? error.message : String(error)}`);
       }
     };
 
