@@ -1,9 +1,9 @@
-name: Release 1.0.0
+name: Release
 
 on:
   push:
     tags:
-      - "1.0.0"
+      - "*.*.*"
 
 permissions:
   contents: write
@@ -34,12 +34,12 @@ jobs:
         env:
           RELEASE_TAG: ${{ github.ref_name }}
         run: |
-          node -e 'const fs = require("node:fs"); const tag = process.env.RELEASE_TAG; const packageVersion = JSON.parse(fs.readFileSync("package.json", "utf8")).version; const manifestVersion = JSON.parse(fs.readFileSync("manifest.json", "utf8")).version; if (tag !== "1.0.0" || packageVersion !== tag || manifestVersion !== tag) throw new Error(`Expected tag, package version, and manifest version to be 1.0.0; got ${tag}, ${packageVersion}, ${manifestVersion}.`);'
+          node -e 'const fs = require("node:fs"); const tag = process.env.RELEASE_TAG; const packageVersion = JSON.parse(fs.readFileSync("package.json", "utf8")).version; const manifest = JSON.parse(fs.readFileSync("manifest.json", "utf8")); const versions = JSON.parse(fs.readFileSync("versions.json", "utf8")); if (packageVersion !== tag || manifest.version !== tag || versions[tag] !== manifest.minAppVersion) throw new Error(`Release metadata mismatch for tag ${tag}: package=${packageVersion}, manifest=${manifest.version}, minAppVersion=${manifest.minAppVersion}, versions entry=${versions[tag]}.`);'
 
       - name: Verify and build
         run: |
           pnpm run typecheck
-          pnpm run lint -- --quiet
+          pnpm run lint -- --max-warnings=0
           pnpm test
           pnpm run build
           test -f dist/main.js
