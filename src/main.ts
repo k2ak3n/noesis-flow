@@ -1,5 +1,5 @@
 
-import { CalendarTask, CalendarTaskStats, NoesisFlowProject, NoesisFlowSettings, RecurringTaskSeries, TimerSoundFile, TimelineEntry } from "./types";
+import { CalendarTask, CalendarTaskStats, NoesisFlowProject, NoesisFlowSettings, RecurringTaskRecurrence, RecurringTaskRule, RecurringTaskSeries, TimerSoundFile, TimelineEntry } from "./types";
 import { NOESIS_FLOW_CALENDAR_VIEW_TYPE, NOESIS_FLOW_TIMER_VIEW_TYPE, NOESIS_FLOW_TASK_LIST_VIEW_TYPE, NOESIS_FLOW_PLANNING_VIEW_TYPE, NOESIS_FLOW_KANBAN_VIEW_TYPE, NOESIS_FLOW_RECURRING_VIEW_TYPE, NOESIS_FLOW_DAILY_BRIEF_VIEW_TYPE, NOESIS_FLOW_TIMELINE_VIEW_TYPE, NOESIS_FLOW_VIEW_TYPES, DEFAULT_VIEW_PLACEMENTS, DEFAULT_SETTINGS, DATE_TASK_FILTER_VALUES, KANBAN_TASK_VIEW_VALUES, TASK_LIST_COLUMN_IDS, BUILT_IN_SLOW_TICK_SOUND_PATH, BUILT_IN_TIMER_SOUNDS, normalizeTimerSoundPath, normalizeTaskListColumnOrder, normalizeTaskListVisibleColumns, normalizeTaskListColumnWidths, unique, sanitizeCssText, clampNumber, normalizeMarkdownPath, normalizeCalendarTaskText, getCalendarTaskDateKey, createCalendarTaskLine, createCalendarTaskId, createNoesisFlowProjectId, getCalendarTaskDuplicateKeys, normalizePomodoroMode, normalizeKanbanCardAccentPosition, normalizeKanbanCardContextPlacement, normalizeKanbanCardContextAlignment } from "./utils";
 import { getRecurringTaskDates, getRecurringTaskLabel } from "./tasks/TaskRecurrence";
 import { getMarkdownH2Sections, insertCalendarTasksInSection } from "./tasks/TaskMarkdown";
@@ -30,8 +30,9 @@ import { NoesisFlowTaskDetailsModal } from "./modals/NoesisFlowTaskDetailsModal"
 import { NoesisFlowCalendarDayTasksModal } from "./modals/NoesisFlowCalendarDayTasksModal";
 import { NoesisFlowConfirmModal } from "./modals/NoesisFlowConfirmModal";
 import { NoesisFlowTimelineEventModal } from "./modals/NoesisFlowTimelineEventModal";
-import { Plugin, Notice, TFile } from "obsidian";
+import { MarkdownView, Plugin, Notice, TFile } from "obsidian";
 import { moment } from "./time";
+import type { Moment } from "moment";
 import { getTaskCaptureSection } from "./utils";
 import { queryTasks, resolveTaskProject } from "./tasks/TaskQuery";
 import { RefreshScheduler } from "./services/RefreshScheduler";
@@ -39,6 +40,28 @@ import { settingsNeedPersist } from "./settings/SettingsPersistence";
 import { normalizeSettingsSchema } from "./settings/SettingsNormalizer";
 import { sanitizeSettingsSnapshot } from "./settings/SettingsSnapshot";
 import bundledSlowTickDataUrl from "../media/ticking_slow.mp3";
+
+interface TaskCaptureOptions {
+  defaultRecurrence?: RecurringTaskRule;
+  defaultUndated?: boolean;
+  initialDate?: Moment | null;
+  onCancel?: () => void;
+  onComplete?: () => void;
+}
+
+interface CalendarTaskMetadata extends Record<string, unknown> {
+  projectId?: string | null;
+  seriesId?: string;
+  taskId?: string;
+  priorityMarker?: string;
+}
+
+interface ObsidianSettingsApp {
+  setting?: {
+    open(): void;
+    openTabById(id: string): void;
+  };
+}
 
 export class NoesisFlowPlugin extends Plugin {
   declare settings: NoesisFlowSettings;
@@ -132,11 +155,11 @@ export class NoesisFlowPlugin extends Plugin {
       // Obsidian restores the sidebar after plugins load, which can reset ribbon
       // element visibility. Reapply module visibility once that restore is done.
       this.updateCalendarRibbonIcon();
-      this.refreshCalendarTaskCounts(true);
-      this.refreshHolidayCalendar(true)
+      void this.refreshCalendarTaskCounts(true).catch((error) => console.warn("Noesis Flow: unable to refresh calendar tasks", error));
+      void this.refreshHolidayCalendar(true)
         .then(() => this.maintainRecurringTaskSeriesHorizon())
         .catch((error) => console.warn("Noesis Flow: unable to maintain recurring tasks", error));
-      this.refreshTimelineEntries(true);
+      void this.refreshTimelineEntries(true).catch((error) => console.warn("Noesis Flow: unable to refresh timeline entries", error));
       this.rememberVisibleViewPlacements();
       this.closeSidebarDailyBriefViews().catch((error) => console.warn("Noesis Flow: unable to migrate Dashboard view", error));
     });
@@ -161,28 +184,28 @@ export class NoesisFlowPlugin extends Plugin {
     this.registerView(NOESIS_FLOW_TIMELINE_VIEW_TYPE, (leaf) => new NoesisFlowTimelineView(leaf, this));
 
     this.dailyBriefRibbonIconEl = this.addRibbonIcon("layout-dashboard", "Open Dashboard", () => {
-      this.runCommandSafely(() => this.openDailyBriefView());
+      void this.runCommandSafely(() => this.openDailyBriefView());
     });
     this.calendarRibbonIconEl = this.addRibbonIcon("calendar-days", "Open Calendar", () => {
-      this.runCommandSafely(() => this.openCalendarView());
+      void this.runCommandSafely(() => this.openCalendarView());
     });
     this.timerRibbonIconEl = this.addRibbonIcon("timer", "Open Pomodoro Timer", () => {
-      this.runCommandSafely(() => this.openTimerView());
+      void this.runCommandSafely(() => this.openTimerView());
     });
     this.taskListRibbonIconEl = this.addRibbonIcon("table-properties", "Open Task List", () => {
-      this.runCommandSafely(() => this.openTaskListView());
+      void this.runCommandSafely(() => this.openTaskListView());
     });
     this.planningRibbonIconEl = this.addRibbonIcon("calendar-range", "Open Monthly Planner", () => {
-      this.runCommandSafely(() => this.openPlanningView());
+      void this.runCommandSafely(() => this.openPlanningView());
     });
     this.kanbanRibbonIconEl = this.addRibbonIcon("columns-3", "Open Kanban", () => {
-      this.runCommandSafely(() => this.openKanbanView());
+      void this.runCommandSafely(() => this.openKanbanView());
     });
     this.recurringRibbonIconEl = this.addRibbonIcon("repeat-2", "Open recurring tasks", () => {
-      this.runCommandSafely(() => this.openRecurringTaskManager());
+      void this.runCommandSafely(() => this.openRecurringTaskManager());
     });
     this.timelineRibbonIconEl = this.addRibbonIcon("calendar-clock", "Open Timeline", () => {
-      this.runCommandSafely(() => this.openTimelineView());
+      void this.runCommandSafely(() => this.openTimelineView());
     });
     this.updateCalendarRibbonIcon();
   }
@@ -428,8 +451,17 @@ export class NoesisFlowPlugin extends Plugin {
     if (normalizeTimerSoundPath(path) !== BUILT_IN_SLOW_TICK_SOUND_PATH) {
       throw new Error("Unsupported timer sound.");
     }
-    const response = await fetch(bundledSlowTickDataUrl);
-    return URL.createObjectURL(await response.blob());
+    const separatorIndex = bundledSlowTickDataUrl.indexOf(",");
+    if (separatorIndex === -1) throw new Error("Invalid bundled timer sound.");
+
+    const header = bundledSlowTickDataUrl.slice(0, separatorIndex);
+    const encodedData = bundledSlowTickDataUrl.slice(separatorIndex + 1);
+    if (!header.includes(";base64")) throw new Error("Unsupported bundled timer sound encoding.");
+
+    const mimeType = header.match(/^data:([^;,]+)/)?.[1] || "audio/mpeg";
+    const binary = atob(encodedData);
+    const bytes = Uint8Array.from(binary, (character) => character.charCodeAt(0));
+    return URL.createObjectURL(new Blob([bytes], { type: mimeType }));
   }
 
 
@@ -456,9 +488,9 @@ export class NoesisFlowPlugin extends Plugin {
 
   async closeSidebarDailyBriefViews() {
     const leaves = this.getDailyBriefLeaves();
-    await Promise.all(leaves
-      .filter((leaf) => !this.isMainLeaf(leaf))
-      .map((leaf) => leaf.detach()));
+    for (const leaf of leaves) {
+      if (!this.isMainLeaf(leaf)) leaf.detach();
+    }
   }
 
 
@@ -673,7 +705,7 @@ export class NoesisFlowPlugin extends Plugin {
         if (!cleanPath || seen.has(key)) return false;
         seen.add(key);
         return true;
-      }) as string[];
+      });
   }
 
   getProjects(): NoesisFlowProject[] {
@@ -1104,18 +1136,20 @@ export class NoesisFlowPlugin extends Plugin {
     return true;
   }
 
-  openCalendarTaskCapture(date, options: any = {}) {
+  openCalendarTaskCapture(date: Moment, options: TaskCaptureOptions = {}) {
     if (!this.settings.tasksAddonEnabled || !this.settings.calendarTaskCaptureEnabled) return false;
     const file = this.getCalendarTaskTargetFile(true);
     if (!file) return false;
 
-    this.openTaskCaptureForm(file, date, options).then((opened) => {
-      if (!opened && typeof options.onCancel === "function") options.onCancel();
-    });
+    void this.openTaskCaptureForm(file, date, options)
+      .then((opened) => {
+        if (!opened && typeof options.onCancel === "function") options.onCancel();
+      })
+      .catch((error) => console.error("Noesis Flow: unable to open task capture", error));
     return true;
   }
 
-  async openQuickTaskCapture(options: any = {}) {
+  async openQuickTaskCapture(options: TaskCaptureOptions = {}) {
     if (!this.settings.tasksAddonEnabled) {
       new Notice("Enable Tasks in Noesis Flow settings first.");
       return false;
@@ -1165,7 +1199,7 @@ export class NoesisFlowPlugin extends Plugin {
       return false;
     }
     await leaf.openFile(file);
-    const editor = (leaf.view as any).editor;
+    const editor = leaf.view instanceof MarkdownView ? leaf.view.editor : null;
     const line = Math.max(0, Number(task && task.lineIndex) || 0);
     if (editor && typeof editor.setCursor === "function") {
       const position = { line, ch: 0 };
@@ -1191,7 +1225,7 @@ export class NoesisFlowPlugin extends Plugin {
     return await this.openTaskCaptureForm(file, moment(), { defaultRecurrence: "weekly" });
   }
 
-  async openTaskCaptureForm(file, initialDate, options: any = {}) {
+  async openTaskCaptureForm(file: TFile, initialDate: Moment | null, options: TaskCaptureOptions = {}) {
     let sections = [];
     try {
       sections = unique([
@@ -1241,7 +1275,7 @@ export class NoesisFlowPlugin extends Plugin {
     return this.recurringTaskService.recoverSeriesFromConfiguredSources(force);
   }
 
-  getRecurringTaskDateSettings(overrides: any = {}) {
+  getRecurringTaskDateSettings(overrides: Record<string, unknown> = {}) {
     return Object.assign({}, this.settings, overrides, {
       recurringTaskHolidayDates: Array.from(this.holidayCalendarEntries.keys())
     });
@@ -1312,7 +1346,15 @@ export class NoesisFlowPlugin extends Plugin {
     return this.recurringTaskService.removeSeries(seriesId);
   }
 
-  async appendCalendarTask(file, sectionName, taskText, priority, date, recurrence: any = { rule: "none" }, metadata: any = {}) {
+  async appendCalendarTask(
+    file: TFile,
+    sectionName: string,
+    taskText: string,
+    priority: { marker: string },
+    date: Moment | null,
+    recurrence: RecurringTaskRecurrence = { rule: "none" },
+    metadata: CalendarTaskMetadata = {}
+  ) {
     const section = getTaskCaptureSection(sectionName);
     const cleanTaskText = normalizeCalendarTaskText(taskText);
     if (!section || !cleanTaskText) return;
@@ -1885,35 +1927,34 @@ export class NoesisFlowPlugin extends Plugin {
   }
 
   async closeCalendarViews() {
-    const leaves = this.getCalendarLeaves();
-    await Promise.all(leaves.map((leaf) => leaf.detach()));
+    for (const leaf of this.getCalendarLeaves()) leaf.detach();
   }
 
 
 
   async closeTimerViews() {
-    await Promise.all(this.getTimerLeaves().map((leaf) => leaf.detach()));
+    for (const leaf of this.getTimerLeaves()) leaf.detach();
   }
 
 
   async closeKanbanViews() {
-    await Promise.all(this.getKanbanLeaves().map((leaf) => leaf.detach()));
+    for (const leaf of this.getKanbanLeaves()) leaf.detach();
   }
 
   async closeTaskListViews() {
-    await Promise.all(this.getTaskListLeaves().map((leaf) => leaf.detach()));
+    for (const leaf of this.getTaskListLeaves()) leaf.detach();
   }
 
   async closePlanningViews() {
-    await Promise.all(this.getPlanningLeaves().map((leaf) => leaf.detach()));
+    for (const leaf of this.getPlanningLeaves()) leaf.detach();
   }
 
   async closeRecurringTaskManagerViews() {
-    await Promise.all(this.getRecurringTaskManagerLeaves().map((leaf) => leaf.detach()));
+    for (const leaf of this.getRecurringTaskManagerLeaves()) leaf.detach();
   }
 
   async closeDailyBriefViews() {
-    await Promise.all(this.getDailyBriefLeaves().map((leaf) => leaf.detach()));
+    for (const leaf of this.getDailyBriefLeaves()) leaf.detach();
   }
 
 
@@ -1921,7 +1962,7 @@ export class NoesisFlowPlugin extends Plugin {
 
 
   async closeTimelineViews() {
-    await Promise.all(this.getTimelineLeaves().map((leaf) => leaf.detach()));
+    for (const leaf of this.getTimelineLeaves()) leaf.detach();
   }
 
   async updateCalendarAddonState() {
@@ -2016,7 +2057,7 @@ export class NoesisFlowPlugin extends Plugin {
   registerCommands() {
     this.addCommand({
       id: "open-settings",
-      name: "Open Noesis Flow settings",
+      name: "Open settings",
       callback: () => this.openSettingsTab()
     });
 
@@ -2042,7 +2083,7 @@ export class NoesisFlowPlugin extends Plugin {
 
   }
 
-  async runCommandSafely(callback: () => Promise<unknown> | unknown) {
+  async runCommandSafely(callback: () => void | Promise<unknown>) {
     try {
       await callback();
     } catch (error) {
@@ -2051,7 +2092,7 @@ export class NoesisFlowPlugin extends Plugin {
     }
   }
 
-  addModuleCommand(id: string, name: string, isEnabled: () => boolean, callback: () => Promise<unknown> | unknown) {
+  addModuleCommand(id: string, name: string, isEnabled: () => boolean, callback: () => void | Promise<unknown>) {
     this.addCommand({
       id,
       name,
@@ -2064,7 +2105,7 @@ export class NoesisFlowPlugin extends Plugin {
   }
 
   openSettingsTab() {
-    const settingApp = this.app as any;
+    const settingApp = this.app as unknown as ObsidianSettingsApp;
     if (!settingApp.setting) {
       new Notice("Open Settings, then Noesis Flow.");
       return;
@@ -2073,15 +2114,15 @@ export class NoesisFlowPlugin extends Plugin {
     settingApp.setting.openTabById(this.manifest.id);
   }
 
-  async onunload() {
-    await this.closeCalendarViews();
-    await this.closeTimerViews();
-    await this.closeTaskListViews();
-    await this.closePlanningViews();
-    await this.closeKanbanViews();
-    await this.closeRecurringTaskManagerViews();
-    await this.closeDailyBriefViews();
-    await this.closeTimelineViews();
+  onunload(): void {
+    void this.closeCalendarViews();
+    void this.closeTimerViews();
+    void this.closeTaskListViews();
+    void this.closePlanningViews();
+    void this.closeKanbanViews();
+    void this.closeRecurringTaskManagerViews();
+    void this.closeDailyBriefViews();
+    void this.closeTimelineViews();
   }
 
   async loadSettings() {

@@ -2,6 +2,7 @@ import { Notice, TFile, Vault, normalizePath } from "obsidian";
 import { CalendarTask, NoesisFlowSettings, RecurringTaskSeries } from "../types";
 import { moment } from "../time";
 import {
+  asVoidHandler,
   createCalendarTaskId,
   createCalendarTaskLine,
   deleteCalendarTaskInContent,
@@ -87,15 +88,15 @@ export class TaskMutationService {
     if (this.undoStack.length > 20) this.undoStack.shift();
 
     const notice = new Notice(`${label}.`, 10000);
-    const noticeEl = (notice as Notice & { noticeEl?: HTMLElement }).noticeEl;
+    const noticeEl = notice.messageEl;
     if (!noticeEl) return;
     const button = noticeEl.createEl("button", { text: "Undo", attr: { type: "button" } });
-    button.addEventListener("click", async () => {
+    button.addEventListener("click", asVoidHandler(async () => {
       button.disabled = true;
       const restored = await this.runTaskUndo(entry);
       if (restored) new Notice("Task change undone.");
       notice.hide();
-    });
+    }));
   }
 
   private getTaskAuditPath(): string {

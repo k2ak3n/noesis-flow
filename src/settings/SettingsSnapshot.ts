@@ -20,5 +20,5 @@ export function sanitizeSettingsSnapshot(value: unknown): Partial<NoesisFlowSett
     if (CURRENT_SETTING_KEYS.has(key)) result[key] = setting;
   }
 
-  return result as Partial<NoesisFlowSettings>;
+  return result;
 }

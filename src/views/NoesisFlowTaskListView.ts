@@ -6,6 +6,7 @@ import { moment } from "../time";
 import {
   CALENDAR_TASK_PRIORITIES,
   NOESIS_FLOW_TASK_LIST_VIEW_TYPE,
+  asVoidHandler,
   TASK_LIST_COLUMN_IDS,
   getDateTaskFilterRange,
   normalizeDateTaskFilter
@@ -88,7 +89,9 @@ export class NoesisFlowTaskListView extends NoesisFlowTimedView {
     };
     const minimums = { date: 136, section: 145, priority: 106, actions: 148 };
     if (column === "actions") return minimums.actions;
-    const measure = document.createElement("canvas").getContext("2d");
+    const canvas = this.contentEl.createEl("canvas");
+    const measure = canvas.getContext("2d");
+    canvas.remove();
     if (!measure) return minimums[column] || 96;
     const style = window.getComputedStyle(this.contentEl);
     measure.font = style.font || `${style.fontSize} ${style.fontFamily}`;
@@ -276,7 +279,7 @@ export class NoesisFlowTaskListView extends NoesisFlowTimedView {
 
   focusCell(rowIndex, column) {
     const selector = `[data-task-list-row="${rowIndex}"][data-task-list-column="${column}"]`;
-    const next = this.contentEl.querySelector(selector) as HTMLElement;
+    const next = this.contentEl.querySelector<HTMLElement>(selector);
     if (next) next.focus();
   }
 
@@ -300,13 +303,13 @@ export class NoesisFlowTaskListView extends NoesisFlowTimedView {
     const input = cell.createEl("input", { attr: { type: "text", value: String(task[property] || "") } });
     if (property === "section") input.setAttribute("list", projects);
     this.registerKeyboardNavigation(input, rowIndex, property, columns);
-    input.addEventListener("change", async () => {
+    input.addEventListener("change", asVoidHandler(async () => {
       const value = input.value.trim();
       if (!value || value === String(task[property] || "")) return;
       const updates: any = { [property]: value };
       if (property === "section") updates.projectId = this.plugin.findProjectForSection(task.sourcePath, value)?.id || null;
       await this.updateTask(task, updates);
-    });
+    }));
   }
 
   renderTaskTextEditor(cell, task, rowIndex, columns) {
@@ -320,14 +323,14 @@ export class NoesisFlowTaskListView extends NoesisFlowTimedView {
         cancel();
       }
     });
-    input.addEventListener("change", async () => {
+    input.addEventListener("change", asVoidHandler(async () => {
       const value = input.value.trim();
       if (!value || value === String(task.text || "")) {
         this.render();
         return;
       }
       await this.updateTask(task, { text: value });
-    });
+    }));
     input.focus();
     input.select();
   }
@@ -336,9 +339,9 @@ export class NoesisFlowTaskListView extends NoesisFlowTimedView {
     const cell = row.createEl("td", { cls: "noesis-flow-task-list-cell noesis-flow-task-list-date-cell" });
     const input = cell.createEl("input", { attr: { type: "date", value: task.dateKey || "", "aria-label": `Date ${task.text}` } });
     this.registerKeyboardNavigation(input, rowIndex, "date", columns);
-    input.addEventListener("change", async () => {
+    input.addEventListener("change", asVoidHandler(async () => {
       if (input.value !== String(task.dateKey || "")) await this.updateTask(task, { dateKey: input.value });
-    });
+    }));
   }
 
   renderPriorityCell(row, task, rowIndex, columns) {
@@ -348,11 +351,11 @@ export class NoesisFlowTaskListView extends NoesisFlowTimedView {
     for (const item of CALENDAR_TASK_PRIORITIES) select.createEl("option", { text: item.label, attr: { value: item.marker } });
     select.value = task.marker || " ";
     this.registerKeyboardNavigation(select, rowIndex, "priority", columns);
-    select.addEventListener("change", async () => {
+    select.addEventListener("change", asVoidHandler(async () => {
       if (select.value === task.marker) return;
       if (select.value === "X") await this.plugin.completeCalendarTask(task);
       else await this.updateTask(task, { marker: select.value });
-    });
+    }));
   }
 
   renderActionsCell(row, task) {
@@ -360,19 +363,19 @@ export class NoesisFlowTaskListView extends NoesisFlowTimedView {
     const controls = cell.createDiv({ cls: "noesis-flow-task-list-row-actions" });
     const details = controls.createEl("button", { cls: "noesis-flow-task-list-action-button", attr: { type: "button", "aria-label": `Open task details: ${task.text}`, title: "Task details" } });
     setIcon(details, "panel-right-open");
-    details.addEventListener("click", () => this.plugin.openTaskDetails(task));
+    details.addEventListener("click", () => void this.plugin.openTaskDetails(task));
     const source = controls.createEl("button", { cls: "noesis-flow-task-list-action-button", attr: { type: "button", "aria-label": `Open source note: ${task.text}`, title: "Open source note" } });
     setIcon(source, "file-text");
-    source.addEventListener("click", () => this.plugin.openTaskSource(task));
+    source.addEventListener("click", () => void this.plugin.openTaskSource(task));
     const complete = controls.createEl("button", { cls: "noesis-flow-task-list-action-button noesis-flow-task-list-complete-button", attr: { type: "button", "aria-label": task.completed ? `Reopen task: ${task.text}` : `Complete task: ${task.text}`, title: task.completed ? "Reopen task" : "Mark complete" } });
     setIcon(complete, task.completed ? "rotate-ccw" : "check");
-    complete.addEventListener("click", async () => {
+    complete.addEventListener("click", asVoidHandler(async () => {
       if (task.completed) await this.updateTask(task, { marker: " " });
       else await this.plugin.completeCalendarTask(task);
-    });
+    }));
     const button = controls.createEl("button", { cls: "noesis-flow-task-list-delete-button", attr: { type: "button", "aria-label": `Delete task: ${task.text}`, title: "Delete task" } });
     setIcon(button, "trash");
-    button.addEventListener("click", () => this.plugin.requestCalendarTaskDelete(task));
+    button.addEventListener("click", () => void this.plugin.requestCalendarTaskDelete(task));
   }
 
   renderSelectionCell(row, task) {
@@ -413,15 +416,15 @@ export class NoesisFlowTaskListView extends NoesisFlowTimedView {
     header.setAttribute("aria-label", column === "actions"
       ? "Actions column. Press Alt+Shift+Left or Right Arrow to rearrange."
       : `${COLUMN_LABELS[column]} column. Press Enter or Space to sort, or Alt+Shift+Left or Right Arrow to rearrange.`);
-    header.addEventListener("click", async () => {
+    header.addEventListener("click", asVoidHandler(async () => {
       if (column === "actions") return;
       const direction = this.plugin.settings.taskListSortColumn === column && this.plugin.settings.taskListSortDirection === "asc" ? "desc" : "asc";
       this.plugin.settings.taskListSortColumn = column;
       this.plugin.settings.taskListSortDirection = direction;
       await this.plugin.saveSettings();
       this.render();
-    });
-    header.addEventListener("keydown", async (event) => {
+    }));
+    header.addEventListener("keydown", asVoidHandler(async (event: KeyboardEvent) => {
       const moveOffset = event.altKey && event.shiftKey && event.key === "ArrowLeft" ? -1
         : event.altKey && event.shiftKey && event.key === "ArrowRight" ? 1 : 0;
       if (moveOffset) {
@@ -436,7 +439,7 @@ export class NoesisFlowTaskListView extends NoesisFlowTimedView {
       this.plugin.settings.taskListSortDirection = direction;
       await this.plugin.saveSettings();
       this.render();
-    });
+    }));
     header.addEventListener("dragstart", (event) => {
       this.draggedColumn = column;
       header.addClass("is-dragging");
@@ -452,23 +455,23 @@ export class NoesisFlowTaskListView extends NoesisFlowTimedView {
       header.addClass("is-drop-target");
     });
     header.addEventListener("dragleave", () => header.removeClass("is-drop-target"));
-    header.addEventListener("drop", async (event) => {
+    header.addEventListener("drop", asVoidHandler(async (event: DragEvent) => {
       event.preventDefault();
       header.removeClass("is-drop-target");
       await this.moveColumn(this.draggedColumn, column);
-    });
+    }));
     const resizer = header.createEl("div", {
       cls: "noesis-flow-task-list-column-resizer",
       attr: { role: "separator", tabindex: "0", "aria-label": `Resize ${COLUMN_LABELS[column]} column` }
     });
     resizer.addEventListener("pointerdown", (event) => this.startColumnResize(event, column, header, resizer));
-    resizer.addEventListener("keydown", async (event) => {
+    resizer.addEventListener("keydown", asVoidHandler(async (event: KeyboardEvent) => {
       if (!['ArrowLeft', 'ArrowRight'].includes(event.key)) return;
       event.preventDefault();
       event.stopPropagation();
       const delta = event.key === 'ArrowLeft' ? -10 : 10;
       await this.setColumnWidth(column, Math.max(80, Math.round(header.getBoundingClientRect().width) + delta));
-    });
+    }));
     resizer.addEventListener("click", (event) => event.stopPropagation());
   }
 
@@ -481,14 +484,14 @@ export class NoesisFlowTaskListView extends NoesisFlowTimedView {
     const startX = event.clientX;
     const startWidth = header.getBoundingClientRect().width;
     const table = header.closest("table");
-    const columnDefinition = table && table.querySelector(`col[data-task-list-column="${column}"]`) as HTMLElement | null;
+    const columnDefinition = table?.querySelector<HTMLElement>(`col[data-task-list-column="${column}"]`) || null;
     const onMove = (moveEvent: PointerEvent) => {
       if (moveEvent.pointerId !== event.pointerId) return;
       const width = Math.max(32, Math.min(1000, Math.round(startWidth + moveEvent.clientX - startX)));
       header.style.width = `${width}px`;
       if (columnDefinition) columnDefinition.style.width = `${width}px`;
     };
-    const finish = async (upEvent: PointerEvent) => {
+    const finish = asVoidHandler(async (upEvent: PointerEvent) => {
       if (upEvent.pointerId !== event.pointerId) return;
       const width = Math.max(32, Math.min(1000, Math.round(startWidth + upEvent.clientX - startX)));
       resizer.removeEventListener("pointermove", onMove);
@@ -499,7 +502,7 @@ export class NoesisFlowTaskListView extends NoesisFlowTimedView {
       this.plugin.settings.taskListColumnWidths = Object.assign({}, this.plugin.settings.taskListColumnWidths, { [column]: width });
       await this.plugin.saveSettings();
       this.render();
-    };
+    });
     resizer.addEventListener("pointermove", onMove);
     resizer.addEventListener("pointerup", finish);
     resizer.addEventListener("pointercancel", finish);
@@ -578,7 +581,7 @@ export class NoesisFlowTaskListView extends NoesisFlowTimedView {
     priority.createEl("option", { text: "Keep priority", attr: { value: "" } });
     for (const item of CALENDAR_TASK_PRIORITIES) priority.createEl("option", { text: item.label, attr: { value: item.marker } });
     const apply = bar.createEl("button", { text: "Apply fields", attr: { type: "button" } });
-    apply.addEventListener("click", async () => {
+    apply.addEventListener("click", asVoidHandler(async () => {
       const updates: any = {};
       if (date.value) updates.dateKey = date.value;
       if (section.value.trim()) updates.section = section.value.trim();
@@ -591,25 +594,25 @@ export class NoesisFlowTaskListView extends NoesisFlowTimedView {
       }
       this.selectedTaskKeys.clear();
       this.render();
-    });
+    }));
     const clearDates = bar.createEl("button", { text: "Clear Dates", attr: { type: "button" } });
-    clearDates.addEventListener("click", async () => {
+    clearDates.addEventListener("click", asVoidHandler(async () => {
       for (const task of selected) await this.updateTask(task, { dateKey: "" });
       this.selectedTaskKeys.clear();
       this.render();
-    });
+    }));
     const complete = bar.createEl("button", { text: "Complete", attr: { type: "button" } });
-    complete.addEventListener("click", async () => {
+    complete.addEventListener("click", asVoidHandler(async () => {
       for (const task of selected.filter((task) => !task.completed)) await this.plugin.completeCalendarTask(task);
       this.selectedTaskKeys.clear();
       this.render();
-    });
+    }));
     const reopen = bar.createEl("button", { text: "Reopen", attr: { type: "button" } });
-    reopen.addEventListener("click", async () => {
+    reopen.addEventListener("click", asVoidHandler(async () => {
       for (const task of selected.filter((task) => task.completed)) await this.updateTask(task, { marker: " " });
       this.selectedTaskKeys.clear();
       this.render();
-    });
+    }));
     const clear = bar.createEl("button", { text: "Clear selection", attr: { type: "button" } });
     clear.addEventListener("click", () => { this.selectedTaskKeys.clear(); this.render(); });
   }
@@ -659,7 +662,7 @@ export class NoesisFlowTaskListView extends NoesisFlowTimedView {
     const filtersActive = this.filter !== "all" || this.statuses.length !== 1 || this.statuses[0] !== "active" || this.priorities.length !== 5 || this.unscheduledFilter !== "auto";
     const controls = header.createDiv({ cls: "noesis-flow-task-list-controls" });
     const addButton = controls.createEl("button", { cls: "mod-cta", text: "New task", attr: { type: "button" } });
-    addButton.addEventListener("click", () => this.plugin.openTaskListQuickTaskCapture());
+    addButton.addEventListener("click", () => void this.plugin.openTaskListQuickTaskCapture());
     const columnButton = controls.createEl("button", { text: "Columns", attr: { type: "button" } });
     columnButton.addEventListener("click", () => { this.columnChooserOpen = !this.columnChooserOpen; this.render(); });
     const filterButton = controls.createEl("button", { cls: "noesis-flow-task-list-filter-button", attr: { type: "button", "aria-label": "Filter Task List" } });

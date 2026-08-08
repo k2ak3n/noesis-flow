@@ -1,16 +1,17 @@
 import { ItemView } from "obsidian";
+import type { Moment } from "moment";
 import type NoesisFlowPlugin from "../main";
 import { moment } from "../time";
-import { NOESIS_FLOW_CALENDAR_VIEW_TYPE, DEFAULT_SETTINGS, getCalendarWeekStart, getCalendarWeekdays, getCalendarWeekdayLabel, isSameCalendarWeek, getCalendarMonthRows, getCalendarQuarter, normalizeWeekendDays } from "../utils";
+import { NOESIS_FLOW_CALENDAR_VIEW_TYPE, DEFAULT_SETTINGS, asVoidHandler, getCalendarWeekStart, getCalendarWeekdays, getCalendarWeekdayLabel, isSameCalendarWeek, getCalendarMonthRows, getCalendarQuarter, normalizeWeekendDays } from "../utils";
 import { createCalendarIconButton, createNoesisFlowWidgetShell, setTooltip } from "../ui/NoesisFlowUi";
 
 export class NoesisFlowCalendarView extends ItemView {
   dayTimer: number | null;
-  displayedMonth: any;
+  displayedMonth: Moment;
   pickerMode: "day" | "month" | "year";
   plugin: NoesisFlowPlugin;
-  selectedDate: any;
-  today: any;
+  selectedDate: Moment;
+  today: Moment;
   constructor(leaf, plugin) {
     super(leaf);
     this.plugin = plugin;
@@ -442,8 +443,10 @@ export class NoesisFlowCalendarView extends ItemView {
       event.dataTransfer.dropEffect = "move";
       button.addClass("is-drop-target");
     });
-    button.addEventListener("dragleave", () => button.removeClass("is-drop-target"));
-    button.addEventListener("drop", async (event) => {
+    button.addEventListener("dragleave", () => {
+      button.removeClass("is-drop-target");
+    });
+    button.addEventListener("drop", asVoidHandler(async (event: DragEvent) => {
       event.preventDefault();
       button.removeClass("is-drop-target");
       const rawTask = event.dataTransfer ? event.dataTransfer.getData("application/x-noesis-flow-task") : "";
@@ -454,7 +457,7 @@ export class NoesisFlowCalendarView extends ItemView {
       } catch (error) {
         console.error(error);
       }
-    });
+    }));
     const hoverLines = this.getDateHoverLines(date, taskSignal, holidayEntries, eventEntries);
     if (!hoverLines.length) {
       button.removeAttribute("aria-description");

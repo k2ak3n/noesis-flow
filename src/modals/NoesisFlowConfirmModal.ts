@@ -1,4 +1,5 @@
 import { Modal, Notice } from "obsidian";
+import { asVoidHandler } from "../utils";
 
 export class NoesisFlowConfirmModal extends Modal {
   title: string;
@@ -25,7 +26,7 @@ export class NoesisFlowConfirmModal extends Modal {
     actions.createEl("button", { text: "Cancel", attr: { type: "button" } }).addEventListener("click", () => this.close());
     const confirm = actions.createEl("button", { text: this.confirmLabel, attr: { type: "button" } });
     confirm.addClass("mod-warning");
-    confirm.addEventListener("click", async () => {
+    confirm.addEventListener("click", asVoidHandler(async () => {
       confirm.disabled = true;
       try {
         await this.onConfirm();
@@ -35,6 +36,6 @@ export class NoesisFlowConfirmModal extends Modal {
         new Notice(`Noesis Flow command failed: ${error.message || error}`);
         confirm.disabled = false;
       }
-    });
+    }));
   }
 }

@@ -1,13 +1,11 @@
-import { Notice, Modal, Setting } from "obsidian";
+import { Notice, Modal, Setting, TFile } from "obsidian";
 export class NoesisFlowMarkdownNoteChooserModal extends Modal {
   onChoose: any;
-  query: any;
   title: any;
   constructor(app, title, onChoose) {
     super(app);
     this.title = title || "Choose note";
     this.onChoose = onChoose;
-    this.query = "";
   }
 
   onOpen() {
@@ -20,18 +18,15 @@ export class NoesisFlowMarkdownNoteChooserModal extends Modal {
 
     const input = contentEl.createEl("input", {
       type: "text",
-      placeholder: "Search notes",
-      attr: { "aria-label": "Search notes" }
+      placeholder: "Path to a Markdown note",
+      attr: { "aria-label": "Path to a Markdown note" }
     });
     input.addClass("noesis-flow-dialog-text-input");
 
-    const list = contentEl.createDiv({ cls: "noesis-flow-dialog-chooser-list" });
-    const getMatches = () => {
-      const query = this.query.trim().toLowerCase();
-      return this.app.vault.getMarkdownFiles()
-        .filter((file) => !query || file.path.toLowerCase().includes(query) || file.basename.toLowerCase().includes(query))
-        .slice(0, 60);
-    };
+    contentEl.createEl("p", {
+      cls: "setting-item-description",
+      text: "Enter the exact vault-relative path to a Markdown note, for example Projects/Tasks.md."
+    });
 
     const choose = async (file) => {
       this.close();
@@ -43,27 +38,15 @@ export class NoesisFlowMarkdownNoteChooserModal extends Modal {
       }
     };
 
-    const render = () => {
-      list.empty();
-      const matches = getMatches();
-      if (!matches.length) {
-        list.createEl("p", { text: "No matching notes." });
+    const chooseInput = () => {
+      const path = input.value.trim();
+      const file = this.app.vault.getAbstractFileByPath(path);
+      if (!(file instanceof TFile) || file.extension !== "md") {
+        new Notice("Enter the path to an existing Markdown note.");
         return;
       }
-
-      for (const file of matches) {
-        const item = list.createEl("button", { cls: "noesis-flow-dialog-chooser-item" });
-        item.type = "button";
-        item.createEl("span", { cls: "noesis-flow-dialog-chooser-title", text: file.basename });
-        item.createEl("span", { cls: "noesis-flow-dialog-chooser-meta", text: file.path });
-        item.addEventListener("click", () => choose(file));
-      }
+      void choose(file);
     };
-
-    input.addEventListener("input", () => {
-      this.query = input.value;
-      render();
-    });
 
     input.addEventListener("keydown", (event) => {
       if (event.key === "Escape") {
@@ -71,20 +54,22 @@ export class NoesisFlowMarkdownNoteChooserModal extends Modal {
         this.close();
       }
       if (event.key === "Enter") {
-        const first = getMatches()[0];
-        if (!first) return;
         event.preventDefault();
-        choose(first);
+        chooseInput();
       }
     });
 
     new Setting(contentEl)
       .addButton((button) => {
+        button.setButtonText("Choose");
+        button.setCta();
+        button.onClick(chooseInput);
+      })
+      .addButton((button) => {
         button.setButtonText("Cancel");
         button.onClick(() => this.close());
       });
 
-    render();
     window.setTimeout(() => input.focus(), 0);
   }
 }

@@ -73,7 +73,7 @@ export function createCalendarIconButton(
 }
 
 export function enhanceNoesisFlowDatePicker(input: HTMLInputElement): void {
-  const existing = input.parentElement?.closest(".noesis-flow-date-input-control") as HTMLElement | null;
+  const existing = input.parentElement?.closest(".noesis-flow-date-input-control");
   if (existing) {
     existing.classList.toggle("is-date-input", input.type === "date");
     const button = existing.querySelector<HTMLButtonElement>(".noesis-flow-date-picker-button");
@@ -81,13 +81,11 @@ export function enhanceNoesisFlowDatePicker(input: HTMLInputElement): void {
     return;
   }
   if (input.type !== "date" || !input.parentElement) return;
-  const wrapper = document.createElement("div");
-  wrapper.className = "noesis-flow-date-input-control is-date-input";
-  input.parentElement.insertBefore(wrapper, input);
+  const parent = input.parentElement;
+  const wrapper = parent.createDiv({ cls: "noesis-flow-date-input-control is-date-input" });
+  parent.insertBefore(wrapper, input);
   wrapper.appendChild(input);
-  const button = document.createElement("button");
-  button.type = "button";
-  button.className = "noesis-flow-date-picker-button";
+  const button = wrapper.createEl("button", { cls: "noesis-flow-date-picker-button", attr: { type: "button" } });
   setIcon(button, "calendar-days");
   setTooltip(button, "Open date picker");
   button.addEventListener("click", () => {
@@ -101,7 +99,6 @@ export function enhanceNoesisFlowDatePicker(input: HTMLInputElement): void {
       input.click();
     }
   });
-  wrapper.appendChild(button);
 }
 
 export function enhanceNoesisFlowDatePickers(container: HTMLElement): void {
@@ -173,7 +170,7 @@ export function renderNoesisFlowTaskRow(
     cls: "noesis-flow-today-task-marker noesis-flow-today-task-complete",
     text: completed ? "\u2713" : "",
     attr: { type: "button" }
-  }) as unknown as HTMLButtonElement;
+  });
   setTooltip(completeButton, completed ? `Completed ${priorityLabel} task: ${task.text}` : `Mark ${priorityLabel} task complete: ${task.text}`);
   if (completed) completeButton.disabled = true;
   if (!completed && callbacks.onComplete) {

@@ -1,4 +1,5 @@
 import { Modal, Setting, Notice } from "obsidian";
+import { asVoidHandler } from "../utils";
 
 export class NoesisFlowChoiceModal extends Modal {
   onCancel: any;
@@ -41,7 +42,7 @@ export class NoesisFlowChoiceModal extends Modal {
         cls: "noesis-flow-dialog-chooser-meta",
         text: this.renderMeta(choice)
       });
-      item.addEventListener("click", async () => {
+      item.addEventListener("click", asVoidHandler(async () => {
         this.didChoose = true;
         this.close();
         try {
@@ -50,7 +51,7 @@ export class NoesisFlowChoiceModal extends Modal {
           console.error(error);
           new Notice(`Noesis Flow command failed: ${error.message || error}`);
         }
-      });
+      }));
     }
 
     new Setting(contentEl)

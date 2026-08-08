@@ -1,4 +1,5 @@
 import { moment } from "../time";
+import type { Moment } from "moment";
 import { findNoesisFlowDateMarker, isMarkdownCodeFenceLine } from "../utils";
 
 export function parseHolidayEntries(content: unknown, settings: unknown): Map<string, string[]> {
@@ -29,10 +30,17 @@ export function serializeHolidayEntries(holidays: Map<string, string[]>): string
   return JSON.stringify(Array.from(holidays.entries()).sort(([a], [b]) => a.localeCompare(b)));
 }
 
-export function getNextHolidayCounterEntry(holidayEntries: Map<string, string[]>, today = moment()) {
+export interface HolidayCounterEntry {
+  type: "holiday";
+  label: string;
+  date: Moment;
+  meta: "Holiday";
+}
+
+export function getNextHolidayCounterEntry(holidayEntries: Map<string, string[]>, today: Moment = moment()): HolidayCounterEntry | null {
   if (!(holidayEntries instanceof Map) || !holidayEntries.size) return null;
   const todayStart = today.clone().startOf("day");
-  const candidates = [];
+  const candidates: HolidayCounterEntry[] = [];
   for (const [dateKey, entries] of holidayEntries.entries()) {
     const date = moment(dateKey, "YYYY-MM-DD", true).startOf("day");
     if (!date.isValid() || date.isBefore(todayStart, "day")) continue;

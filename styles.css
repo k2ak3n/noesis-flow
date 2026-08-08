@@ -14,13 +14,15 @@
   padding-top: 18px;
 }
 
-.noesis-flow-settings-panel > h3.noesis-flow-settings-group-heading {
+.noesis-flow-settings-panel > .noesis-flow-settings-group-heading {
   border-top: 0;
   color: var(--text-normal);
   font-size: var(--font-ui-medium);
   font-weight: 700;
   letter-spacing: 0;
   margin: 0 0 8px;
+  min-height: 0;
+  padding-bottom: 0;
   padding-top: 0;
 }
 
@@ -319,10 +321,10 @@
 .noesis-flow-calendar-week-number,
 .noesis-flow-calendar-day {
   appearance: none;
-  background: transparent !important;
-  background-image: none !important;
-  border: 0 !important;
-  box-shadow: none !important;
+  background: transparent;
+  background-image: none;
+  border: 0;
+  box-shadow: none;
   font: inherit;
   letter-spacing: 0;
   margin: 0;
@@ -384,7 +386,7 @@
 .noesis-flow-calendar-picker {
   display: grid;
   align-content: space-between;
-  column-gap: 8px;
+  gap: 8px;
   flex: 1 1 auto;
   grid-template-columns: repeat(4, minmax(0, 1fr));
   margin: 0;
@@ -417,7 +419,7 @@
 }
 
 .noesis-flow-calendar-picker-button.active {
-  background: color-mix(in srgb, var(--noesis-flow-widget-accent) 64%, var(--background-primary)) !important;
+  background: color-mix(in srgb, var(--noesis-flow-widget-accent) 64%, var(--background-primary));
   color: var(--text-on-accent, var(--text-normal));
   font-weight: 600;
   opacity: 1;
@@ -429,7 +431,7 @@
 }
 
 .noesis-flow-calendar-picker-button:focus-visible {
-  box-shadow: 0 0 0 2px var(--interactive-accent) !important;
+  box-shadow: 0 0 0 2px var(--interactive-accent);
 }
 
 .noesis-flow-calendar-wrapper.picker-mode-month,
@@ -501,7 +503,7 @@
 .noesis-flow-calendar-today-button {
   align-items: center;
   border-radius: var(--noesis-flow-calendar-cell-radius, 6px);
-  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--noesis-flow-widget-accent) 18%, transparent) !important;
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--noesis-flow-widget-accent) 18%, transparent);
   color: var(--color-button);
   cursor: pointer;
   display: inline-flex;
@@ -519,7 +521,7 @@
 .noesis-flow-calendar-icon-button {
   align-items: center;
   border-radius: var(--noesis-flow-calendar-cell-radius, 6px);
-  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--noesis-flow-widget-accent) 18%, transparent) !important;
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--noesis-flow-widget-accent) 18%, transparent);
   color: var(--color-arrow);
   cursor: pointer;
   display: flex;
@@ -534,7 +536,7 @@
 .noesis-flow-calendar-today-button:hover,
 .noesis-flow-calendar-icon-button:hover,
 .noesis-flow-calendar-icon-button.active {
-  background-color: var(--color-hover-cell) !important;
+  background-color: var(--color-hover-cell);
   color: var(--color-active-cell);
   opacity: 1;
 }
@@ -636,7 +638,7 @@
 
 .noesis-flow-calendar-day:hover,
 .noesis-flow-calendar-week-number:hover {
-  background-color: var(--color-hover-cell) !important;
+  background-color: var(--color-hover-cell);
 }
 
 .noesis-flow-calendar-day.today {
@@ -645,16 +647,16 @@
 }
 
 .noesis-flow-calendar-day.active {
-  background-color: var(--color-active-cell) !important;
+  background-color: var(--color-active-cell);
   color: var(--text-on-accent);
 }
 
 .noesis-flow-calendar-day.active:hover {
-  background-color: var(--color-active-cell-hover, var(--interactive-accent-hover)) !important;
+  background-color: var(--color-active-cell-hover, var(--interactive-accent-hover));
 }
 
 .noesis-flow-calendar-day.is-drop-target {
-  box-shadow: inset 0 0 0 2px var(--interactive-accent) !important;
+  box-shadow: inset 0 0 0 2px var(--interactive-accent);
   transform: scale(1.04);
 }
 
@@ -663,7 +665,7 @@
 }
 
 .noesis-flow-calendar-day.task-load-busy:not(.active) {
-  background-color: color-mix(in srgb, var(--color-active-cell) 8%, transparent) !important;
+  background-color: color-mix(in srgb, var(--color-active-cell) 8%, transparent);
   color: color-mix(in srgb, var(--color-active-cell) 24%, var(--text-normal));
 }
 
@@ -672,7 +674,7 @@
 }
 
 .noesis-flow-calendar-day.event:not(.active) {
-  background-color: color-mix(in srgb, var(--noesis-flow-calendar-event-color) 14%, transparent) !important;
+  background-color: color-mix(in srgb, var(--noesis-flow-calendar-event-color) 14%, transparent);
   color: color-mix(in srgb, var(--noesis-flow-calendar-event-color) 72%, var(--text-normal));
 }
 
@@ -682,7 +684,7 @@
 }
 
 .noesis-flow-calendar-day.task-load-warning:not(.active) {
-  background-color: color-mix(in srgb, var(--noesis-flow-calendar-load-color) 16%, transparent) !important;
+  background-color: color-mix(in srgb, var(--noesis-flow-calendar-load-color) 16%, transparent);
   color: color-mix(in srgb, var(--noesis-flow-calendar-load-color) 68%, var(--text-normal));
 }
 
@@ -692,7 +694,7 @@
 }
 
 .noesis-flow-calendar-day.task-load-critical:not(.active) {
-  background-color: color-mix(in srgb, var(--noesis-flow-calendar-load-color) 16%, transparent) !important;
+  background-color: color-mix(in srgb, var(--noesis-flow-calendar-load-color) 16%, transparent);
   color: color-mix(in srgb, var(--noesis-flow-calendar-load-color) 70%, var(--text-normal));
 }
 
@@ -704,7 +706,7 @@
 
 .noesis-flow-calendar-day.task-load-overdue:not(.active),
 .noesis-flow-calendar-day.holiday:not(.active) {
-  background-color: color-mix(in srgb, var(--noesis-flow-calendar-load-color) 16%, transparent) !important;
+  background-color: color-mix(in srgb, var(--noesis-flow-calendar-load-color) 16%, transparent);
   color: color-mix(in srgb, var(--noesis-flow-calendar-load-color) 72%, var(--text-normal));
 }
 
@@ -754,13 +756,13 @@
 
 
 .noesis-flow-calendar-week-number:hover {
-  background-color: transparent !important;
+  background-color: transparent;
   color: var(--color-text-weeknum);
 }
 
 .noesis-flow-calendar-week-number.active,
 .noesis-flow-calendar-week-number.active:hover {
-  background-color: transparent !important;
+  background-color: transparent;
   color: color-mix(in srgb, var(--color-active-cell) 72%, var(--text-muted));
   font-weight: 600;
   opacity: 0.76;
@@ -824,10 +826,10 @@
 .noesis-flow-time-button,
 .noesis-flow-calendar-wrapper .noesis-flow-calendar-today-button,
 .noesis-flow-calendar-wrapper .noesis-flow-calendar-icon-button {
-  background: transparent !important;
-  border: 0 !important;
+  background: transparent;
+  border: 0;
   border-radius: var(--noesis-flow-calendar-cell-radius, 6px);
-  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--noesis-flow-widget-accent) 18%, transparent) !important;
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--noesis-flow-widget-accent) 18%, transparent);
   box-sizing: border-box;
   color: var(--text-muted);
   cursor: pointer;
@@ -848,7 +850,7 @@
 }
 
 .noesis-flow-calendar-wrapper :is(.noesis-flow-calendar-today-button, .noesis-flow-calendar-icon-button):hover {
-  background: color-mix(in srgb, var(--noesis-flow-widget-accent) 11%, transparent) !important;
+  background: color-mix(in srgb, var(--noesis-flow-widget-accent) 11%, transparent);
   color: color-mix(in srgb, var(--noesis-flow-widget-accent) 74%, var(--text-normal));
 }
 
@@ -957,7 +959,7 @@
 
 .noesis-flow-time-segment.active,
 .noesis-flow-time-button.primary {
-  background: color-mix(in srgb, var(--noesis-flow-widget-accent) 16%, transparent) !important;
+  background: color-mix(in srgb, var(--noesis-flow-widget-accent) 16%, transparent);
   color: color-mix(in srgb, var(--noesis-flow-widget-accent) 74%, var(--text-normal));
 }
 
@@ -1013,12 +1015,12 @@
 .noesis-flow-today-task-marker {
   align-items: center;
   appearance: none;
-  background: color-mix(in srgb, var(--noesis-flow-task-priority-color) 18%, transparent) !important;
+  background: color-mix(in srgb, var(--noesis-flow-task-priority-color) 18%, transparent);
   border: 0;
-  border-color: transparent !important;
+  border-color: transparent;
   border-radius: var(--noesis-flow-calendar-cell-radius, 6px);
-  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--noesis-flow-task-priority-color) 36%, transparent) !important;
-  color: var(--noesis-flow-task-priority-color) !important;
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--noesis-flow-task-priority-color) 36%, transparent);
+  color: var(--noesis-flow-task-priority-color);
   cursor: pointer;
   display: inline-flex;
   font-size: var(--font-ui-smaller);
@@ -1036,8 +1038,8 @@
 
 .noesis-flow-today-task-complete:hover,
 .noesis-flow-today-task-complete:focus-visible {
-  background: color-mix(in srgb, var(--noesis-flow-task-priority-color) 26%, transparent) !important;
-  color: var(--noesis-flow-task-priority-color) !important;
+  background: color-mix(in srgb, var(--noesis-flow-task-priority-color) 26%, transparent);
+  color: var(--noesis-flow-task-priority-color);
   opacity: 1;
 }
 
@@ -1459,14 +1461,14 @@
 }
 
 .noesis-flow-task-list-select-column {
-  font-size: 0.72em !important;
-  padding-left: 2px !important;
-  padding-right: 2px !important;
+  font-size: 0.72em;
+  padding-left: 2px;
+  padding-right: 2px;
 }
 
 .noesis-flow-task-list-select-cell {
-  padding-left: 2px !important;
-  padding-right: 2px !important;
+  padding-left: 2px;
+  padding-right: 2px;
 }
 
 .noesis-flow-task-list-select-cell input[type="checkbox"] {
@@ -2125,7 +2127,6 @@
   overflow-x: auto;
   overscroll-behavior-x: contain;
   padding-bottom: 10px;
-  scrollbar-color: color-mix(in srgb, var(--noesis-flow-kanban-accent) 45%, transparent) transparent;
 }
 
 .noesis-flow-kanban-lane {
@@ -2636,7 +2637,7 @@
 }
 
 .noesis-flow-brief-task-lanes.has-divider {
-  column-gap: 0;
+  gap: 0;
 }
 
 .noesis-flow-brief-task-lane {
@@ -2722,9 +2723,9 @@
 }
 
 .noesis-flow-brief-task-item .noesis-flow-today-task-marker {
-  background: color-mix(in srgb, var(--noesis-flow-task-priority-color) 24%, transparent) !important;
-  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--noesis-flow-task-priority-color) 44%, transparent) !important;
-  color: color-mix(in srgb, var(--noesis-flow-task-priority-color) 82%, var(--text-normal)) !important;
+  background: color-mix(in srgb, var(--noesis-flow-task-priority-color) 24%, transparent);
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--noesis-flow-task-priority-color) 44%, transparent);
+  color: color-mix(in srgb, var(--noesis-flow-task-priority-color) 82%, var(--text-normal));
 }
 
 .noesis-flow-brief-task-item:not(:last-child) {
@@ -3332,7 +3333,7 @@
 }
 
 .noesis-flow-settings-search-hidden {
-  display: none !important;
+  display: none;
 }
 
 .noesis-flow-settings-search-exact {
@@ -3740,8 +3741,8 @@
 
 .noesis-flow-date-picker-button {
   align-items: center;
-  background: transparent !important;
-  border: 0 !important;
+  background: transparent;
+  border: 0;
   color: var(--text-muted);
   cursor: pointer;
   display: inline-flex;
@@ -3792,8 +3793,8 @@
 :is(.noesis-flow-time-shell, .noesis-flow-daily-brief-board, .noesis-flow-kanban-board, .noesis-flow-task-list, .noesis-flow-planning, .noesis-flow-timeline-shell, .noesis-flow-recurring-manager, .noesis-flow-dialog) button:not(.mod-cta):not(.mod-warning) { border-color: var(--noesis-flow-ui-border); }
 :is(.noesis-flow-time-shell, .noesis-flow-daily-brief-board, .noesis-flow-kanban-board, .noesis-flow-task-list, .noesis-flow-planning, .noesis-flow-timeline-shell, .noesis-flow-recurring-manager, .noesis-flow-dialog) button:not(:disabled):hover { border-color: var(--noesis-flow-ui-border-strong); }
 :is(.noesis-flow-time-shell, .noesis-flow-daily-brief-board, .noesis-flow-kanban-board, .noesis-flow-task-list, .noesis-flow-planning, .noesis-flow-timeline-shell, .noesis-flow-recurring-manager, .noesis-flow-dialog) button:disabled { cursor: not-allowed; opacity: 0.5; }
-.mod-cta { border-color: color-mix(in srgb, var(--interactive-accent) 62%, transparent) !important; box-shadow: 0 1px 1px color-mix(in srgb, var(--interactive-accent) 26%, transparent); }
-.mod-warning { border-color: color-mix(in srgb, var(--text-error) 38%, var(--background-modifier-border)) !important; }
+.noesis-flow-dialog.mod-cta, .noesis-flow-dialog .mod-cta { border-color: color-mix(in srgb, var(--interactive-accent) 62%, transparent); box-shadow: 0 1px 1px color-mix(in srgb, var(--interactive-accent) 26%, transparent); }
+.noesis-flow-dialog.mod-warning, .noesis-flow-dialog .mod-warning { border-color: color-mix(in srgb, var(--text-error) 38%, var(--background-modifier-border)); }
 
 /* Settings and dialogs */
 .noesis-flow-settings-panel .setting-item { border-bottom: 1px solid color-mix(in srgb, var(--background-modifier-border) 58%, transparent); padding: 14px 2px; }
@@ -3918,19 +3919,19 @@
 
 .noesis-flow-date-input-control .noesis-flow-date-picker-button {
   appearance: none;
-  background: transparent !important;
-  border: 0 !important;
-  border-radius: 0 !important;
-  box-shadow: none !important;
+  background: transparent;
+  border: 0;
+  border-radius: 0;
+  box-shadow: none;
   height: 24px;
-  min-height: 24px !important;
-  min-width: 24px !important;
-  transform: translateY(-50%) !important;
+  min-height: 24px;
+  min-width: 24px;
+  transform: translateY(-50%);
 }
 
 .noesis-flow-date-input-control .noesis-flow-date-picker-button:hover {
-  background: transparent !important;
-  transform: translateY(-50%) !important;
+  background: transparent;
+  transform: translateY(-50%);
 }
 .noesis-flow-timeline-item, .noesis-flow-recurring-card { border-color: var(--noesis-flow-ui-border); }
 .noesis-flow-planner-subtitle, .noesis-flow-planner-signal { font-weight: 500; letter-spacing: 0; text-transform: none; }
@@ -4036,23 +4037,23 @@
 
 .noesis-flow-planning-task-details {
   align-self: center;
-  background: transparent !important;
-  border: 1px solid var(--noesis-flow-ui-border) !important;
+  background: transparent;
+  border: 1px solid var(--noesis-flow-ui-border);
   border-radius: 6px;
-  box-shadow: none !important;
+  box-shadow: none;
   height: 24px;
   justify-content: center;
   justify-self: end;
-  min-height: 24px !important;
+  min-height: 24px;
   padding: 0;
   width: 24px;
 }
 
 .noesis-flow-planning-task-details:hover,
 .noesis-flow-planning-task-details:focus-visible {
-  background: color-mix(in srgb, var(--noesis-flow-ui-accent) 8%, transparent) !important;
-  border-color: var(--noesis-flow-ui-border-strong) !important;
-  transform: none !important;
+  background: color-mix(in srgb, var(--noesis-flow-ui-accent) 8%, transparent);
+  border-color: var(--noesis-flow-ui-border-strong);
+  transform: none;
 }
 
 @container (max-width: 560px) {
@@ -4548,21 +4549,21 @@
 }
 
 .noesis-flow-pomodoro-actions .noesis-flow-time-button.primary {
-  background: var(--interactive-accent) !important;
-  border-color: var(--interactive-accent) !important;
-  color: var(--text-on-accent) !important;
+  background: var(--interactive-accent);
+  border-color: var(--interactive-accent);
+  color: var(--text-on-accent);
   box-sizing: border-box;
   font-size: var(--font-ui-small);
   font-weight: 650;
   height: 26px;
-  min-height: 26px !important;
+  min-height: 26px;
   padding-block: 0;
   padding-inline: 12px;
 }
 
 .noesis-flow-pomodoro-actions .noesis-flow-time-button.primary:not(:disabled):hover {
-  background: color-mix(in srgb, var(--interactive-accent) 86%, var(--text-normal)) !important;
-  border-color: var(--interactive-accent) !important;
+  background: color-mix(in srgb, var(--interactive-accent) 86%, var(--text-normal));
+  border-color: var(--interactive-accent);
   transform: none;
 }
 
@@ -4570,7 +4571,7 @@
   background: transparent;
   flex-basis: 26px;
   height: 26px;
-  min-height: 26px !important;
+  min-height: 26px;
   width: 26px;
 }
 
@@ -4606,7 +4607,7 @@
   box-sizing: border-box;
   color: var(--text-normal);
   height: 30px;
-  min-height: 30px !important;
+  min-height: 30px;
 }
 
 .noesis-flow-kanban-hero-actions select.dropdown {
@@ -4673,7 +4674,7 @@
 .noesis-flow-kanban-hero-actions > button {
   box-sizing: border-box;
   height: 30px;
-  min-height: 30px !important;
+  min-height: 30px;
 }
 /* Native Kanban lane separators: section boundaries without lane cards. ----- */
 .noesis-flow-kanban-lanes {
@@ -4834,16 +4835,16 @@
 .noesis-flow-today-task-marker {
   align-self: start;
   aspect-ratio: 1;
-  block-size: var(--noesis-flow-task-marker-size) !important;
-  inline-size: var(--noesis-flow-task-marker-size) !important;
-  max-block-size: var(--noesis-flow-task-marker-size) !important;
-  max-height: var(--noesis-flow-task-marker-size) !important;
-  max-inline-size: var(--noesis-flow-task-marker-size) !important;
-  max-width: var(--noesis-flow-task-marker-size) !important;
-  min-block-size: var(--noesis-flow-task-marker-size) !important;
-  min-height: var(--noesis-flow-task-marker-size) !important;
-  min-inline-size: var(--noesis-flow-task-marker-size) !important;
-  min-width: var(--noesis-flow-task-marker-size) !important;
+  block-size: var(--noesis-flow-task-marker-size);
+  inline-size: var(--noesis-flow-task-marker-size);
+  max-block-size: var(--noesis-flow-task-marker-size);
+  max-height: var(--noesis-flow-task-marker-size);
+  max-inline-size: var(--noesis-flow-task-marker-size);
+  max-width: var(--noesis-flow-task-marker-size);
+  min-block-size: var(--noesis-flow-task-marker-size);
+  min-height: var(--noesis-flow-task-marker-size);
+  min-inline-size: var(--noesis-flow-task-marker-size);
+  min-width: var(--noesis-flow-task-marker-size);
 }
 
 @container (max-width: 250px) {
@@ -5087,7 +5088,7 @@
 /* Every Noesis Flow dialog uses Obsidian's modal shell as its only surface. */
 .modal .noesis-flow-dialog,
 .modal.noesis-flow-dialog {
-  background: transparent !important;
+  background: transparent;
   border: 0;
   box-shadow: none;
 }
@@ -5106,8 +5107,8 @@
 }
 
 .noesis-flow-kanban-card .noesis-flow-today-task-marker {
-  background: color-mix(in srgb, var(--noesis-flow-task-priority-color) 24%, transparent) !important;
-  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--noesis-flow-task-priority-color) 48%, transparent) !important;
+  background: color-mix(in srgb, var(--noesis-flow-task-priority-color) 24%, transparent);
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--noesis-flow-task-priority-color) 48%, transparent);
 }
 
 .noesis-flow-kanban-card .noesis-flow-task-edit-actions {
@@ -5306,4 +5307,3 @@
     grid-template-columns: minmax(0, 1fr);
   }
 }
-

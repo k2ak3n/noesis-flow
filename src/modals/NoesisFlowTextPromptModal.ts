@@ -58,7 +58,7 @@ export class NoesisFlowTextPromptModal extends Modal {
     input.addEventListener("keydown", (event) => {
       if (event.key === "Enter") {
         event.preventDefault();
-        submit();
+        void submit();
       }
       if (event.key === "Escape") {
         event.preventDefault();

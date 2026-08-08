@@ -1,5 +1,5 @@
 import { Modal, Notice } from "obsidian";
-import { DATE_TASK_FILTER_OPTIONS } from "../utils";
+import { asVoidHandler, DATE_TASK_FILTER_OPTIONS } from "../utils";
 
 const PRIORITIES = [
   ["!", "Critical"],
@@ -80,7 +80,7 @@ export class NoesisFlowKanbanFilterModal extends Modal {
     const cancel = actions.createEl("button", { text: "Cancel", attr: { type: "button" } });
     cancel.addEventListener("click", () => this.close());
     const apply = actions.createEl("button", { cls: "mod-cta", text: "Apply filters", attr: { type: "button" } });
-    apply.addEventListener("click", async () => {
+    apply.addEventListener("click", asVoidHandler(async () => {
       const nextStatuses = Array.from(statuses.entries()).filter(([, input]) => input.checked).map(([value]) => value);
       const nextPriorities = Array.from(priorities.entries()).filter(([, input]) => input.checked).map(([value]) => value);
       if (!nextStatuses.length || !nextPriorities.length) {
@@ -89,7 +89,7 @@ export class NoesisFlowKanbanFilterModal extends Modal {
       }
       await this.onApply(nextStatuses, nextPriorities, dateSelect ? dateSelect.value : this.dateFilter, unscheduledInput ? (unscheduledInput.checked ? "include" : "exclude") : this.unscheduledFilter);
       this.close();
-    });
+    }));
   }
 
   onClose() {

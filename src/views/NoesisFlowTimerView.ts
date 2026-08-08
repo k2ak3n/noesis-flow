@@ -1,5 +1,6 @@
 import { ItemView, Notice, setIcon } from "obsidian";
 import type NoesisFlowPlugin from "../main";
+import type { PomodoroMode } from "../utils";
 import {
   NOESIS_FLOW_TIMER_VIEW_TYPE,
   getPomodoroNextStep,
@@ -14,7 +15,7 @@ export class NoesisFlowTimerView extends ItemView {
   completedFocusCycles: number;
   endsAt: number;
   lastTickAt: number;
-  mode: string;
+  mode: PomodoroMode;
   pendingCompletion: boolean;
   plugin: NoesisFlowPlugin;
   remainingSeconds: number;
@@ -114,7 +115,7 @@ export class NoesisFlowTimerView extends ItemView {
     if (!this.endsAt) this.endsAt = Date.now() + this.remainingSeconds * 1000;
     this.lastTickAt = Date.now();
     this.timer = window.setInterval(() => this.tick(), 500);
-    this.playSelectedSound();
+    void this.playSelectedSound();
     this.render();
     this.plugin.refreshDailyBriefViews();
   }
@@ -165,7 +166,7 @@ export class NoesisFlowTimerView extends ItemView {
     this.persistSession();
     this.render();
     this.plugin.refreshDailyBriefViews();
-    this.playSelectedSound();
+    void this.playSelectedSound();
   }
 
   pause(options: any = {}) {
@@ -234,7 +235,7 @@ export class NoesisFlowTimerView extends ItemView {
     const message = nextStep.sessionComplete
       ? "Pomodoro session complete. New focus cycle ready."
       : `${completedLabel} complete. ${nextLabel} ready.`;
-    this.playCompletionSound();
+    void this.playCompletionSound();
     this.notifyCompletion(message);
     this.render();
     this.plugin.refreshDailyBriefViews();

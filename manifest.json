@@ -2,7 +2,7 @@
   "id": "noesis-flow",
   "name": "Noesis Flow",
   "version": "1.0.0",
-  "minAppVersion": "1.5.0",
+  "minAppVersion": "1.7.2",
   "description": "A private, Markdown-native task hub for Inbox capture and planning.",
   "author": "k2ak3n",
   "authorUrl": "",

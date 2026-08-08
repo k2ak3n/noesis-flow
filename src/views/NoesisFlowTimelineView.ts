@@ -52,7 +52,7 @@ export class NoesisFlowTimelineView extends NoesisFlowTimedView {
       title: "Timeline",
       meta: `Next ${rangeDays}d`,
       metaClass: "noesis-flow-timeline-range",
-      renderActions: (actions) => createCalendarIconButton(actions, "plus", "New event", () => this.plugin.openTimelineEventCreator(), "+")
+      renderActions: (actions) => createCalendarIconButton(actions, "plus", "New event", () => void this.plugin.openTimelineEventCreator(), "+")
     });
 
     const entries = this.plugin.getTimelineEntries();
@@ -78,7 +78,7 @@ export class NoesisFlowTimelineView extends NoesisFlowTimedView {
       text.createDiv({ cls: "noesis-flow-timeline-meta", text: entry.section || (entry.type === "holiday" ? "Holiday" : "Event") });
       if (entry.type !== "holiday") {
         const edit = item.createDiv({ cls: "noesis-flow-timeline-edit" });
-        createCalendarIconButton(edit, "pencil", `Edit ${entry.label}`, () => this.plugin.openTimelineEventEditor(entry), "", "noesis-flow-task-edit-button");
+        createCalendarIconButton(edit, "pencil", `Edit ${entry.label}`, () => void this.plugin.openTimelineEventEditor(entry), "", "noesis-flow-task-edit-button");
       }
     }
   }

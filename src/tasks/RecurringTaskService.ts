@@ -1,5 +1,5 @@
 import { Notice, TFile, Vault } from "obsidian";
-import { CalendarTask, NoesisFlowSettings, RecurringTaskSeries } from "../types";
+import { CalendarTask, NoesisFlowSettings, RecurringTaskRecurrence, RecurringTaskSeries } from "../types";
 import { moment } from "../time";
 import {
   createCalendarTaskId,
@@ -54,12 +54,12 @@ function numericGreatestCommonDivisor(first: number, second: number): number {
   return left || 1;
 }
 
-function inferRecoveredRecurrence(dateKeys: string[]) {
+function inferRecoveredRecurrence(dateKeys: string[]): RecurringTaskRecurrence {
   const dates = Array.from(new Set(dateKeys))
     .map((dateKey) => moment(dateKey, "YYYY-MM-DD", true).startOf("day"))
     .filter((date) => date.isValid())
     .sort((left, right) => left.valueOf() - right.valueOf());
-  const fallback = { rule: "weekly", interval: 1, endMode: "limit", endCount: 0, endDate: "" };
+  const fallback: RecurringTaskRecurrence = { rule: "weekly", interval: 1, endMode: "limit", endCount: 0, endDate: "" };
   if (dates.length < 2) return fallback;
 
   const monthSteps = dates.slice(1).map((date, index) => (date.year() - dates[index].year()) * 12 + date.month() - dates[index].month());
@@ -138,7 +138,7 @@ export class RecurringTaskService {
   private recoveryPromise: Promise<number> | null = null;
 
   async recoverSeriesFromConfiguredSources(force = false): Promise<number> {
-    if (this.recoveryPromise) return this.recoveryPromise;
+    if (this.recoveryPromise !== null) return await this.recoveryPromise;
     this.recoveryPromise = this.recoverSeriesFromConfiguredSourcesInternal(force);
     try {
       return await this.recoveryPromise;

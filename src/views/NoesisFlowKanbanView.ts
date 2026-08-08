@@ -1,9 +1,11 @@
 import { Notice, setIcon } from "obsidian";
 import type NoesisFlowPlugin from "../main";
+import type { CalendarTask } from "../types";
 import { NoesisFlowTimedView } from "./NoesisFlowTimedView";
 import { moment } from "../time";
 import {
   NOESIS_FLOW_KANBAN_VIEW_TYPE,
+  asVoidHandler,
   KANBAN_TASK_VIEW_OPTIONS,
   getDateTaskFilterLabel,
   getDateTaskFilterRange,
@@ -24,7 +26,7 @@ const PRIORITY_COLUMNS = [
 
 export class NoesisFlowKanbanView extends NoesisFlowTimedView {
   plugin: NoesisFlowPlugin;
-  draggedTask: any;
+  draggedTask: CalendarTask | null;
   searchQuery: string;
   weekOffset: number;
 
@@ -143,11 +145,11 @@ export class NoesisFlowKanbanView extends NoesisFlowTimedView {
     const select = container.createEl("select", { cls: "dropdown noesis-flow-kanban-saved-select", attr: { "aria-label": "Saved Kanban views" } });
     select.createEl("option", { text: "Saved views", attr: { value: "" } });
     views.forEach((saved, index) => select.createEl("option", { text: saved.name || `View ${index + 1}`, attr: { value: String(index) } }));
-    select.addEventListener("change", async () => {
+    select.addEventListener("change", asVoidHandler(async () => {
       const saved = views[Number(select.value)];
       if (!saved) return;
       await this.plugin.applyKanbanSavedView(saved);
-    });
+    }));
     const saveButton = container.createEl("button", { text: "Save", attr: { type: "button", "aria-label": "Save current Kanban view" } });
     saveButton.addEventListener("click", () => new NoesisFlowKanbanSavedViewModal(this.app, {}, async (details) => {
       const savedViews = Array.isArray(this.plugin.settings.kanbanSavedViews) ? this.plugin.settings.kanbanSavedViews : [];
@@ -311,7 +313,7 @@ export class NoesisFlowKanbanView extends NoesisFlowTimedView {
       card.addClass("is-card-drop-target");
     });
     card.addEventListener("dragleave", () => card.removeClass("is-card-drop-target"));
-    card.addEventListener("drop", async (event) => {
+    card.addEventListener("drop", asVoidHandler(async (event: DragEvent) => {
       if (!this.draggedTask || this.draggedTask === task) return;
       event.preventDefault();
       event.stopPropagation();
@@ -319,7 +321,7 @@ export class NoesisFlowKanbanView extends NoesisFlowTimedView {
       const draggedTask = this.draggedTask;
       this.draggedTask = null;
       await this.plugin.reorderKanbanTasks(draggedTask, task);
-    });
+    }));
   }
 
   async moveTaskToColumn(task, column, view) {
@@ -358,13 +360,13 @@ export class NoesisFlowKanbanView extends NoesisFlowTimedView {
     lane.addEventListener("dragleave", (event) => {
       if (!lane.contains(event.relatedTarget as Node)) lane.removeClass("is-drop-target");
     });
-    lane.addEventListener("drop", async (event) => {
+    lane.addEventListener("drop", asVoidHandler(async (event: DragEvent) => {
       event.preventDefault();
       lane.removeClass("is-drop-target");
       const task = this.draggedTask;
       this.draggedTask = null;
       if (task) await this.moveTaskToColumn(task, column, view);
-    });
+    }));
   }
 
   getTaskCardHeader(task, view, today) {
@@ -397,7 +399,7 @@ export class NoesisFlowKanbanView extends NoesisFlowTimedView {
     this.setCardReorderEvents(card, task, view);
     renderNoesisFlowTaskRow(card, task, {
       onOpen: (selectedTask) => this.plugin.openTaskDetails(selectedTask),
-      onComplete: (selectedTask, button) => this.completeTask(selectedTask, button),
+      onComplete: (selectedTask, button) => { void this.completeTask(selectedTask, button); },
       hideProjectMeta: true,
       actionsPlacement: "top",
       app: this.app,
@@ -457,13 +459,13 @@ export class NoesisFlowKanbanView extends NoesisFlowTimedView {
       attr: { type: "button", "aria-label": "Open Calendar sidebar for task drop" }
     });
     setIcon(calendarButton, "calendar-days");
-    calendarButton.addEventListener("click", () => this.plugin.openCalendarForKanbanDrop());
+    calendarButton.addEventListener("click", () => void this.plugin.openCalendarForKanbanDrop());
     const addTaskButton = heroActions.createEl("button", {
       cls: "mod-cta noesis-flow-kanban-add-button",
       text: "New task",
       attr: { type: "button", "aria-label": "Add a new Kanban task" }
     });
-    addTaskButton.addEventListener("click", () => this.plugin.openKanbanQuickTaskCapture());
+    addTaskButton.addEventListener("click", () => void this.plugin.openKanbanQuickTaskCapture());
     this.renderSavedViews(heroActions);
 
     if (view === "date") {

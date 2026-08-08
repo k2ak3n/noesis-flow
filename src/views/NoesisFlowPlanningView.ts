@@ -3,7 +3,7 @@ import type NoesisFlowPlugin from "../main";
 import type { CalendarTask } from "../types";
 import { NoesisFlowTimedView } from "./NoesisFlowTimedView";
 import { moment } from "../time";
-import { NOESIS_FLOW_PLANNING_VIEW_TYPE } from "../utils";
+import { asVoidHandler, NOESIS_FLOW_PLANNING_VIEW_TYPE } from "../utils";
 
 const PRIORITY_NAMES = { "!": "Critical", H: "High", M: "Medium", L: "Low", " ": "Normal" };
 
@@ -79,7 +79,7 @@ export class NoesisFlowPlanningView extends NoesisFlowTimedView {
       }
     });
     chip.addEventListener("dragend", () => { this.draggedTask = null; });
-    chip.addEventListener("dblclick", () => this.plugin.openTaskDetails(task));
+    chip.addEventListener("dblclick", () => void this.plugin.openTaskDetails(task));
   }
 
   renderDay(parent: HTMLElement, day: moment.Moment, tasksByDate: Map<string, CalendarTask[]>, options: PlanningDayOptions = {}) {
@@ -103,7 +103,7 @@ export class NoesisFlowPlanningView extends NoesisFlowTimedView {
     if (!isPast) {
       taskArea.addEventListener("dragover", (event) => { event.preventDefault(); taskArea.addClass("is-drop-target"); });
       taskArea.addEventListener("dragleave", () => taskArea.removeClass("is-drop-target"));
-      taskArea.addEventListener("drop", async (event) => {
+      taskArea.addEventListener("drop", asVoidHandler(async (event) => {
         event.preventDefault();
         taskArea.removeClass("is-drop-target");
         const task = this.draggedTask;
@@ -111,7 +111,7 @@ export class NoesisFlowPlanningView extends NoesisFlowTimedView {
         const changed = await this.plugin.updateCalendarTask(task, { dateKey: key }, `Task moved to ${day.format("MMM D")}.`);
         if (!changed) new Notice("Could not reschedule that task.");
         this.draggedTask = null;
-      });
+      }));
     }
   }
 
@@ -167,7 +167,7 @@ export class NoesisFlowPlanningView extends NoesisFlowTimedView {
     titleBlock.createDiv({ cls: "noesis-flow-planner-kicker", text: this.getMonthStart().format("MMMM YYYY") });
     const heroActions = hero.createDiv({ cls: "noesis-flow-planner-hero-actions" });
     const addTask = heroActions.createEl("button", { text: "New task", cls: "mod-cta", attr: { type: "button" } });
-    addTask.addEventListener("click", () => this.plugin.openQuickTaskCapture({ initialDate: today }));
+    addTask.addEventListener("click", () => void this.plugin.openQuickTaskCapture({ initialDate: today }));
     this.renderMonthControls(heroActions);
     this.renderMonthlyCalendar(root, tasksByDate);
   }

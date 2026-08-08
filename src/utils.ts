@@ -1,5 +1,6 @@
 import { moment } from "./time";
-import { NoesisFlowSettings, KanbanSavedView, DateTaskFilter } from "./types";
+import type { Moment, MomentInput } from "moment";
+import { CalendarTask, CalendarTaskIndex, CalendarTaskStats, NoesisFlowSettings, KanbanSavedView, DateTaskFilter } from "./types";
 import { insertCalendarTaskInSection } from "./tasks/TaskMarkdown";
 import { parseTaskMetadata, preserveTaskLineComments, updateTaskMetadataInText } from "./tasks/TaskMetadata";
 import { parseMarkdownTaskLine } from "./tasks/TaskParser";
@@ -42,18 +43,36 @@ export const BUILT_IN_TIMER_SOUNDS = [{
 export const KANBAN_SAVED_VIEWS_SCHEMA = "noesis-flow-kanban-saved-views/v1";
 export const TASK_LIST_COLUMN_IDS = ["text", "date", "section", "priority", "actions"];
 
-export function normalizeTaskListColumnOrder(value) {
-  const stored = Array.isArray(value) ? value.filter((column) => TASK_LIST_COLUMN_IDS.includes(column)) : [];
+/**
+ * Adapt an async operation for an event API whose callback contract is synchronous.
+ * The operation still runs and surfaces its own errors, but the event listener returns void.
+ */
+export function asVoidHandler<Args extends unknown[]>(
+  handler: (...args: Args) => Promise<unknown>
+): (...args: Args) => void {
+  return (...args) => {
+    void handler(...args);
+  };
+}
+
+export function normalizeTaskListColumnOrder(value: unknown): string[] {
+  const stored = Array.isArray(value)
+    ? value.filter((column): column is string => typeof column === "string" && TASK_LIST_COLUMN_IDS.includes(column))
+    : [];
   return Array.from(new Set([...stored, ...TASK_LIST_COLUMN_IDS]));
 }
 
-export function normalizeTaskListVisibleColumns(value) {
-  const visible = Array.isArray(value) ? value.filter((column) => TASK_LIST_COLUMN_IDS.includes(column)) : TASK_LIST_COLUMN_IDS;
+export function normalizeTaskListVisibleColumns(value: unknown): string[] {
+  const visible = Array.isArray(value)
+    ? value.filter((column): column is string => typeof column === "string" && TASK_LIST_COLUMN_IDS.includes(column))
+    : TASK_LIST_COLUMN_IDS;
   return visible.length ? Array.from(new Set(visible)) : ["text"];
 }
 
-export function normalizeTaskListColumnWidths(value) {
-  const widths = value && typeof value === "object" ? value : {};
+export function normalizeTaskListColumnWidths(value: unknown): Record<string, number> {
+  const widths: Record<string, unknown> = value && typeof value === "object" && !Array.isArray(value)
+    ? value as Record<string, unknown>
+    : {};
   return Object.fromEntries(TASK_LIST_COLUMN_IDS
     .map((column) => [column, Math.round(Number(widths[column]))] as [string, number])
     .filter(([, width]) => Number.isFinite(width) && width >= 32 && width <= 1000));
@@ -195,12 +214,19 @@ export const DATE_TASK_FILTER_OPTIONS = [
   { label: "All", value: "all", description: "All open dated tasks." }
 ];
 export const DATE_TASK_FILTER_VALUES = new Set(DATE_TASK_FILTER_OPTIONS.map((option) => option.value));
-export const POMODORO_MODES = ["focus", "break", "long-break"];
-export function unique(values) {
+export const POMODORO_MODES = ["focus", "break", "long-break"] as const;
+export type PomodoroMode = typeof POMODORO_MODES[number];
+export interface PomodoroNextStep {
+  mode: PomodoroMode;
+  completedFocusCycles: number;
+  sessionComplete: boolean;
+}
+
+export function unique<T>(values: Iterable<T>): T[] {
   return Array.from(new Set(values));
 }
 
-export function normalizeTimerSoundPath(path) {
+export function normalizeTimerSoundPath(path: unknown): string {
   const value = String(path || "");
   if (value === BUILT_IN_SLOW_TICK_SOUND_PATH) {
     return BUILT_IN_SLOW_TICK_SOUND_PATH;
@@ -210,18 +236,18 @@ export function normalizeTimerSoundPath(path) {
 
 
 
-export function sanitizeCssText(value, fallback) {
+export function sanitizeCssText(value: unknown, fallback: string): string {
   const text = String(value || "").trim().replace(/[;"{}]/g, "");
   return (text || fallback).slice(0, 80);
 }
 
-export function clampNumber(value, min, max, fallback) {
+export function clampNumber(value: unknown, min: number, max: number, fallback: number): number {
   const number = Number(value);
   if (!Number.isFinite(number)) return fallback;
   return Math.max(min, Math.min(max, number));
 }
 
-export function getPomodoroSessionSettings(settings: any = {}) {
+export function getPomodoroSessionSettings(settings: Partial<Pick<NoesisFlowSettings, "timerFocusCycles" | "timerLongBreakInterval" | "timerFocusMinutes" | "timerBreakMinutes" | "timerLongBreakMinutes">> = {}) {
   const totalCycles = clampNumber(settings.timerFocusCycles, 1, 12, 4);
   const longBreakInterval = Math.min(totalCycles, clampNumber(settings.timerLongBreakInterval, 1, 12, 4));
   return {
@@ -233,11 +259,17 @@ export function getPomodoroSessionSettings(settings: any = {}) {
   };
 }
 
-export function normalizePomodoroMode(mode) {
-  return POMODORO_MODES.includes(mode) ? mode : "focus";
+export function normalizePomodoroMode(mode: unknown): PomodoroMode {
+  return typeof mode === "string" && (POMODORO_MODES as readonly string[]).includes(mode)
+    ? mode as PomodoroMode
+    : "focus";
 }
 
-export function getPomodoroNextStep(mode, completedFocusCycles, settings: any = {}) {
+export function getPomodoroNextStep(
+  mode: unknown,
+  completedFocusCycles: unknown,
+  settings: Partial<Pick<NoesisFlowSettings, "timerFocusCycles" | "timerLongBreakInterval" | "timerFocusMinutes" | "timerBreakMinutes" | "timerLongBreakMinutes">> = {}
+): PomodoroNextStep {
   const session = getPomodoroSessionSettings(settings);
   const cleanMode = normalizePomodoroMode(mode);
   const completedCycles = clampNumber(completedFocusCycles, 0, session.totalCycles, 0);
@@ -272,7 +304,7 @@ export function makeCssUrl(value) {
   return `url("${String(value).replace(/\\/g, "\\\\").replace(/"/g, '\\"')}")`;
 }
 
-export function getCalendarWeekStart(settings): number {
+export function getCalendarWeekStart(settings: { calendarWeekStart?: string }): number {
   const value = String(settings.calendarWeekStart || "monday").toLowerCase();
   if (value === "sunday") return 0;
   if (value === "saturday") return 6;
@@ -285,41 +317,41 @@ export function getCalendarWeekStart(settings): number {
   return 1;
 }
 
-export function getCalendarWeekdays(weekStart) {
+export function getCalendarWeekdays(weekStart: number): number[] {
   return Array.from({ length: 7 }, (_value, index) => (weekStart + index) % 7);
 }
 
-export function getCalendarWeekdayLabel(dayIndex) {
+export function getCalendarWeekdayLabel(dayIndex: number): string {
   const date = moment().day(dayIndex);
   return date.format("dd");
 }
 
-export function getCalendarWeekNumber(date, weekStart) {
+export function getCalendarWeekNumber(date: Moment, weekStart: number): number {
   if (weekStart === 1 && typeof date.isoWeek === "function") {
     return date.isoWeek();
   }
   return date.week();
 }
 
-export function getCalendarWeekStartDate(date, weekStart) {
+export function getCalendarWeekStartDate(date: Moment, weekStart: number): Moment {
   const offset = (date.day() - weekStart + 7) % 7;
   return date.clone().startOf("day").subtract(offset, "days");
 }
 
-export function isSameCalendarWeek(a, b, weekStart) {
+export function isSameCalendarWeek(a: Moment | null | undefined, b: Moment | null | undefined, weekStart: number): boolean {
   if (!a || !b) return false;
   return getCalendarWeekStartDate(a, weekStart).isSame(getCalendarWeekStartDate(b, weekStart), "day");
 }
 
-export function getCalendarMonthRows(displayedMonth, weekStart) {
-  const rows = [];
+export function getCalendarMonthRows(displayedMonth: Moment, weekStart: number): Array<{ weekNum: number; days: Moment[] }> {
+  const rows: Array<{ weekNum: number; days: Moment[] }> = [];
   const startOfMonth = displayedMonth.clone().startOf("month");
   const startOffset = (startOfMonth.day() - weekStart + 7) % 7;
   let cursor = startOfMonth.clone().subtract(startOffset, "days");
 
   for (let rowIndex = 0; rowIndex < 6; rowIndex += 1) {
     const weekStartDate = cursor.clone();
-    const days = [];
+    const days: Moment[] = [];
 
     for (let dayIndex = 0; dayIndex < 7; dayIndex += 1) {
       days.push(cursor.clone());
@@ -339,7 +371,7 @@ export function getCalendarQuarter(monthIndex) {
   return Math.floor(monthIndex / 3) + 1;
 }
 
-export function normalizeWeekendDays(value) {
+export function normalizeWeekendDays(value: unknown): number[] {
   const source = Array.isArray(value) ? value : [0, 6];
   const days = source
     .map((item) => Number(item))
@@ -459,8 +491,7 @@ export function stripNoesisFlowDateMarker(text: string | null | undefined, dateK
   return str.replace(pattern, "$1");
 }
 
-export function getCalendarTaskDateKey(date) {
-  if (date && typeof date.format === "function") return date.format("YYYY-MM-DD");
+export function getCalendarTaskDateKey(date: MomentInput): string {
   const parsed = moment(date);
   return parsed && parsed.isValid && parsed.isValid() ? parsed.format("YYYY-MM-DD") : moment().format("YYYY-MM-DD");
 }
@@ -518,7 +549,7 @@ export function normalizeCalendarTaskPriorityMarker(marker) {
   return CALENDAR_TASK_PRIORITY_ORDER.includes(normalized) ? normalized : " ";
 }
 
-export function createCalendarTaskStats() {
+export function createCalendarTaskStats(): CalendarTaskStats {
   return {
     total: 0,
     priority: 0,
@@ -527,8 +558,9 @@ export function createCalendarTaskStats() {
   };
 }
 
-export function getCalendarTaskPriorityLabel(marker) {
-  return CALENDAR_TASK_PRIORITY_LABELS.get(marker) || marker || "No priority";
+export function getCalendarTaskPriorityLabel(marker: unknown): string {
+  const value = String(marker || "");
+  return CALENDAR_TASK_PRIORITY_LABELS.get(value) || value || "No priority";
 }
 
 export function cleanCalendarTaskText(text, dateKey, settings) {
@@ -543,12 +575,12 @@ export function cleanCalendarTaskText(text, dateKey, settings) {
     .trim();
 }
 
-export function parseCalendarTaskIndex(content, settings, sourcePath = "") {
-  const counts = new Map();
-  const tasksByDate = new Map();
-  const undatedTasks = [];
-  const completedTasksByDate = new Map();
-  const completedUndatedTasks = [];
+export function parseCalendarTaskIndex(content: string, settings: NoesisFlowSettings, sourcePath = ""): CalendarTaskIndex {
+  const counts = new Map<string, CalendarTaskStats>();
+  const tasksByDate = new Map<string, CalendarTask[]>();
+  const undatedTasks: CalendarTask[] = [];
+  const completedTasksByDate = new Map<string, CalendarTask[]>();
+  const completedUndatedTasks: CalendarTask[] = [];
   const lines = String(content || "").split(/\r?\n/);
   let section = "";
   let inCodeBlock = false;
@@ -580,7 +612,7 @@ export function parseCalendarTaskIndex(content, settings, sourcePath = "") {
       ? normalizeCalendarTaskPriorityMarker(metadata.priorityMarker)
       : checkboxMarker;
     const seriesId = metadata.seriesId;
-    const task = {
+    const task: CalendarTask = {
       id: metadata.taskId,
       dateKey,
       marker,
@@ -758,14 +790,14 @@ export function updateCalendarTaskInContent(content, task, updates, settings) {
   return { changed: movedContent !== content, content: movedContent };
 }
 
-export function parseCalendarTaskCounts(content, settings) {
+export function parseCalendarTaskCounts(content: string, settings: NoesisFlowSettings): Map<string, CalendarTaskStats> {
   const { counts } = parseCalendarTaskIndex(content, settings);
   return counts;
 }
 
-export function serializeCalendarTaskCounts(counts) {
+export function serializeCalendarTaskCounts(counts: Map<string, CalendarTaskStats>): string {
   return JSON.stringify(Array.from(counts.entries())
-    .map(([dateKey, stats]) => [
+    .map(([dateKey, stats]): [string, number, number, Array<[string, number]>, Array<[string, string, string, string]>] => [
       dateKey,
       stats.total || 0,
       stats.priority || 0,
@@ -805,7 +837,14 @@ export function getDateTaskFilterLabel(value) {
   return option ? option.label : "Today";
 }
 
-export function getDateTaskFilterRange(filter, todayStart) {
+export interface DateTaskFilterRange {
+  startDate: Moment | null;
+  endDate: Moment | null;
+  overdueOnly: boolean;
+  includeAll?: boolean;
+}
+
+export function getDateTaskFilterRange(filter: DateTaskFilter, todayStart: Moment): DateTaskFilterRange {
   if (filter === "all") {
     return { startDate: null, endDate: null, overdueOnly: false, includeAll: true };
   }
@@ -834,10 +873,8 @@ export function getDateTaskFilterRange(filter, todayStart) {
   return { startDate: todayStart, endDate: todayStart, overdueOnly: false };
 }
 
-export function getDaysUntil(date, today = moment()) {
-  const target = date && typeof date.clone === "function"
-    ? date.clone().startOf("day")
-    : moment(date).startOf("day");
+export function getDaysUntil(date: MomentInput, today: Moment = moment()): number | null {
+  const target = moment(date).startOf("day");
   if (!target.isValid()) return null;
   return target.diff(today.clone().startOf("day"), "days");
 }
@@ -944,10 +981,9 @@ export function normalizeKanbanTaskView(value): NoesisFlowSettings["kanbanTaskVi
 export function downloadText(filename, text) {
   const blob = new Blob([text], { type: "application/json;charset=utf-8" });
   const url = URL.createObjectURL(blob);
-  const link = document.createElement("a");
+  const link = document.body.createEl("a");
   link.href = url;
   link.download = filename;
-  document.body.appendChild(link);
   link.click();
   link.remove();
   URL.revokeObjectURL(url);
@@ -966,8 +1002,8 @@ export function normalizeKanbanSavedView(value: any): KanbanSavedView | null {
   return {
     name,
     description: String(value.description || "").trim().slice(0, 240),
-    filter: normalizeDateTaskFilter(value.filter || "all") as KanbanSavedView["filter"],
-    view: normalizeKanbanTaskView(value.view || "sections") as KanbanSavedView["view"],
+    filter: normalizeDateTaskFilter(value.filter || "all"),
+    view: normalizeKanbanTaskView(value.view || "sections"),
     statuses: statuses.length ? Array.from(new Set(statuses)) as any : ["active"],
     priorities: priorities.length ? Array.from(new Set(priorities)) : ["!", "H", "M", "L", " "],
     unscheduledFilter: ["auto", "include", "exclude"].includes(String(value.unscheduledFilter))

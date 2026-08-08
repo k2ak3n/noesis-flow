@@ -1,9 +1,10 @@
 import { Modal, Notice, TFile } from "obsidian";
 import type NoesisFlowPlugin from "../main";
 import { moment } from "../time";
-import { CALENDAR_TASK_PRIORITIES } from "../utils";
+import { asVoidHandler, CALENDAR_TASK_PRIORITIES } from "../utils";
 import { enhanceNoesisFlowDatePickers } from "../ui/NoesisFlowUi";
 import { getMarkdownH2Sections } from "../tasks/TaskMarkdown";
+import { NoesisFlowConfirmModal } from "./NoesisFlowConfirmModal";
 
 /** A single editor used by every task surface. */
 export class NoesisFlowTaskDetailsModal extends Modal {
@@ -34,7 +35,7 @@ export class NoesisFlowTaskDetailsModal extends Modal {
       wrap.appendChild(control);
       return wrap;
     };
-    const title = document.createElement("input");
+    const title = form.createEl("input");
     title.type = "text";
     title.value = this.task.text || "";
     field("Task", title).addClass("noesis-flow-kanban-task-name-field");
@@ -48,12 +49,12 @@ export class NoesisFlowTaskDetailsModal extends Modal {
       wrap.appendChild(control);
       return wrap;
     };
-    const date = document.createElement("input");
+    const date = form.createEl("input");
     date.type = "date";
     date.value = this.task.dateKey || "";
     const dateField = meta("Date", date);
     dateField.addClass("noesis-flow-kanban-date-field");
-    const noDate = document.createElement("input");
+    const noDate = dateField.createEl("input");
     noDate.type = "checkbox";
     noDate.checked = !date.value;
     date.disabled = noDate.checked;
@@ -68,14 +69,14 @@ export class NoesisFlowTaskDetailsModal extends Modal {
       if (noDate.checked) date.value = "";
       else date.focus();
     });
-    const project = document.createElement("input");
+    const project = form.createEl("input");
     project.type = "text";
     project.value = this.task.section || "";
     const projectListId = `noesis-flow-project-list-${Date.now()}`;
     project.setAttribute("list", projectListId);
     project.placeholder = "Unassigned";
     meta("Project", project);
-    const projectList = document.createElement("datalist");
+    const projectList = form.createEl("datalist");
     projectList.id = projectListId;
     const setProjectOptions = (sections: string[]) => {
       projectList.empty();
@@ -102,11 +103,11 @@ export class NoesisFlowTaskDetailsModal extends Modal {
       }
     };
     form.appendChild(projectList);
-    const priority = document.createElement("select");
+    const priority = form.createEl("select");
     for (const item of CALENDAR_TASK_PRIORITIES) priority.createEl("option", { text: item.label, attr: { value: item.marker } });
     priority.value = this.task.marker || " ";
     meta("Priority", priority);
-const source = document.createElement("select");
+const source = form.createEl("select");
     const sourcePaths = Array.from(new Set([this.task.sourcePath, ...this.plugin.getTaskSourcePaths()].filter(Boolean)));
     for (const path of sourcePaths) source.createEl("option", { text: path, attr: { value: path } });
     source.value = this.task.sourcePath || sourcePaths[0] || "";
@@ -120,7 +121,7 @@ const source = document.createElement("select");
       const recurrenceActions = recurrence.createDiv({ cls: "noesis-flow-recurring-occurrence-actions" });
       const editSeries = recurrenceActions.createEl("button", { text: "Edit future occurrences", attr: { type: "button" } });
       editSeries.addEventListener("click", () => {
-        if (series) this.plugin.openRecurringTaskSeriesEditor(series);
+        if (series) void this.plugin.openRecurringTaskSeriesEditor(series);
       });
       const skipOccurrence = recurrenceActions.createEl("button", { text: "Skip this occurrence", attr: { type: "button" } });
       skipOccurrence.disabled = afterCompletion || !!this.task.completed;
@@ -133,9 +134,14 @@ const source = document.createElement("select");
       skipOccurrence.addEventListener("click", () => {
         if (!series || afterCompletion) return;
         const dateLabel = this.task.dateKey || "this date";
-        if (confirm(`Skip the ${dateLabel} occurrence? Future occurrences will remain unchanged.`)) {
-          void this.plugin.skipRecurringTaskOccurrence(this.task).then((skipped) => { if (skipped) this.close(); });
-        }
+        new NoesisFlowConfirmModal(this.app, {
+          title: "Skip occurrence?",
+          message: `Skip the ${dateLabel} occurrence? Future occurrences will remain unchanged.`,
+          confirmLabel: "Skip occurrence",
+          onConfirm: async () => {
+            if (await this.plugin.skipRecurringTaskOccurrence(this.task)) this.close();
+          }
+        }).open();
       });
     }
     enhanceNoesisFlowDatePickers(contentEl);
@@ -147,11 +153,11 @@ const source = document.createElement("select");
     const cancel = primaryActions.createEl("button", { text: "Cancel", attr: { type: "button" } });
     cancel.addEventListener("click", () => this.close());
     const completion = primaryActions.createEl("button", { text: this.task.completed ? "Reopen" : "Complete", attr: { type: "button" } });
-    completion.addEventListener("click", async () => {
+    completion.addEventListener("click", asVoidHandler(async () => {
       if (this.task.completed) await this.plugin.updateCalendarTask(this.task, { marker: this.task.marker || " " }, "Task reopened.");
       else await this.plugin.completeCalendarTask(this.task);
       this.close();
-    });
+    }));
     const saveTask = async () => {
       const text = title.value.trim();
       const section = project.value.trim() || "Unassigned";
@@ -173,7 +179,7 @@ const source = document.createElement("select");
       if (saved) this.close();
     };
     const save = primaryActions.createEl("button", { text: "Save", cls: "mod-cta", attr: { type: "button" } });
-    save.addEventListener("click", saveTask);
+    save.addEventListener("click", asVoidHandler(saveTask));
     contentEl.addEventListener("keydown", (event) => {
       if (event.key === "Enter" && (event.ctrlKey || event.metaKey)) {
         event.preventDefault();

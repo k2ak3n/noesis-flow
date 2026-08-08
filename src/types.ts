@@ -134,6 +134,22 @@ export interface NoesisFlowSettings {
   timerSessionState: TimerSessionState | null;
 }
 
+export type RecurringTaskRule = "none" | "daily" | "weekly" | "monthly" | "weekdays" | "custom-weekdays" | "after-completion";
+
+export interface RecurringTaskRecurrence {
+  rule: RecurringTaskRule;
+  interval?: number;
+  weekdays?: string | string[];
+  endMode?: "limit" | "count" | "date";
+  endCount?: number;
+  endDate?: string;
+  excludedDates?: string | string[];
+  includedDates?: string | string[];
+  skipWeekends?: boolean;
+  skipHolidays?: boolean;
+  completionRule?: "daily" | "weekly" | "monthly";
+}
+
 export interface RecurringTaskSeries {
   id: string;
   text: string;
@@ -141,10 +157,10 @@ export interface RecurringTaskSeries {
   marker: string;
   sourcePath: string;
   startDate: string;
-  recurrence: any;
+  recurrence: RecurringTaskRecurrence;
   occurrenceCount: number;
   occurrenceDates?: string[];
-  metadata?: Record<string, any>;
+  metadata?: Record<string, unknown>;
   status: "active" | "paused";
   createdAt: string;
 }
@@ -201,9 +217,17 @@ export interface CalendarTaskStats {
   level?: string;
 }
 
+export interface CalendarTaskIndex {
+  counts: Map<string, CalendarTaskStats>;
+  tasksByDate: Map<string, CalendarTask[]>;
+  undatedTasks: CalendarTask[];
+  completedTasksByDate: Map<string, CalendarTask[]>;
+  completedUndatedTasks: CalendarTask[];
+}
+
 export interface TimelineEntry {
   type: string;
-  date: any; // moment.Moment
+  date: Moment;
   dateKey: string;
   label: string;
   section?: string;
@@ -218,3 +242,4 @@ export interface TimerSoundFile {
   label: string;
   extension: string;
 }
+import type { Moment } from "moment";

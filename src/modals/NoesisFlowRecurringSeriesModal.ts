@@ -1,6 +1,6 @@
 import { Modal, Notice } from "obsidian";
 import { moment } from "../time";
-import { CALENDAR_TASK_PRIORITIES, CALENDAR_TASK_RECURRENCE_OPTIONS } from "../utils";
+import { asVoidHandler, CALENDAR_TASK_PRIORITIES, CALENDAR_TASK_RECURRENCE_OPTIONS } from "../utils";
 import { getRecurringTaskDateKeys } from "../tasks/TaskRecurrence";
 import { enhanceNoesisFlowDatePicker, enhanceNoesisFlowDatePickers } from "../ui/NoesisFlowUi";
 
@@ -35,38 +35,38 @@ export class NoesisFlowRecurringSeriesModal extends Modal {
       field.appendChild(control);
       return field;
     };
-    const taskInput = document.createElement("input");
+    const taskInput = form.createEl("input");
     taskInput.type = "text";
     taskInput.value = this.series.text || "";
     createField(form, "Task name", taskInput, "noesis-flow-kanban-task-name-field");
 
     const fields = form.createDiv({ cls: "noesis-flow-kanban-task-fields" });
-    const projectInput = document.createElement("input");
+    const projectInput = fields.createEl("input");
     projectInput.type = "text";
     projectInput.value = this.series.section || "";
     createField(fields, "Project", projectInput);
 
-    const prioritySelect = document.createElement("select");
+    const prioritySelect = fields.createEl("select");
     for (const priority of CALENDAR_TASK_PRIORITIES) prioritySelect.add(new Option(priority.label, priority.marker));
     prioritySelect.value = this.series.marker || " ";
     createField(fields, "Priority", prioritySelect);
 
     const recurrence = this.series.recurrence || {};
-    const repeatSelect = document.createElement("select");
+    const repeatSelect = fields.createEl("select");
     for (const option of CALENDAR_TASK_RECURRENCE_OPTIONS.filter((option) => option.value !== "none")) {
       repeatSelect.add(new Option(option.label, option.value));
     }
     repeatSelect.value = recurrence.rule || "weekly";
     createField(fields, "Repeat", repeatSelect);
 
-    const completionUnitSelect = document.createElement("select");
+    const completionUnitSelect = fields.createEl("select");
     for (const option of [["daily", "day"], ["weekly", "week"], ["monthly", "month"]]) {
       completionUnitSelect.add(new Option(option[1], option[0]));
     }
     completionUnitSelect.value = recurrence.completionRule || "weekly";
     const completionUnitField = createField(fields, "After completion", completionUnitSelect);
 
-    const intervalInput = document.createElement("input");
+    const intervalInput = fields.createEl("input");
     intervalInput.type = "number";
     intervalInput.min = "1";
     intervalInput.max = "52";
@@ -75,47 +75,47 @@ export class NoesisFlowRecurringSeriesModal extends Modal {
     const intervalField = createField(fields, "Every", intervalInput);
     const intervalUnit = intervalField.createSpan({ cls: "noesis-flow-kanban-repeat-interval-unit" });
 
-    const skipOptions = document.createElement("div");
+    const skipOptions = fields.createDiv();
     skipOptions.classList.add("noesis-flow-kanban-recurrence-options");
-    const weekendLabel = document.createElement("label");
-    const skipWeekendsInput = document.createElement("input");
+    const weekendLabel = skipOptions.createEl("label");
+    const skipWeekendsInput = weekendLabel.createEl("input");
     skipWeekendsInput.type = "checkbox";
     skipWeekendsInput.checked = !!recurrence.skipWeekends;
     weekendLabel.append(skipWeekendsInput, "Skip weekends");
-    const holidayLabel = document.createElement("label");
-    const skipHolidaysInput = document.createElement("input");
+    const holidayLabel = skipOptions.createEl("label");
+    const skipHolidaysInput = holidayLabel.createEl("input");
     skipHolidaysInput.type = "checkbox";
     skipHolidaysInput.checked = !!recurrence.skipHolidays;
     holidayLabel.append(skipHolidaysInput, "Skip holidays");
     skipOptions.append(weekendLabel, holidayLabel);
     const skipField = createField(fields, "Skip", skipOptions, "noesis-flow-kanban-task-span-full");
 
-    const excludedDatesInput = document.createElement("input");
+    const excludedDatesInput = fields.createEl("input");
     excludedDatesInput.type = "text";
     excludedDatesInput.placeholder = "2026-12-25, 2026-12-31";
     excludedDatesInput.value = getRecurringTaskDateKeys(recurrence.excludedDates).join(", ");
     const excludedDatesField = createField(fields, "Skip dates", excludedDatesInput, "noesis-flow-kanban-task-span-full");
 
-    const includedDatesInput = document.createElement("input");
+    const includedDatesInput = fields.createEl("input");
     includedDatesInput.type = "text";
     includedDatesInput.placeholder = "2026-12-24";
     includedDatesInput.value = getRecurringTaskDateKeys(recurrence.includedDates).join(", ");
     const includedDatesField = createField(fields, "Add dates", includedDatesInput, "noesis-flow-kanban-task-span-full");
 
-    const weekdaysInput = document.createElement("input");
+    const weekdaysInput = fields.createEl("input");
     weekdaysInput.type = "text";
     weekdaysInput.placeholder = "Mon, Wed, Fri";
     weekdaysInput.value = recurrence.weekdays || "";
     const weekdaysField = createField(fields, "Weekdays", weekdaysInput, "noesis-flow-kanban-task-span-full");
 
-    const endsSelect = document.createElement("select");
+    const endsSelect = fields.createEl("select");
     endsSelect.add(new Option(`No end (extend in batches of ${this.occurrenceLimit})`, "limit"));
     endsSelect.add(new Option("After a number of occurrences", "count"));
     endsSelect.add(new Option("On a date", "date"));
     endsSelect.value = recurrence.endMode === "count" || recurrence.endMode === "date" ? recurrence.endMode : "limit";
     createField(fields, "Ends", endsSelect);
 
-    const endInput = document.createElement("input");
+    const endInput = fields.createEl("input");
     const endField = createField(fields, "Occurrences", endInput);
     const updateFields = () => {
       const rule = repeatSelect.value;
@@ -155,7 +155,7 @@ export class NoesisFlowRecurringSeriesModal extends Modal {
     const actions = contentEl.createDiv({ cls: "noesis-flow-kanban-task-actions" });
     actions.createEl("button", { text: "Cancel", attr: { type: "button" } }).addEventListener("click", () => this.close());
     const save = actions.createEl("button", { cls: "mod-cta", text: "Save changes", attr: { type: "button" } });
-    save.addEventListener("click", async () => {
+    save.addEventListener("click", asVoidHandler(async () => {
       const text = taskInput.value.trim();
       const section = projectInput.value.trim();
       const endMode = endsSelect.value;
@@ -208,6 +208,6 @@ export class NoesisFlowRecurringSeriesModal extends Modal {
         }
       });
       this.close();
-    });
+    }));
   }
 }

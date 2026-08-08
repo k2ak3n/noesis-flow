@@ -1,7 +1,7 @@
 import { ItemView, Notice, setIcon } from "obsidian";
 import type NoesisFlowPlugin from "../main";
 import { moment } from "../time";
-import { NOESIS_FLOW_RECURRING_VIEW_TYPE } from "../utils";
+import { asVoidHandler, NOESIS_FLOW_RECURRING_VIEW_TYPE } from "../utils";
 import { getRecurringTaskLabel } from "../tasks/TaskRecurrence";
 import { NoesisFlowConfirmModal } from "../modals/NoesisFlowConfirmModal";
 
@@ -59,21 +59,21 @@ export class NoesisFlowRecurringView extends ItemView {
     heading.createEl("h2", { text: "Recurring tasks" });
     const headerActions = header.createDiv({ cls: "noesis-flow-recurring-header-actions" });
     const recoverButton = headerActions.createEl("button", { text: "Recover from notes", attr: { type: "button" } });
-    recoverButton.addEventListener("click", async () => {
+    recoverButton.addEventListener("click", asVoidHandler(async () => {
       recoverButton.disabled = true;
       const recovered = await this.plugin.recoverRecurringTaskSeries(true);
       new Notice(recovered ? `Recovered ${recovered} recurring ${recovered === 1 ? "series" : "series"}.` : "No missing recurring series were found in configured task notes.");
       this.render();
-    });
+    }));
     const maintainButton = headerActions.createEl("button", { text: "Refresh upcoming", attr: { type: "button" } });
-    maintainButton.addEventListener("click", async () => {
+    maintainButton.addEventListener("click", asVoidHandler(async () => {
       maintainButton.disabled = true;
       const added = await this.plugin.maintainRecurringTaskSeriesHorizon(true);
       new Notice(added ? `Added ${added} upcoming ${added === 1 ? "date" : "dates"}.` : "Upcoming recurring dates are already covered.");
       this.render();
-    });
+    }));
     const addButton = headerActions.createEl("button", { text: "New recurring task", attr: { type: "button" } });
-    addButton.addEventListener("click", () => this.plugin.openRecurringTaskCapture());
+    addButton.addEventListener("click", () => void this.plugin.openRecurringTaskCapture());
 
     const seriesList = this.plugin.getRecurringTaskSeries()
       .slice()
@@ -137,24 +137,24 @@ export class NoesisFlowRecurringView extends ItemView {
 
     const actions = card.createDiv({ cls: "noesis-flow-recurring-actions" });
     const editButton = actions.createEl("button", { text: "Edit", attr: { type: "button" } });
-    editButton.addEventListener("click", () => this.plugin.openRecurringTaskSeriesEditor(series));
+    editButton.addEventListener("click", () => void this.plugin.openRecurringTaskSeriesEditor(series));
     const extendButton = actions.createEl("button", { text: `Add ${this.plugin.settings.recurringTaskOccurrenceLimit} dates`, attr: { type: "button" } });
     extendButton.disabled = series.status === "paused";
-    extendButton.addEventListener("click", async () => {
+    extendButton.addEventListener("click", asVoidHandler(async () => {
       extendButton.disabled = true;
       const added = await this.plugin.extendRecurringTaskSeries(series.id);
       new Notice(added ? `Added ${added} planned ${added === 1 ? "date" : "dates"}.` : "No further dates can be added for this series.");
       if (!added) extendButton.disabled = series.status === "paused";
-    });
+    }));
     const statusButton = actions.createEl("button", {
       text: series.status === "paused" ? "Resume" : "Pause",
       attr: { type: "button" }
     });
-    statusButton.addEventListener("click", async () => {
+    statusButton.addEventListener("click", asVoidHandler(async () => {
       statusButton.disabled = true;
       await this.plugin.setRecurringTaskSeriesStatus(series.id, series.status === "paused" ? "active" : "paused");
       new Notice(series.status === "paused" ? "Recurring task resumed." : "Recurring task paused.");
-    });
+    }));
     this.renderIconButton(actions, "trash-2", "Remove tracking", async () => {
       new NoesisFlowConfirmModal(this.app, {
         title: "Remove recurring-task tracking",

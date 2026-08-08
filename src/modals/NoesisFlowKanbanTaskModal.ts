@@ -1,6 +1,6 @@
 import { Modal, Notice } from "obsidian";
 import { moment } from "../time";
-import { CALENDAR_TASK_PRIORITIES, CALENDAR_TASK_RECURRENCE_OPTIONS } from "../utils";
+import { asVoidHandler, CALENDAR_TASK_PRIORITIES, CALENDAR_TASK_RECURRENCE_OPTIONS } from "../utils";
 import { getRecurringTaskDateKeys } from "../tasks/TaskRecurrence";
 import { enhanceNoesisFlowDatePicker, enhanceNoesisFlowDatePickers } from "../ui/NoesisFlowUi";
 
@@ -47,7 +47,7 @@ export class NoesisFlowKanbanTaskModal extends Modal {
       return field;
     };
 
-    const taskInput = document.createElement("input");
+    const taskInput = form.createEl("input");
     taskInput.type = "text";
     taskInput.placeholder = "Task name";
     taskInput.setAttribute("aria-label", "Task name");
@@ -61,7 +61,7 @@ export class NoesisFlowKanbanTaskModal extends Modal {
       return field;
     };
 
-    const dateInput = document.createElement("input");
+    const dateInput = fields.createEl("input");
     dateInput.type = "date";
     dateInput.value = this.initialDate;
     dateInput.setAttribute("aria-label", "Date");
@@ -74,25 +74,25 @@ export class NoesisFlowKanbanTaskModal extends Modal {
     noDateLabel.createSpan({ text: "Unscheduled" });
 
     const sectionListId = `noesis-flow-kanban-section-list-${Date.now()}`;
-    const sectionInput = document.createElement("input");
+    const sectionInput = fields.createEl("input");
     sectionInput.type = "text";
     sectionInput.placeholder = "Unassigned";
     sectionInput.setAttribute("list", sectionListId);
     sectionInput.setAttribute("aria-label", "Task project");
     createMetaField("Project", sectionInput);
-    const sectionList = document.createElement("datalist");
+    const sectionList = form.createEl("datalist");
     sectionList.id = sectionListId;
     for (const section of this.sections) {
-      const option = document.createElement("option");
+      const option = sectionList.createEl("option");
       option.value = section;
       sectionList.appendChild(option);
     }
     form.appendChild(sectionList);
 
-    const prioritySelect = document.createElement("select");
+    const prioritySelect = fields.createEl("select");
     prioritySelect.setAttribute("aria-label", "Task priority");
     for (const priority of CALENDAR_TASK_PRIORITIES) {
-      const option = document.createElement("option");
+      const option = prioritySelect.createEl("option");
       option.value = priority.marker;
       option.text = priority.label;
       prioritySelect.appendChild(option);
@@ -120,10 +120,10 @@ export class NoesisFlowKanbanTaskModal extends Modal {
     let endValueInput: HTMLInputElement | null = null;
     let endValueField: HTMLElement | null = null;
     if (this.recurrenceEnabled) {
-      recurrenceSelect = document.createElement("select");
+      recurrenceSelect = fields.createEl("select");
       recurrenceSelect.setAttribute("aria-label", "Task recurrence");
       for (const recurrence of CALENDAR_TASK_RECURRENCE_OPTIONS) {
-        const option = document.createElement("option");
+        const option = recurrenceSelect.createEl("option");
         option.value = recurrence.value;
         option.text = recurrence.label;
         recurrenceSelect.appendChild(option);
@@ -133,7 +133,7 @@ export class NoesisFlowKanbanTaskModal extends Modal {
       }
       createMetaField("Repeat", recurrenceSelect);
 
-      completionUnitSelect = document.createElement("select");
+      completionUnitSelect = fields.createEl("select");
       completionUnitSelect.setAttribute("aria-label", "After completion interval");
       for (const option of [["daily", "day"], ["weekly", "week"], ["monthly", "month"]]) {
         completionUnitSelect.createEl("option", { text: option[1], attr: { value: option[0] } });
@@ -141,7 +141,7 @@ export class NoesisFlowKanbanTaskModal extends Modal {
       const completionUnitField = createMetaField("After completion", completionUnitSelect);
       completionUnitField.addClass("is-hidden");
 
-      intervalInput = document.createElement("input");
+      intervalInput = fields.createEl("input");
       intervalInput.type = "number";
       intervalInput.min = "1";
       intervalInput.max = "52";
@@ -151,15 +151,15 @@ export class NoesisFlowKanbanTaskModal extends Modal {
       intervalField = createMetaField("Every", intervalInput);
       intervalUnit = intervalField.createSpan({ cls: "noesis-flow-kanban-repeat-interval-unit" });
 
-      const skipOptions = document.createElement("div");
+      const skipOptions = fields.createDiv();
       skipOptions.classList.add("noesis-flow-kanban-recurrence-options");
-      const weekendLabel = document.createElement("label");
-      skipWeekendsInput = document.createElement("input");
+      const weekendLabel = skipOptions.createEl("label");
+      skipWeekendsInput = weekendLabel.createEl("input");
       skipWeekendsInput.type = "checkbox";
       weekendLabel.appendChild(skipWeekendsInput);
       weekendLabel.append("Skip weekends");
-      const holidayLabel = document.createElement("label");
-      skipHolidaysInput = document.createElement("input");
+      const holidayLabel = skipOptions.createEl("label");
+      skipHolidaysInput = holidayLabel.createEl("input");
       skipHolidaysInput.type = "checkbox";
       holidayLabel.appendChild(skipHolidaysInput);
       holidayLabel.append("Skip holidays");
@@ -167,21 +167,21 @@ export class NoesisFlowKanbanTaskModal extends Modal {
       skipField = createMetaField("Skip", skipOptions);
       skipField.addClass("noesis-flow-kanban-task-span-full");
 
-      excludedDatesInput = document.createElement("input");
+      excludedDatesInput = fields.createEl("input");
       excludedDatesInput.type = "text";
       excludedDatesInput.placeholder = "2026-12-25, 2026-12-31";
       excludedDatesInput.setAttribute("aria-label", "Dates to skip");
       excludedDatesField = createMetaField("Skip dates", excludedDatesInput);
       excludedDatesField.addClass("noesis-flow-kanban-task-span-full");
 
-      includedDatesInput = document.createElement("input");
+      includedDatesInput = fields.createEl("input");
       includedDatesInput.type = "text";
       includedDatesInput.placeholder = "2026-12-24";
       includedDatesInput.setAttribute("aria-label", "Additional recurrence dates");
       includedDatesField = createMetaField("Add dates", includedDatesInput);
       includedDatesField.addClass("noesis-flow-kanban-task-span-full");
 
-      weekdaysInput = document.createElement("input");
+      weekdaysInput = fields.createEl("input");
       weekdaysInput.type = "text";
       weekdaysInput.placeholder = "Mon, Wed, Fri";
       weekdaysInput.setAttribute("aria-label", "Custom repeat weekdays");
@@ -189,14 +189,14 @@ export class NoesisFlowKanbanTaskModal extends Modal {
       weekdaysField.addClass("noesis-flow-kanban-task-span-full");
       weekdaysField.addClass("is-hidden");
 
-      endModeSelect = document.createElement("select");
+      endModeSelect = fields.createEl("select");
       endModeSelect.setAttribute("aria-label", "When recurrence ends");
       for (const endOption of [
         { value: "limit", label: `No end (up to ${this.recurrenceLimit} occurrences)` },
         { value: "count", label: "After a number of occurrences" },
         { value: "date", label: "On a date" }
       ]) {
-        const option = document.createElement("option");
+        const option = endModeSelect.createEl("option");
         option.value = endOption.value;
         option.text = endOption.label;
         endModeSelect.appendChild(option);
@@ -204,7 +204,7 @@ export class NoesisFlowKanbanTaskModal extends Modal {
       endModeField = createMetaField("Ends", endModeSelect);
       endModeField.addClass("is-hidden");
 
-      endValueInput = document.createElement("input");
+      endValueInput = fields.createEl("input");
       endValueInput.setAttribute("aria-label", "Recurrence end value");
       endValueField = createMetaField("Occurrences", endValueInput);
       endValueField.addClass("is-hidden");
@@ -340,7 +340,7 @@ export class NoesisFlowKanbanTaskModal extends Modal {
       text: "ADD TASK",
       attr: { type: "button" }
     });
-    submitButton.addEventListener("click", submit);
+    submitButton.addEventListener("click", asVoidHandler(submit));
 
     window.setTimeout(() => taskInput.focus(), 0);
   }

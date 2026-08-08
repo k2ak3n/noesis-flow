@@ -1,4 +1,5 @@
 import { Modal, Notice } from "obsidian";
+import { asVoidHandler } from "../utils";
 
 export class NoesisFlowKanbanSavedViewModal extends Modal {
   savedView: any;
@@ -33,13 +34,13 @@ export class NoesisFlowKanbanSavedViewModal extends Modal {
       field.appendChild(control);
       return field;
     };
-    const nameInput = document.createElement("input");
+    const nameInput = form.createEl("input");
     nameInput.type = "text";
     nameInput.value = this.savedView.name || "";
     nameInput.placeholder = "View name";
     createField("Name", nameInput);
 
-    const descriptionInput = document.createElement("input");
+    const descriptionInput = form.createEl("input");
     descriptionInput.type = "text";
     descriptionInput.value = this.savedView.description || "";
     descriptionInput.placeholder = "Optional short description";
@@ -48,7 +49,7 @@ export class NoesisFlowKanbanSavedViewModal extends Modal {
     const actions = contentEl.createDiv({ cls: "noesis-flow-kanban-task-actions" });
     actions.createEl("button", { text: "Cancel", attr: { type: "button" } }).addEventListener("click", () => this.close());
     const save = actions.createEl("button", { cls: "mod-cta", text: this.submitLabel, attr: { type: "button" } });
-    save.addEventListener("click", async () => {
+    save.addEventListener("click", asVoidHandler(async () => {
       const name = nameInput.value.trim();
       if (!name) {
         new Notice("Enter a saved view name.");
@@ -62,7 +63,7 @@ export class NoesisFlowKanbanSavedViewModal extends Modal {
         save.disabled = false;
         new Notice(`Could not save view: ${error.message || error}`);
       }
-    });
+    }));
     window.setTimeout(() => nameInput.focus(), 0);
   }
 }

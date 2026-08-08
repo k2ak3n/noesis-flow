@@ -1,4 +1,6 @@
 import { moment } from "../time";
+import type { Moment, MomentInput } from "moment";
+import type { CalendarTask, CalendarTaskStats, DateTaskFilter, NoesisFlowSettings } from "../types";
 import {
   CALENDAR_TASK_PRIORITY_ORDER,
   clampNumber,
@@ -8,7 +10,10 @@ import {
   normalizeDateTaskFilter
 } from "../utils";
 
-export function mergeCalendarTaskStats(target, source) {
+export function mergeCalendarTaskStats(
+  target: CalendarTaskStats | null | undefined,
+  source: CalendarTaskStats | null | undefined
+): CalendarTaskStats {
   const merged = target || createCalendarTaskStats();
   if (!source) return merged;
   merged.total += source.total || 0;
@@ -20,14 +25,18 @@ export function mergeCalendarTaskStats(target, source) {
   return merged;
 }
 
-export function getCalendarTaskSignal(stats, settings, date) {
-  const cleanStats = stats || { total: 0, priority: 0 };
+export function getCalendarTaskSignal(
+  stats: CalendarTaskStats | null | undefined,
+  settings: Pick<NoesisFlowSettings, "calendarTaskWorkloadThreshold" | "calendarTaskOrangePriorityThreshold" | "calendarTaskRedPriorityThreshold" | "calendarMarkOverdueTasks">,
+  date: MomentInput
+): CalendarTaskStats {
+  const cleanStats = stats || createCalendarTaskStats();
   const workload = clampNumber(settings?.calendarTaskWorkloadThreshold, 1, 50, 5);
   const orangePriority = clampNumber(settings?.calendarTaskOrangePriorityThreshold, 1, 20, 1);
   const redPriority = clampNumber(settings?.calendarTaskRedPriorityThreshold, 1, 20, 2);
   const total = cleanStats.total || 0;
   const priority = cleanStats.priority || 0;
-  const dateMoment = date?.clone ? date.clone().startOf("day") : moment(date).startOf("day");
+  const dateMoment = moment(date).startOf("day");
   const overdue = !!settings?.calendarMarkOverdueTasks && total > 0 && dateMoment.isValid() && dateMoment.isBefore(moment().startOf("day"));
   const dotCount = total <= 0 ? 0 : total >= workload ? 3 : total >= Math.max(2, Math.ceil(workload / 2)) ? 2 : 1;
   const prioritySummary = CALENDAR_TASK_PRIORITY_ORDER.map((marker) => {
@@ -35,21 +44,35 @@ export function getCalendarTaskSignal(stats, settings, date) {
     return count ? `${getCalendarTaskPriorityLabel(marker)} ${count}` : "";
   }).filter(Boolean).join(", ");
   const level = overdue ? "overdue" : total >= workload ? priority >= redPriority ? "critical" : priority >= orangePriority ? "warning" : "busy" : "";
-  return { total, priority, priorities: cleanStats.priorities || {}, tasks: cleanStats.tasks || [], prioritySummary, overdue, dotCount, level };
+  return { total, priority, priorities: cleanStats.priorities, tasks: cleanStats.tasks, prioritySummary, overdue, dotCount, level };
 }
 
 /** A task is overdue when its single task Date is before today. */
-export function isTaskDeadlineOverdue(task, today = moment()) {
+export function isTaskDeadlineOverdue(task: Pick<CalendarTask, "dateKey"> | null | undefined, today: Moment = moment()) {
   const taskDate = moment(String(task?.dateKey || "").trim(), "YYYY-MM-DD", true).startOf("day");
   return taskDate.isValid() && taskDate.isBefore(today.clone().startOf("day"), "day");
 }
 
-export function getDateTaskGroups(tasksByDate, settings, today = moment()) {
+export interface CalendarTaskGroup {
+  date: Moment;
+  dateKey: string;
+  filter: DateTaskFilter;
+  isOverdue: boolean;
+  isToday: boolean;
+  isTomorrow: boolean;
+  tasks: CalendarTask[];
+}
+
+export function getDateTaskGroups(
+  tasksByDate: Map<string, CalendarTask[]>,
+  settings: { taskDateFilter?: string },
+  today: Moment = moment()
+) {
   if (!(tasksByDate instanceof Map) || !tasksByDate.size) return [];
   const todayStart = today.clone().startOf("day");
   const filter = normalizeDateTaskFilter(settings?.taskDateFilter);
   const range = getDateTaskFilterRange(filter, todayStart);
-  const groups = [];
+  const groups: CalendarTaskGroup[] = [];
   for (const [dateKey, tasks] of tasksByDate.entries()) {
     const date = moment(dateKey, "YYYY-MM-DD", true).startOf("day");
     const actionableTasks = Array.isArray(tasks) ? tasks : [];

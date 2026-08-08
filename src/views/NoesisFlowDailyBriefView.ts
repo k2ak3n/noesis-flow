@@ -158,7 +158,7 @@ export class NoesisFlowDailyBriefView extends NoesisFlowTimedView {
     for (const task of tasks.slice(0, 8)) {
       renderNoesisFlowTaskRow(list, task, {
         onOpen: (selectedTask) => this.plugin.openTaskDetails(selectedTask),
-        onComplete: (selectedTask, button) => this.completeTask(selectedTask, button),
+        onComplete: (selectedTask, button) => { void this.completeTask(selectedTask, button); },
         actionsPlacement: "meta",
         app: this.app,
         component: this
@@ -193,7 +193,7 @@ export class NoesisFlowDailyBriefView extends NoesisFlowTimedView {
     for (const task of tasks.slice(0, 8)) {
       renderNoesisFlowTaskRow(list, task, {
         onOpen: (selectedTask) => this.plugin.openTaskDetails(selectedTask),
-        onComplete: (selectedTask, button) => this.completeTask(selectedTask, button),
+        onComplete: (selectedTask, button) => { void this.completeTask(selectedTask, button); },
         actionsPlacement: "meta",
         app: this.app,
         component: this
@@ -223,7 +223,7 @@ export class NoesisFlowDailyBriefView extends NoesisFlowTimedView {
       for (const task of group.tasks.slice(0, 8)) {
         renderNoesisFlowTaskRow(taskList, task, {
           onOpen: (selectedTask) => this.plugin.openTaskDetails(selectedTask),
-          onComplete: (selectedTask, button) => this.completeTask(selectedTask, button),
+          onComplete: (selectedTask, button) => { void this.completeTask(selectedTask, button); },
           actionsPlacement: "meta",
           app: this.app,
           component: this
@@ -298,7 +298,7 @@ export class NoesisFlowDailyBriefView extends NoesisFlowTimedView {
     for (const task of tasks) {
       renderNoesisFlowTaskRow(list, task, {
         onOpen: (selectedTask) => this.plugin.openTaskDetails(selectedTask),
-        onComplete: (selectedTask, button) => this.completeTask(selectedTask, button),
+        onComplete: (selectedTask, button) => { void this.completeTask(selectedTask, button); },
         actionsPlacement: "meta",
         app: this.app,
         component: this
@@ -416,7 +416,7 @@ export class NoesisFlowDailyBriefView extends NoesisFlowTimedView {
     dateLine.createSpan({ cls: "noesis-flow-brief-date-value", text: today.format("MMM D, YYYY") });
     const heroActions = hero.createDiv({ cls: "noesis-flow-brief-hero-actions" });
     const addTask = heroActions.createEl("button", { text: "New task", cls: "mod-cta", attr: { type: "button" } });
-    addTask.addEventListener("click", () => this.plugin.openQuickTaskCapture({ initialDate: today }));
+    addTask.addEventListener("click", () => void this.plugin.openQuickTaskCapture({ initialDate: today }));
     this.renderTaskFilter(heroActions, taskFilter);
 
     const priorityCounts = this.getPriorityCounts(visibleTasks);

@@ -2,6 +2,7 @@ import { Modal, Notice } from "obsidian";
 import { moment } from "../time";
 import { enhanceNoesisFlowDatePickers } from "../ui/NoesisFlowUi";
 import { NoesisFlowConfirmModal } from "./NoesisFlowConfirmModal";
+import { asVoidHandler } from "../utils";
 
 export class NoesisFlowTimelineEventModal extends Modal {
   event: any;
@@ -34,21 +35,21 @@ export class NoesisFlowTimelineEventModal extends Modal {
       return field;
     };
 
-    const name = document.createElement("input");
+    const name = form.createEl("input");
     name.type = "text";
     name.value = this.event.label || "";
     name.placeholder = "Event name";
     createField("Event", name).addClass("noesis-flow-kanban-task-name-field");
 
     const fields = form.createDiv({ cls: "noesis-flow-kanban-task-fields" });
-    const date = document.createElement("input");
+    const date = fields.createEl("input");
     date.type = "date";
     date.value = this.event.dateKey || moment().format("YYYY-MM-DD");
     const dateField = fields.createDiv({ cls: "noesis-flow-kanban-task-field" });
     dateField.createEl("label", { text: "Date" });
     dateField.appendChild(date);
 
-    const project = document.createElement("input");
+    const project = fields.createEl("input");
     project.type = "text";
     project.value = this.event.section || "";
     project.placeholder = "Optional project";
@@ -56,7 +57,7 @@ export class NoesisFlowTimelineEventModal extends Modal {
     const projectField = fields.createDiv({ cls: "noesis-flow-kanban-task-field" });
     projectField.createEl("label", { text: "Project" });
     projectField.appendChild(project);
-    const dataList = document.createElement("datalist");
+    const dataList = form.createEl("datalist");
     dataList.id = project.getAttribute("list") || "";
     for (const section of this.sections) dataList.appendChild(new Option(section, section));
     form.appendChild(dataList);
@@ -80,7 +81,7 @@ export class NoesisFlowTimelineEventModal extends Modal {
     }
     actions.createEl("button", { text: "Cancel", attr: { type: "button" } }).addEventListener("click", () => this.close());
     const save = actions.createEl("button", { cls: "mod-cta", text: this.title === "New event" ? "Add event" : "Save changes", attr: { type: "button" } });
-    save.addEventListener("click", async () => {
+    save.addEventListener("click", asVoidHandler(async () => {
       if (!name.value.trim() || !moment(date.value, "YYYY-MM-DD", true).isValid()) {
         new Notice("Enter an event name and valid date.");
         return;
@@ -88,7 +89,7 @@ export class NoesisFlowTimelineEventModal extends Modal {
       save.disabled = true;
       await this.onSubmit({ label: name.value.trim(), dateKey: date.value, section: project.value.trim() });
       this.close();
-    });
+    }));
     window.setTimeout(() => name.focus(), 0);
   }
 }

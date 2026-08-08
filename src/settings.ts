@@ -7,7 +7,7 @@ import { NoesisFlowKanbanSavedViewModal } from "./modals/NoesisFlowKanbanSavedVi
 import { NoesisFlowConfirmModal } from "./modals/NoesisFlowConfirmModal";
 import { NoesisFlowSettings } from "./types";
 import type NoesisFlowPlugin from "./main";
-import { DATE_TASK_FILTER_OPTIONS, KANBAN_TASK_VIEW_OPTIONS, CALENDAR_TASK_PRIORITIES, sanitizeCssText, clampNumber, getDateMarkerLabel, downloadText, DEFAULT_SETTINGS, normalizeDateTaskFilter, normalizeKanbanCardAccentPosition, normalizeKanbanCardContextPlacement, normalizeKanbanCardContextAlignment, normalizeKanbanTaskView, parseCalendarTaskIndex, parseKanbanSavedViewsExport, serializeKanbanSavedViews } from "./utils";
+import { DATE_TASK_FILTER_OPTIONS, KANBAN_TASK_VIEW_OPTIONS, CALENDAR_TASK_PRIORITIES, asVoidHandler, sanitizeCssText, clampNumber, getDateMarkerLabel, downloadText, DEFAULT_SETTINGS, normalizeDateTaskFilter, normalizeKanbanCardAccentPosition, normalizeKanbanCardContextPlacement, normalizeKanbanCardContextAlignment, normalizeKanbanTaskView, parseCalendarTaskIndex, parseKanbanSavedViewsExport, serializeKanbanSavedViews } from "./utils";
 import { getMarkdownH2Sections } from "./tasks/TaskMarkdown";
 
 export class NoesisFlowSettingTab extends PluginSettingTab {
@@ -103,10 +103,10 @@ export class NoesisFlowSettingTab extends PluginSettingTab {
   }
 
   renderSettingsSectionHeading(containerEl, title) {
-    containerEl.createEl("h3", {
-      cls: "noesis-flow-settings-group-heading",
-      text: title
-    });
+    new Setting(containerEl)
+      .setName(title)
+      .setHeading()
+      .setClass("noesis-flow-settings-group-heading");
   }
 
   renderSettingsSearch(containerEl) {
@@ -127,11 +127,11 @@ export class NoesisFlowSettingTab extends PluginSettingTab {
   applySettingsSearch() {
     if (!this.containerEl) return;
     const query = this.settingsSearchQuery.trim().toLowerCase();
-    const sections = Array.from(this.containerEl.querySelectorAll("details.noesis-flow-settings-section"));
+    const sections = Array.from(this.containerEl.querySelectorAll<HTMLDetailsElement>("details.noesis-flow-settings-section"));
     const headings = Array.from(this.containerEl.querySelectorAll(".noesis-flow-settings-group-heading"));
 
-    for (const section of sections as any[]) {
-      const settingItems = Array.from(section.querySelectorAll(".setting-item")) as HTMLElement[];
+    for (const section of sections) {
+      const settingItems = Array.from(section.querySelectorAll<HTMLElement>(".setting-item"));
       let hasMatchingControl = false;
       for (const item of settingItems) {
         const name = String(item.querySelector(".setting-item-name")?.textContent || "").trim().toLowerCase();
@@ -170,9 +170,6 @@ export class NoesisFlowSettingTab extends PluginSettingTab {
     containerEl.empty();
     containerEl.addClass("noesis-flow-settings");
 
-    new Setting(containerEl)
-      .setName("Noesis Flow")
-      .setHeading();
     containerEl.createEl("p", {
       text: "Configure your Markdown task workflow and optional planning tools."
     });
@@ -618,7 +615,6 @@ export class NoesisFlowSettingTab extends PluginSettingTab {
           slider
             .setLimits(min, max, step)
             .setValue(clampNumber(this.plugin.settings[key], min, max, fallback))
-            .setDynamicTooltip()
             .onChange(async (value) => {
               this.plugin.settings[key] = value;
               await this.plugin.saveSettings();
@@ -744,7 +740,6 @@ export class NoesisFlowSettingTab extends PluginSettingTab {
           slider
             .setLimits(2, 26, 1)
             .setValue(clampNumber(this.plugin.settings.recurringTaskOccurrenceLimit, 2, 26, 6))
-            .setDynamicTooltip()
             .onChange(async (value) => {
               this.plugin.settings.recurringTaskOccurrenceLimit = value;
               await this.plugin.saveSettings();
@@ -845,7 +840,6 @@ export class NoesisFlowSettingTab extends PluginSettingTab {
           slider
             .setLimits(1, 20, 1)
             .setValue(clampNumber(this.plugin.settings.calendarTaskWorkloadThreshold, 1, 20, 5))
-            .setDynamicTooltip()
             .onChange(async (value) => {
               this.plugin.settings.calendarTaskWorkloadThreshold = value;
               await this.plugin.saveSettings();
@@ -860,7 +854,6 @@ export class NoesisFlowSettingTab extends PluginSettingTab {
           slider
             .setLimits(1, 10, 1)
             .setValue(clampNumber(this.plugin.settings.calendarTaskOrangePriorityThreshold, 1, 10, 1))
-            .setDynamicTooltip()
             .onChange(async (value) => {
               this.plugin.settings.calendarTaskOrangePriorityThreshold = value;
               await this.plugin.saveSettings();
@@ -875,7 +868,6 @@ export class NoesisFlowSettingTab extends PluginSettingTab {
           slider
             .setLimits(1, 10, 1)
             .setValue(clampNumber(this.plugin.settings.calendarTaskRedPriorityThreshold, 1, 10, 2))
-            .setDynamicTooltip()
             .onChange(async (value) => {
               this.plugin.settings.calendarTaskRedPriorityThreshold = value;
               await this.plugin.saveSettings();
@@ -1169,8 +1161,7 @@ export class NoesisFlowSettingTab extends PluginSettingTab {
       .addSlider((slider) => {
         slider
           .setLimits(0, 12, 1)
-          .setValue(this.plugin.settings.kanbanCardCornerRadius)
-          .setDynamicTooltip();
+          .setValue(this.plugin.settings.kanbanCardCornerRadius);
         slider.onChange(async (value) => {
           this.plugin.settings.kanbanCardCornerRadius = value;
           await this.plugin.saveSettings();
@@ -1264,12 +1255,16 @@ export class NoesisFlowSettingTab extends PluginSettingTab {
       .addButton((button) => {
         button.setButtonText("Import JSON");
         button.onClick(() => {
-          const input = document.createElement("input");
+          const input = savedGroup.createEl("input");
           input.type = "file";
           input.accept = "application/json,.json";
-          input.addEventListener("change", async () => {
+          input.style.display = "none";
+          input.addEventListener("change", asVoidHandler(async () => {
             const file = input.files && input.files[0];
-            if (!file) return;
+            if (!file) {
+              input.remove();
+              return;
+            }
             try {
               const imported = parseKanbanSavedViewsExport(await file.text());
               const next = savedViews.slice();
@@ -1284,8 +1279,10 @@ export class NoesisFlowSettingTab extends PluginSettingTab {
               this.display();
             } catch (error) {
               new Notice(`Import failed: ${error.message || error}`);
+            } finally {
+              input.remove();
             }
-          });
+          }));
           input.click();
         });
       });
@@ -1319,7 +1316,7 @@ export class NoesisFlowSettingTab extends PluginSettingTab {
         })
         .addButton((button) => {
           button.setButtonText("Delete");
-          button.setWarning();
+          button.setDestructive();
           button.onClick(() => new NoesisFlowConfirmModal(this.app, {
             title: "Delete saved Kanban view",
             message: `Delete “${viewName}”?`,
@@ -1404,9 +1401,9 @@ export class NoesisFlowSettingTab extends PluginSettingTab {
         row.createSpan({ cls: "noesis-flow-task-source-label", text: "Task note" });
       } else {
         const remove = row.createEl("button", { text: "Remove", attr: { type: "button" } });
-        remove.addEventListener("click", async () => {
+        remove.addEventListener("click", asVoidHandler(async () => {
           if (await this.plugin.removeTaskSourceNote(path)) this.display();
-        });
+        }));
       }
     }
   }
@@ -1448,15 +1445,15 @@ export class NoesisFlowSettingTab extends PluginSettingTab {
       row.createSpan({ text: `${project.name} · ${project.sourcePath} / ${project.section}` });
       row.createSpan({ cls: "noesis-flow-task-source-label", text: project.status });
       const toggle = row.createEl("button", { text: project.status === "active" ? "Pause" : "Activate", attr: { type: "button" } });
-      toggle.addEventListener("click", async () => {
+      toggle.addEventListener("click", asVoidHandler(async () => {
         await this.plugin.updateProject(project.id, { status: project.status === "active" ? "paused" : "active" });
         this.display();
-      });
+      }));
       const archive = row.createEl("button", { text: project.status === "archived" ? "Restore" : "Archive", attr: { type: "button" } });
-      archive.addEventListener("click", async () => {
+      archive.addEventListener("click", asVoidHandler(async () => {
         await this.plugin.updateProject(project.id, { status: project.status === "archived" ? "active" : "archived" });
         this.display();
-      });
+      }));
       const due = row.createEl("button", { text: project.dueDate ? `Due ${project.dueDate}` : "Set due", attr: { type: "button" } });
       due.addEventListener("click", () => new NoesisFlowTextPromptModal(this.app, "Project due date", "YYYY-MM-DD (leave blank to clear)", project.dueDate || "", async (value) => {
         const next = String(value || "").trim();
@@ -1515,7 +1512,6 @@ export class NoesisFlowSettingTab extends PluginSettingTab {
         slider
           .setLimits(7, 365, 1)
           .setValue(clampNumber(this.plugin.settings.timelineRangeDays, 7, 365, 60))
-          .setDynamicTooltip()
           .onChange(async (value) => {
             this.plugin.settings.timelineRangeDays = value;
             await this.plugin.saveSettings();
@@ -1721,7 +1717,6 @@ export class NoesisFlowSettingTab extends PluginSettingTab {
         slider
           .setLimits(1, 240, 1)
           .setValue(clampNumber(this.plugin.settings.timerFocusMinutes, 1, 240, 25))
-          .setDynamicTooltip()
           .onChange(async (value) => {
             this.plugin.settings.timerFocusMinutes = value;
             await this.plugin.saveSettings();
@@ -1736,7 +1731,6 @@ export class NoesisFlowSettingTab extends PluginSettingTab {
         slider
           .setLimits(1, 120, 1)
           .setValue(clampNumber(this.plugin.settings.timerBreakMinutes, 1, 120, 5))
-          .setDynamicTooltip()
           .onChange(async (value) => {
             this.plugin.settings.timerBreakMinutes = value;
             await this.plugin.saveSettings();
@@ -1751,7 +1745,6 @@ export class NoesisFlowSettingTab extends PluginSettingTab {
         slider
           .setLimits(1, 120, 1)
           .setValue(clampNumber(this.plugin.settings.timerLongBreakMinutes, 1, 120, 20))
-          .setDynamicTooltip()
           .onChange(async (value) => {
             this.plugin.settings.timerLongBreakMinutes = value;
             await this.plugin.saveSettings();
@@ -1766,7 +1759,6 @@ export class NoesisFlowSettingTab extends PluginSettingTab {
         slider
           .setLimits(1, 12, 1)
           .setValue(clampNumber(this.plugin.settings.timerFocusCycles, 1, 12, 4))
-          .setDynamicTooltip()
           .onChange(async (value) => {
             this.plugin.settings.timerFocusCycles = value;
             if (this.plugin.settings.timerLongBreakInterval > value) {
@@ -1786,7 +1778,6 @@ export class NoesisFlowSettingTab extends PluginSettingTab {
         slider
           .setLimits(1, cycleLimit, 1)
           .setValue(Math.min(cycleLimit, clampNumber(this.plugin.settings.timerLongBreakInterval, 1, 12, 4)))
-          .setDynamicTooltip()
           .onChange(async (value) => {
             this.plugin.settings.timerLongBreakInterval = value;
             await this.plugin.saveSettings();

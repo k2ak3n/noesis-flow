@@ -66,8 +66,10 @@ export class NoesisFlowCalendarDayTasksModal extends Modal {
         app: this.app,
         component: this,
         actionsPlacement: "meta",
-        onComplete: async (currentTask) => {
-          if (await this.plugin.completeCalendarTask(currentTask)) this.render();
+        onComplete: (currentTask) => {
+          void this.plugin.completeCalendarTask(currentTask).then((completed) => {
+            if (completed) this.render();
+          });
         },
         onOpen: (currentTask) => this.plugin.openTaskDetails(currentTask),
       }, "noesis-flow-calendar-day-task-row");
@@ -83,7 +85,7 @@ export class NoesisFlowCalendarDayTasksModal extends Modal {
         new Notice("Events cannot be scheduled in the past.");
         return;
       }
-      this.plugin.openTimelineEventCreator(this.date, () => this.render());
+      void this.plugin.openTimelineEventCreator(this.date, () => this.render());
     }, "is-events");
     if (!events.length) eventBody.createDiv({ cls: "noesis-flow-calendar-day-empty", text: canAddEvents ? "No milestones or events on this date." : "Set up a Milestones / Events note to add entries." });
     for (const event of events) {
@@ -92,7 +94,7 @@ export class NoesisFlowCalendarDayTasksModal extends Modal {
       const details = row.createDiv({ cls: "noesis-flow-calendar-day-reference-details" });
       details.createDiv({ cls: "noesis-flow-calendar-day-reference-title", text: event.label || "Event" });
       details.createDiv({ cls: "noesis-flow-calendar-day-reference-meta", text: event.section || "Milestone / Event" });
-      row.createEl("button", { text: "EDIT", attr: { type: "button" } }).addEventListener("click", () => this.plugin.openTimelineEventEditor(event, () => this.render()));
+      row.createEl("button", { text: "EDIT", attr: { type: "button" } }).addEventListener("click", () => void this.plugin.openTimelineEventEditor(event, () => this.render()));
     }
 
     const canAddHolidays = this.plugin.settings.holidayCalendarEnabled && !!this.plugin.getHolidayCalendarTargetFile(false);
@@ -105,7 +107,7 @@ export class NoesisFlowCalendarDayTasksModal extends Modal {
         new Notice("Holidays cannot be scheduled in the past.");
         return;
       }
-      this.plugin.openHolidayCreator(this.date, () => this.render());
+      void this.plugin.openHolidayCreator(this.date, () => this.render());
     }, "is-holidays");
     if (!holidays.length) holidayBody.createDiv({ cls: "noesis-flow-calendar-day-empty", text: canAddHolidays ? "No holidays on this date." : "Set up a Holidays note to add entries." });
     for (const label of holidays) {
@@ -113,7 +115,7 @@ export class NoesisFlowCalendarDayTasksModal extends Modal {
       const details = row.createDiv({ cls: "noesis-flow-calendar-day-reference-details" });
       details.createDiv({ cls: "noesis-flow-calendar-day-reference-title", text: label || "Holiday" });
       details.createDiv({ cls: "noesis-flow-calendar-day-reference-meta", text: "Holiday" });
-      row.createEl("button", { text: "OPEN NOTE", attr: { type: "button" } }).addEventListener("click", () => this.plugin.openHolidaySource());
+      row.createEl("button", { text: "OPEN NOTE", attr: { type: "button" } }).addEventListener("click", () => void this.plugin.openHolidaySource());
     }
   }
 

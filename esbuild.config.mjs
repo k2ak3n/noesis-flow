@@ -1,8 +1,8 @@
 import esbuild from "esbuild";
 import fs from "fs/promises";
+import { builtinModules } from "node:module";
 import path from "path";
 import process from "process";
-import builtins from "builtin-modules";
 
 const prod = process.argv[2] === "production";
 const outFile = "main.js";
@@ -50,7 +50,7 @@ const context = await esbuild.context({
     "@lezer/common",
     "@lezer/highlight",
     "@lezer/lr",
-    ...builtins,
+    ...builtinModules,
   ],
   format: "cjs",
   target: "es2022",
