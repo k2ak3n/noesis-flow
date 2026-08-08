@@ -1292,7 +1292,7 @@ export class NoesisFlowPlugin extends Plugin {
     const recorded = Array.isArray(series && series.occurrenceDates)
       ? series.occurrenceDates.filter((dateKey: string) => moment(dateKey, "YYYY-MM-DD", true).isValid())
       : [];
-    if (recorded.length) return Array.from(new Set(recorded as string[])).sort();
+    if (recorded.length) return Array.from(new Set(recorded)).sort();
 
     const count = Math.max(1, Math.min(52, Number(series && series.occurrenceCount) || 1));
     const recurrence = Object.assign({}, series && series.recurrence, {

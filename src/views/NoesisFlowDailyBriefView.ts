@@ -107,7 +107,7 @@ export class NoesisFlowDailyBriefView extends NoesisFlowTimedView {
       select.createEl("option", { text: option.label, attr: { value: option.value } });
     }
     select.value = filter;
-    select.addEventListener("change", () => this.setTaskFilter(select.value));
+    select.addEventListener("change", () => void this.setTaskFilter(select.value));
   }
 
   getPriorityCounts(tasks: CalendarTask[]): Record<string, number> {

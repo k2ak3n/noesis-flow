@@ -107,7 +107,7 @@ export class NoesisFlowKanbanView extends NoesisFlowTimedView {
       select.createEl("option", { text: option.label, attr: { value: option.value } });
     }
     select.value = view;
-    select.addEventListener("change", () => this.setTaskView(select.value));
+    select.addEventListener("change", () => void this.setTaskView(select.value));
   }
 
   openFilterDialog() {

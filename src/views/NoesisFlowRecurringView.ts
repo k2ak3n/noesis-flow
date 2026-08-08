@@ -157,7 +157,7 @@ export class NoesisFlowRecurringView extends ItemView {
       await this.plugin.setRecurringTaskSeriesStatus(series.id, series.status === "paused" ? "active" : "paused");
       new Notice(series.status === "paused" ? "Recurring task resumed." : "Recurring task paused.");
     }));
-    this.renderIconButton(actions, "trash-2", "Remove tracking", async () => {
+    this.renderIconButton(actions, "trash-2", "Remove tracking", () => {
       new NoesisFlowConfirmModal(this.app, {
         title: "Remove recurring-task tracking",
         message: "Remove this series from the manager? Its task lines will stay in your note.",

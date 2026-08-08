@@ -636,14 +636,14 @@ export class NoesisFlowTaskListView extends NoesisFlowTimedView {
     const header = panel.createDiv({ cls: "noesis-flow-task-list-column-chooser-header" });
     header.createSpan({ text: "Columns and widths" });
     const reset = header.createEl("button", { text: "Reset widths", attr: { type: "button" } });
-    reset.addEventListener("click", () => this.resetAllColumnWidths());
+    reset.addEventListener("click", () => void this.resetAllColumnWidths());
     const visible = this.getVisibleColumns();
     for (const column of this.getColumnOrder()) {
       const row = panel.createDiv({ cls: "noesis-flow-task-list-column-control" });
       const label = row.createEl("label");
       const checkbox = label.createEl("input", { type: "checkbox" });
       checkbox.checked = visible.includes(column);
-      checkbox.addEventListener("change", () => this.setColumnVisibility(column, checkbox.checked));
+      checkbox.addEventListener("change", () => void this.setColumnVisibility(column, checkbox.checked));
       label.createSpan({ text: COLUMN_LABELS[column] });
       if (!checkbox.checked) continue;
       const width = this.getColumnWidth(column);
@@ -657,7 +657,7 @@ export class NoesisFlowTaskListView extends NoesisFlowTimedView {
       });
       const auto = row.createEl("button", { text: "Auto", attr: { type: "button", "aria-label": `Use automatic width for ${COLUMN_LABELS[column]}` } });
       auto.disabled = !width;
-      auto.addEventListener("click", () => this.resetColumnWidth(column));
+      auto.addEventListener("click", () => void this.resetColumnWidth(column));
     }
   }
 
