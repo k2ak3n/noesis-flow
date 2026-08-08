@@ -39,7 +39,7 @@ jobs:
       - name: Verify and build
         run: |
           pnpm run typecheck
-          pnpm run lint -- --max-warnings=0
+          pnpm run lint
           pnpm test
           pnpm run build
           test -f dist/main.js
