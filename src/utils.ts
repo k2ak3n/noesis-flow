@@ -1,6 +1,6 @@
 import { moment } from "./time";
 import type { Moment, MomentInput } from "moment";
-import { CalendarTask, CalendarTaskIndex, CalendarTaskStats, NoesisFlowSettings, KanbanSavedView, DateTaskFilter } from "./types";
+import { CalendarTask, CalendarTaskIndex, CalendarTaskStats, NoesisFlowSettings, KanbanSavedView, DateTaskFilter, KanbanTaskStatus } from "./types";
 import { insertCalendarTaskInSection } from "./tasks/TaskMarkdown";
 import { parseTaskMetadata, preserveTaskLineComments, updateTaskMetadataInText } from "./tasks/TaskMetadata";
 import { parseMarkdownTaskLine } from "./tasks/TaskParser";
@@ -441,14 +441,14 @@ export function isMarkdownCodeFenceLine(line) {
 
 const _dateMarkerRegexCache = new Map<string, RegExp>();
 
-export function findNoesisFlowDateMarker(text: string | null | undefined, settings: any) {
+export function findNoesisFlowDateMarker(text: string | null | undefined, settings: unknown) {
   if (!text) return null;
   const str = typeof text === "string" ? text : String(text);
 
   // Fast path optimization: check if the string contains the expected marker character
   // before proceeding to the expensive Regex evaluation. Drastically improves performance
   // for strings that don't contain any date markers (approx ~8x faster on misses).
-  const staticPart = settings?.dateMarkerStyle === "double-hash" ? "##" : "#";
+  const staticPart = getDateMarkerPrefix(settings);
   if (!str.includes(staticPart)) return null;
 
   const pattern = getDateMarkerPattern(settings);
@@ -468,13 +468,13 @@ export function findNoesisFlowDateMarker(text: string | null | undefined, settin
 
 const _stripDateMarkerRegexCache = new Map<string, RegExp>();
 
-export function stripNoesisFlowDateMarker(text: string | null | undefined, dateKey = "", settings: any) {
+export function stripNoesisFlowDateMarker(text: string | null | undefined, dateKey = "", settings: unknown) {
   if (!text) return "";
   const str = typeof text === "string" ? text : String(text);
 
   // Fast path optimization: similar to findNoesisFlowDateMarker, skip the regex entirely
   // if the string does not have the target marker symbol.
-  const staticPart = settings?.dateMarkerStyle === "double-hash" ? "##" : "#";
+  const staticPart = getDateMarkerPrefix(settings);
   if (!str.includes(staticPart)) return str;
 
   const escapedDate = dateKey ? escapeRegExp(dateKey) : "\\d{4}-\\d{2}-\\d{2}";
@@ -496,7 +496,7 @@ export function getCalendarTaskDateKey(date: MomentInput): string {
   return parsed && parsed.isValid && parsed.isValid() ? parsed.format("YYYY-MM-DD") : moment().format("YYYY-MM-DD");
 }
 
-export function createCalendarTaskLine(taskText, priority, dateKey, settings, options: any = {}) {
+export function createCalendarTaskLine(taskText: unknown, priority: { marker?: unknown } | null | undefined, dateKey: unknown, settings: Pick<NoesisFlowSettings, "dateMarkerStyle">, options: Record<string, unknown> = {}) {
   const marker = priority && priority.marker !== undefined ? priority.marker : " ";
   const checkbox = marker === " " ? "- [ ]" : `- [${marker}]`;
   const cleanDateKey = String(dateKey || "").trim();
@@ -512,7 +512,7 @@ export function createCalendarTaskLine(taskText, priority, dateKey, settings, op
   return updateTaskMetadataInText(line, getTaskMetadataUpdates(Object.assign({}, options, { priorityMarker })));
 }
 
-export function getTaskMetadataUpdates(value: any = {}) {
+export function getTaskMetadataUpdates(value: Record<string, unknown> = {}) {
   const keys = ["status", "completedAt", "projectId", "priorityMarker"];
   return Object.fromEntries(keys
     .filter((key) => Object.prototype.hasOwnProperty.call(value, key))
@@ -664,7 +664,7 @@ export function parseCalendarTaskIndex(content: string, settings: NoesisFlowSett
 }
 
 
-export function isCompletableCalendarTaskLine(line, task, settings) {
+export function isCompletableCalendarTaskLine(line: string, task: CalendarTask, settings: NoesisFlowSettings): boolean {
   const taskMatch = String(line || "").match(/^\s*-\s+\[([^\]]*)\]\s+(.+?)\s*$/);
   if (!taskMatch) return false;
 
@@ -679,7 +679,7 @@ export function isCompletableCalendarTaskLine(line, task, settings) {
   return !expectedText || cleanText === expectedText;
 }
 
-export function markCalendarTaskCompletedInContent(content, task, settings) {
+export function markCalendarTaskCompletedInContent(content: string, task: CalendarTask, settings: NoesisFlowSettings): { changed: boolean; content: string } {
   const newline = String(content || "").includes("\r\n") ? "\r\n" : "\n";
   const lines = String(content || "").split(/\r?\n/);
   const targetIndex = findCalendarTaskLineIndex(lines, task, settings);
@@ -704,7 +704,7 @@ export function markCalendarTaskCompletedInContent(content, task, settings) {
   return { changed: true, content: lines.join(newline) };
 }
 
-export function findCalendarTaskLineIndex(lines, task, settings) {
+export function findCalendarTaskLineIndex(lines: string[], task: CalendarTask, settings: NoesisFlowSettings): number {
   const taskId = String(task && task.id || "").trim();
   const lineHasTaskId = (line) => taskId && getCalendarTaskId(line) === taskId;
   const preferredIndex = Number(task && task.lineIndex);
@@ -729,7 +729,7 @@ export function findCalendarTaskLineIndex(lines, task, settings) {
   return matches.length === 1 ? matches[0] : -1;
 }
 
-export function updateCalendarTaskInContent(content, task, updates, settings) {
+export function updateCalendarTaskInContent(content: string, task: CalendarTask, updates: Partial<CalendarTask>, settings: NoesisFlowSettings): { changed: boolean; content: string } {
   const newline = String(content || "").includes("\r\n") ? "\r\n" : "\n";
   const lines = String(content || "").split(/\r?\n/);
   const targetIndex = findCalendarTaskLineIndex(lines, task, settings);
@@ -930,7 +930,7 @@ export function getCalendarDateClickAction(openTaskCount, canCaptureTask, isPast
   return "select";
 }
 
-export function deleteCalendarTaskInContent(content, task, settings) {
+export function deleteCalendarTaskInContent(content: string, task: CalendarTask, settings: NoesisFlowSettings): { changed: boolean; content: string } {
   const newline = String(content || "").includes("\r\n") ? "\r\n" : "\n";
   const lines = String(content || "").split(/\r?\n/);
   const targetIndex = findCalendarTaskLineIndex(lines, task, settings);
@@ -989,31 +989,33 @@ export function downloadText(filename, text) {
   URL.revokeObjectURL(url);
 }
 
-export function normalizeKanbanSavedView(value: any): KanbanSavedView | null {
+export function normalizeKanbanSavedView(value: unknown): KanbanSavedView | null {
   if (!value || typeof value !== "object") return null;
-  const name = String(value.name || "").trim().slice(0, 80);
+  const savedView = value as Record<string, unknown>;
+  const name = String(savedView.name || "").trim().slice(0, 80);
   if (!name) return null;
-  const statuses = Array.isArray(value.statuses)
-    ? value.statuses.filter((status) => status === "active" || status === "completed")
-    : [value.status === "completed" ? "completed" : "active"];
-  const priorities = Array.isArray(value.priorities)
-    ? value.priorities.filter((priority) => ["!", "H", "M", "L", " "].includes(priority))
+  const statuses: KanbanTaskStatus[] = Array.isArray(savedView.statuses)
+    ? savedView.statuses.filter((status): status is KanbanTaskStatus => status === "active" || status === "completed")
+    : [savedView.status === "completed" ? "completed" : "active"];
+  const priorities = Array.isArray(savedView.priorities)
+    ? savedView.priorities.filter((priority): priority is string => typeof priority === "string" && ["!", "H", "M", "L", " "].includes(priority))
     : ["!", "H", "M", "L", " "];
+  const unscheduledFilter = String(savedView.unscheduledFilter || "");
   return {
     name,
-    description: String(value.description || "").trim().slice(0, 240),
-    filter: normalizeDateTaskFilter(value.filter || "all"),
-    view: normalizeKanbanTaskView(value.view || "sections"),
-    statuses: statuses.length ? Array.from(new Set(statuses)) as any : ["active"],
+    description: String(savedView.description || "").trim().slice(0, 240),
+    filter: normalizeDateTaskFilter(savedView.filter || "all"),
+    view: normalizeKanbanTaskView(savedView.view || "sections"),
+    statuses: statuses.length ? Array.from(new Set(statuses)) : ["active"],
     priorities: priorities.length ? Array.from(new Set(priorities)) : ["!", "H", "M", "L", " "],
-    unscheduledFilter: ["auto", "include", "exclude"].includes(String(value.unscheduledFilter))
-      ? String(value.unscheduledFilter) as KanbanSavedView["unscheduledFilter"]
+    unscheduledFilter: ["auto", "include", "exclude"].includes(unscheduledFilter)
+      ? unscheduledFilter as KanbanSavedView["unscheduledFilter"]
       : "auto",
-    search: String(value.search || "").slice(0, 240)
+    search: String(savedView.search || "").slice(0, 240)
   };
 }
 
-export function serializeKanbanSavedViews(views: any[]) {
+export function serializeKanbanSavedViews(views: unknown[]) {
   const normalized = (Array.isArray(views) ? views : [])
     .map((view) => normalizeKanbanSavedView(view))
     .filter(Boolean);

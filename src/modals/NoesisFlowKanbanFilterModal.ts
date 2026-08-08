@@ -1,7 +1,8 @@
 import { Modal, Notice } from "obsidian";
-import { asVoidHandler, DATE_TASK_FILTER_OPTIONS } from "../utils";
+import { asVoidHandler, DATE_TASK_FILTER_OPTIONS, normalizeDateTaskFilter } from "../utils";
+import type { DateTaskFilter, KanbanTaskStatus, KanbanUnscheduledFilter } from "../types";
 
-const PRIORITIES = [
+const PRIORITIES: readonly (readonly [string, string])[] = [
   ["!", "Critical"],
   ["H", "High"],
   ["M", "Medium"],
@@ -9,15 +10,22 @@ const PRIORITIES = [
   [" ", "No priority"]
 ];
 
+type FilterApply = (
+  statuses: KanbanTaskStatus[],
+  priorities: string[],
+  dateFilter: DateTaskFilter,
+  unscheduledFilter: KanbanUnscheduledFilter
+) => void | Promise<void>;
+
 export class NoesisFlowKanbanFilterModal extends Modal {
-  statuses: string[];
+  statuses: KanbanTaskStatus[];
   priorities: string[];
-  dateFilter: string;
-  unscheduledFilter: string;
-  onApply: any;
+  dateFilter: DateTaskFilter;
+  unscheduledFilter: KanbanUnscheduledFilter;
+  onApply: FilterApply;
   showDateFilter: boolean;
 
-  constructor(app, statuses, priorities, dateFilter, unscheduledFilter, onApply, showDateFilter = true) {
+  constructor(app: ConstructorParameters<typeof Modal>[0], statuses: KanbanTaskStatus[], priorities: string[], dateFilter: DateTaskFilter, unscheduledFilter: KanbanUnscheduledFilter, onApply: FilterApply, showDateFilter = true) {
     super(app);
     this.statuses = Array.isArray(statuses) ? statuses : ["active"];
     this.priorities = Array.isArray(priorities) ? priorities : PRIORITIES.map(([marker]) => marker);
@@ -39,10 +47,10 @@ export class NoesisFlowKanbanFilterModal extends Modal {
     const leftColumn = filterColumns.createDiv({ cls: "noesis-flow-kanban-filter-column" });
     const rightColumn = filterColumns.createDiv({ cls: "noesis-flow-kanban-filter-column" });
 
-    const makeGroup = (container, title, items, selected) => {
+    const makeGroup = <Value extends string>(container: HTMLElement, title: string, items: readonly (readonly [Value, string])[], selected: readonly Value[]): Map<Value, HTMLInputElement> => {
       const group = container.createDiv({ cls: "noesis-flow-kanban-filter-group" });
       group.createEl("div", { cls: "noesis-flow-kanban-filter-group-title", text: title });
-      const values = new Map();
+      const values = new Map<Value, HTMLInputElement>();
       for (const [value, label] of items) {
         const row = group.createEl("label", { cls: "noesis-flow-kanban-filter-option" });
         const input = row.createEl("input", { type: "checkbox" });
@@ -54,7 +62,7 @@ export class NoesisFlowKanbanFilterModal extends Modal {
       return values;
     };
 
-    const statuses = makeGroup(leftColumn, "Completion", [["active", "Active"], ["completed", "Completed"]], this.statuses);
+    const statuses = makeGroup(leftColumn, "Completion", [["active", "Active"], ["completed", "Completed"]] as const, this.statuses);
     const priorities = makeGroup(leftColumn, "Priority", PRIORITIES, this.priorities);
     let unscheduledInput: HTMLInputElement | null = null;
     if (this.showDateFilter) {
@@ -87,7 +95,7 @@ export class NoesisFlowKanbanFilterModal extends Modal {
         new Notice("Select at least one option in every filter group.");
         return;
       }
-      await this.onApply(nextStatuses, nextPriorities, dateSelect ? dateSelect.value : this.dateFilter, unscheduledInput ? (unscheduledInput.checked ? "include" : "exclude") : this.unscheduledFilter);
+      await this.onApply(nextStatuses, nextPriorities, dateSelect ? normalizeDateTaskFilter(dateSelect.value) : this.dateFilter, unscheduledInput ? (unscheduledInput.checked ? "include" : "exclude") : this.unscheduledFilter);
       this.close();
     }));
   }

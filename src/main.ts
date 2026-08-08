@@ -825,11 +825,11 @@ export class NoesisFlowPlugin extends Plugin {
     if (this.settings.recurringTasksUseSeparateNote) {
       paths.push(this.getRecurringTaskTargetPath());
     }
-    return unique(paths.filter(Boolean)) as string[];
+    return unique(paths.filter(Boolean));
   }
 
-  getCalendarTaskSourceFiles(showNotice = false) {
-    const files = [];
+  getCalendarTaskSourceFiles(showNotice = false): TFile[] {
+    const files: TFile[] = [];
     for (const path of this.getCalendarTaskSourcePaths()) {
       const file = this.app.vault.getAbstractFileByPath(path);
       if (file instanceof TFile && file.extension === "md") {
@@ -1032,7 +1032,7 @@ export class NoesisFlowPlugin extends Plugin {
       new Notice(`${normalized} is already indexed for tasks.`);
       return false;
     }
-    this.settings.taskSourceNotes = unique([...current, normalized]) as string[];
+    this.settings.taskSourceNotes = unique([...current, normalized]);
     await this.saveSettings();
     await this.refreshCalendarTaskCounts(true);
     new Notice(`Task source added: ${normalized}`);

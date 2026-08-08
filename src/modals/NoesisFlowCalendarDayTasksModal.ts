@@ -1,4 +1,5 @@
-import { Modal, Notice } from "obsidian";
+import { App, Modal, Notice } from "obsidian";
+import type { Moment } from "moment";
 import type NoesisFlowPlugin from "../main";
 import { moment } from "../time";
 import { renderNoesisFlowTaskRow } from "../ui/NoesisFlowUi";
@@ -6,9 +7,9 @@ import { renderNoesisFlowTaskRow } from "../ui/NoesisFlowUi";
 /** Fixed-size, scrollable list shown when a Calendar date already has open tasks. */
 export class NoesisFlowCalendarDayTasksModal extends Modal {
   plugin: NoesisFlowPlugin;
-  date: any;
+  date: Moment;
 
-  constructor(app, plugin, date) {
+  constructor(app: App, plugin: NoesisFlowPlugin, date: Moment) {
     super(app);
     this.plugin = plugin;
     this.date = moment(date).startOf("day");
@@ -22,7 +23,7 @@ export class NoesisFlowCalendarDayTasksModal extends Modal {
       .catch((error) => console.warn("Noesis Flow: unable to refresh day workspace", error));
   }
 
-  createSection(container, titleText, count, actionText, onAction, extraClass = "") {
+  createSection(container: HTMLElement, titleText: string, count: number, actionText: string, onAction: () => void, extraClass = ""): HTMLElement {
     const section = container.createDiv({ cls: `noesis-flow-calendar-day-section ${extraClass}`.trim() });
     const sectionHeader = section.createDiv({ cls: "noesis-flow-calendar-day-section-header" });
     const heading = sectionHeader.createDiv({ cls: "noesis-flow-calendar-day-section-heading" });

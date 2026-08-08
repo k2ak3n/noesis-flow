@@ -175,7 +175,7 @@ export class TaskMutationService {
     });
     if (!added) return "";
 
-    const nextOccurrenceDates = unique([...occurrenceDates, dateKey]).sort() as string[];
+    const nextOccurrenceDates = unique([...occurrenceDates, dateKey]).sort();
     this.host.settings.recurringTaskSeries = this.host.getRecurringTaskSeries().map((item) => item.id === series.id
       ? { ...item, occurrenceCount: nextOccurrenceDates.length, occurrenceDates: nextOccurrenceDates }
       : item);
@@ -207,7 +207,7 @@ export class TaskMutationService {
       new Notice("Could not find that occurrence. Refreshed Tasks.");
       return false;
     }
-    const excludedDates = unique([...(series.recurrence.excludedDates || []), task.dateKey]).sort() as string[];
+    const excludedDates = unique([...(series.recurrence.excludedDates || []), task.dateKey]).sort();
     const occurrenceDates = this.host.getRecurringTaskSeriesDates(series).filter((dateKey) => dateKey !== task.dateKey);
     this.host.settings.recurringTaskSeries = this.host.getRecurringTaskSeries().map((item) => item.id === series.id
       ? { ...item, recurrence: { ...item.recurrence, excludedDates }, occurrenceCount: occurrenceDates.length, occurrenceDates }

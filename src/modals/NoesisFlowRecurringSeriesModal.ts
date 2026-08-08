@@ -1,17 +1,18 @@
-import { Modal, Notice } from "obsidian";
+import { App, Modal, Notice } from "obsidian";
 import { moment } from "../time";
 import { asVoidHandler, CALENDAR_TASK_PRIORITIES, CALENDAR_TASK_RECURRENCE_OPTIONS } from "../utils";
 import { getRecurringTaskDateKeys } from "../tasks/TaskRecurrence";
 import { enhanceNoesisFlowDatePicker, enhanceNoesisFlowDatePickers } from "../ui/NoesisFlowUi";
+import type { RecurringTaskRecurrence, RecurringTaskSeries } from "../types";
 
 export class NoesisFlowRecurringSeriesModal extends Modal {
-  series: any;
+  series: RecurringTaskSeries;
   occurrenceLimit: number;
-  onSubmit: any;
+  onSubmit: (updates: Partial<RecurringTaskSeries>) => void | Promise<unknown>;
 
-  constructor(app, series, occurrenceLimit, onSubmit) {
+  constructor(app: App, series: RecurringTaskSeries, occurrenceLimit: number, onSubmit: (updates: Partial<RecurringTaskSeries>) => void | Promise<unknown>) {
     super(app);
-    this.series = series || {};
+    this.series = series;
     this.occurrenceLimit = Math.max(1, Math.min(52, Math.round(Number(occurrenceLimit) || 6)));
     this.onSubmit = onSubmit;
   }
@@ -26,7 +27,7 @@ export class NoesisFlowRecurringSeriesModal extends Modal {
 
     const form = contentEl.createDiv({ cls: "noesis-flow-kanban-task-form" });
     let fieldIndex = 0;
-    const createField = (parent, label, control, extraClass = "") => {
+    const createField = (parent: HTMLElement, label: string, control: HTMLElement, extraClass = ""): HTMLElement => {
       const field = parent.createDiv({ cls: `noesis-flow-kanban-task-field ${extraClass}`.trim() });
       const labelEl = field.createEl("label", { text: label });
       const controlId = `noesis-flow-recurring-task-${fieldIndex++}`;
@@ -51,7 +52,7 @@ export class NoesisFlowRecurringSeriesModal extends Modal {
     prioritySelect.value = this.series.marker || " ";
     createField(fields, "Priority", prioritySelect);
 
-    const recurrence = this.series.recurrence || {};
+    const recurrence = this.series.recurrence;
     const repeatSelect = fields.createEl("select");
     for (const option of CALENDAR_TASK_RECURRENCE_OPTIONS.filter((option) => option.value !== "none")) {
       repeatSelect.add(new Option(option.label, option.value));
@@ -105,7 +106,7 @@ export class NoesisFlowRecurringSeriesModal extends Modal {
     const weekdaysInput = fields.createEl("input");
     weekdaysInput.type = "text";
     weekdaysInput.placeholder = "Mon, Wed, Fri";
-    weekdaysInput.value = recurrence.weekdays || "";
+    weekdaysInput.value = Array.isArray(recurrence.weekdays) ? recurrence.weekdays.join(", ") : recurrence.weekdays || "";
     const weekdaysField = createField(fields, "Weekdays", weekdaysInput, "noesis-flow-kanban-task-span-full");
 
     const endsSelect = fields.createEl("select");
@@ -189,20 +190,23 @@ export class NoesisFlowRecurringSeriesModal extends Modal {
         return;
       }
       save.disabled = true;
+      const rule = repeatSelect.value as RecurringTaskRecurrence["rule"];
+      const completionRule = completionUnitSelect.value as NonNullable<RecurringTaskRecurrence["completionRule"]>;
+      const normalizedEndMode = endMode as NonNullable<RecurringTaskRecurrence["endMode"]>;
       await this.onSubmit({
         text,
         section,
         marker: prioritySelect.value,
         recurrence: {
-          rule: repeatSelect.value,
-          completionRule: repeatSelect.value === "after-completion" ? completionUnitSelect.value : "",
+          rule,
+          completionRule: rule === "after-completion" ? completionRule : undefined,
           interval,
           weekdays: weekdaysInput.value.trim(),
           skipWeekends: skipWeekendsInput.checked,
           skipHolidays: skipHolidaysInput.checked,
           excludedDates,
           includedDates,
-          endMode,
+          endMode: normalizedEndMode,
           endCount: endMode === "count" ? Number(endValue) : 0,
           endDate: endMode === "date" ? endValue : ""
         }

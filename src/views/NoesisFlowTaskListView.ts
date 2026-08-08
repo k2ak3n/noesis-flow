@@ -13,6 +13,7 @@ import {
 } from "../utils";
 import { renderNoesisFlowMarkdown } from "../ui/NoesisFlowUi";
 import { NoesisFlowKanbanFilterModal } from "../modals/NoesisFlowKanbanFilterModal";
+import type { TaskUpdates } from "../tasks/TaskMutationService";
 
 const COLUMN_LABELS = { text: "Task", date: "Date", section: "Project", priority: "Priority", actions: "Actions" };
 
@@ -306,7 +307,7 @@ export class NoesisFlowTaskListView extends NoesisFlowTimedView {
     input.addEventListener("change", asVoidHandler(async () => {
       const value = input.value.trim();
       if (!value || value === String(task[property] || "")) return;
-      const updates: any = { [property]: value };
+      const updates: TaskUpdates = { [property]: value };
       if (property === "section") updates.projectId = this.plugin.findProjectForSection(task.sourcePath, value)?.id || null;
       await this.updateTask(task, updates);
     }));
@@ -582,7 +583,7 @@ export class NoesisFlowTaskListView extends NoesisFlowTimedView {
     for (const item of CALENDAR_TASK_PRIORITIES) priority.createEl("option", { text: item.label, attr: { value: item.marker } });
     const apply = bar.createEl("button", { text: "Apply fields", attr: { type: "button" } });
     apply.addEventListener("click", asVoidHandler(async () => {
-      const updates: any = {};
+      const updates: TaskUpdates = {};
       if (date.value) updates.dateKey = date.value;
       if (section.value.trim()) updates.section = section.value.trim();
       if (priority.value) updates.marker = priority.value;

@@ -1,4 +1,5 @@
 import { PluginSettingTab, Setting, Notice } from "obsidian";
+import type { SettingDefinitionItem } from "obsidian";
 import { moment } from "./time";
 import { NoesisFlowMarkdownNoteChooserModal } from "./modals/NoesisFlowMarkdownNoteChooserModal";
 import { NoesisFlowCalendarSectionModal } from "./modals/NoesisFlowCalendarSectionModal";
@@ -23,7 +24,7 @@ export class NoesisFlowSettingTab extends PluginSettingTab {
 
   captureOpenSettingsSections() {
     if (!this.containerEl) return;
-    this.containerEl.querySelectorAll("details.noesis-flow-settings-section[data-noesis-flow-section-key]").forEach((details: any) => {
+    this.containerEl.querySelectorAll<HTMLDetailsElement>("details.noesis-flow-settings-section[data-noesis-flow-section-key]").forEach((details) => {
       const key = details.dataset.noesisFlowSectionKey;
       if (!key) return;
       if (details.open) {
@@ -34,7 +35,7 @@ export class NoesisFlowSettingTab extends PluginSettingTab {
     });
   }
 
-  createSettingsDetails(containerEl, title, description = "") {
+  createSettingsDetails(containerEl: HTMLElement, title: string, description = ""): HTMLDetailsElement {
     const key = title;
     const details = containerEl.createEl("details", {
       cls: "noesis-flow-settings-details noesis-flow-settings-section"
@@ -57,8 +58,8 @@ export class NoesisFlowSettingTab extends PluginSettingTab {
     return details;
   }
 
-  getSectionResetKeys(title: string) {
-    const resetKeys = {
+  getSectionResetKeys(title: string): (keyof NoesisFlowSettings)[] {
+    const resetKeys: Record<string, (keyof NoesisFlowSettings)[]> = {
       "Date Parser": ["dateMarkerStyle"],
       "Dashboard": ["dailyBriefAddonEnabled", "dailyBriefTaskFilter", "dailyBriefShowTodayTasks", "dailyBriefShowOverdueTasks", "dailyBriefShowNextHoliday", "dailyBriefShowWeekend", "dailyBriefShowTimer"],
       "Calendar": ["calendarAddonEnabled", "calendarLayoutStyle", "calendarWeekStart", "calendarShowWeekNumbers", "calendarShowWeekNumbersRight", "calendarShadeWeekendColumns", "calendarWeekendDays", "calendarShowQuarters", "calendarShowTodayButton", "calendarShowTodayButtonOnMobile", "calendarHeaderDateScale", "calendarDateNumberScale", "calendarSelectedDateRadius", "calendarQuarterRailSpacing", "calendarOverflowDateOpacity", "calendarWeekendTintStrength", "calendarWeekendTintTone"],
@@ -89,14 +90,14 @@ export class NoesisFlowSettingTab extends PluginSettingTab {
           : `Restore the default settings for ${title}?`,
         confirmLabel: "Reset section",
         onConfirm: async () => {
-          const updates: any = {};
+          const updates = {} as Partial<NoesisFlowSettings>;
           for (const key of keys) {
             const value = DEFAULT_SETTINGS[key];
-            updates[key] = value && typeof value === "object" ? JSON.parse(JSON.stringify(value)) : value;
+            Object.assign(updates, { [key]: value && typeof value === "object" ? JSON.parse(JSON.stringify(value)) : value });
           }
           await this.plugin.applyPluginSettingsSnapshot(updates);
           new Notice(`${title} settings reset.`);
-          this.display();
+          this.update();
         }
       }).open();
     });
@@ -164,8 +165,19 @@ export class NoesisFlowSettingTab extends PluginSettingTab {
     }
   }
 
-  display() {
-    const { containerEl } = this;
+  getSettingDefinitions(): SettingDefinitionItem[] {
+    return [{
+      name: "Noesis Flow settings",
+      desc: "Configure your Markdown task workflow and optional planning tools.",
+      aliases: [
+        "task note", "calendar", "daily brief", "task list", "planner", "kanban",
+        "recurring tasks", "timeline", "holidays", "timer", "pomodoro", "projects"
+      ],
+      render: (setting) => this.renderSettings(setting.settingEl)
+    }];
+  }
+
+  private renderSettings(containerEl: HTMLElement): void {
     this.captureOpenSettingsSections();
     containerEl.empty();
     containerEl.addClass("noesis-flow-settings");
@@ -200,7 +212,7 @@ export class NoesisFlowSettingTab extends PluginSettingTab {
       button.setCta();
       button.onClick(async () => {
         await onEnable();
-        this.display();
+        this.update();
       });
     });
   }
@@ -237,21 +249,21 @@ export class NoesisFlowSettingTab extends PluginSettingTab {
       button.setButtonText("Use active note");
       button.setCta();
       button.onClick(async () => {
-        if (await this.plugin.useActiveNoteAsCalendarTaskTarget()) this.display();
+        if (await this.plugin.useActiveNoteAsCalendarTaskTarget()) this.update();
       });
     });
     taskNote.addButton((button) => {
       button.setButtonText("Choose note");
       button.onClick(() => new NoesisFlowMarkdownNoteChooserModal(this.app, "Choose task note", async (file) => {
         await this.plugin.setTaskInboxNote(file.path);
-        this.display();
+        this.update();
       }).open());
     });
     if (!inboxPath) {
       taskNote.addButton((button) => {
         button.setButtonText("Create task note");
         button.onClick(async () => {
-          if (await this.plugin.createTaskInbox()) this.display();
+          if (await this.plugin.createTaskInbox()) this.update();
         });
       });
     }
@@ -278,7 +290,7 @@ export class NoesisFlowSettingTab extends PluginSettingTab {
                 dailyBriefAddonEnabled: false,
                 taskListAddonEnabled: false
               });
-          this.display();
+          this.update();
         });
       });
     const modules = [
@@ -320,7 +332,7 @@ export class NoesisFlowSettingTab extends PluginSettingTab {
         toggle.setValue(enabled);
         toggle.onChange(async (nextEnabled) => {
           await this.plugin.applyPluginSettingsSnapshot(nextEnabled ? module.enableUpdates : module.disableUpdates);
-          this.display();
+          this.update();
         });
       });
     }
@@ -361,7 +373,7 @@ export class NoesisFlowSettingTab extends PluginSettingTab {
               await this.plugin.refreshCalendarTaskCounts(true);
               await this.plugin.refreshHolidayCalendar(true);
               await this.plugin.refreshTimelineEntries(true);
-              this.display();
+              this.update();
             }
           }).open();
         });
@@ -384,7 +396,7 @@ export class NoesisFlowSettingTab extends PluginSettingTab {
           this.plugin.settings.dailyBriefAddonEnabled = value;
           await this.plugin.saveSettings();
           await this.plugin.updateDailyBriefAddonState();
-          this.display();
+          this.update();
         });
       })
       .addButton((button) => {
@@ -471,7 +483,7 @@ export class NoesisFlowSettingTab extends PluginSettingTab {
           this.plugin.settings.calendarAddonEnabled = value;
           await this.plugin.saveSettings();
           await this.plugin.updateCalendarAddonState();
-          this.display();
+          this.update();
         });
       })
       .addButton((button) => {
@@ -532,7 +544,7 @@ export class NoesisFlowSettingTab extends PluginSettingTab {
           this.plugin.settings.calendarShowWeekNumbers = value;
           await this.plugin.saveSettings();
           this.plugin.refreshCalendarViews();
-          this.display();
+          this.update();
         });
       });
 
@@ -571,7 +583,7 @@ export class NoesisFlowSettingTab extends PluginSettingTab {
           this.plugin.settings.calendarShowTodayButton = value;
           await this.plugin.saveSettings();
           this.plugin.refreshCalendarViews();
-          this.display();
+          this.update();
         });
       });
 
@@ -667,7 +679,7 @@ export class NoesisFlowSettingTab extends PluginSettingTab {
           await this.plugin.updateRecurringTaskManagerState();
           await this.plugin.updateDailyBriefAddonState();
           await this.plugin.refreshCalendarTaskCounts(true);
-          this.display();
+          this.update();
         });
       });
 
@@ -698,7 +710,7 @@ export class NoesisFlowSettingTab extends PluginSettingTab {
           this.plugin.settings.calendarTaskCaptureEnabled = value;
           await this.plugin.saveSettings();
           this.plugin.refreshCalendarViews();
-          this.display();
+          this.update();
         });
       });
 
@@ -711,7 +723,7 @@ export class NoesisFlowSettingTab extends PluginSettingTab {
           this.plugin.settings.recurringTasksEnabled = value;
           await this.plugin.saveSettings();
           await this.plugin.updateRecurringTaskManagerState();
-          this.display();
+          this.update();
         });
       });
 
@@ -725,7 +737,7 @@ export class NoesisFlowSettingTab extends PluginSettingTab {
             this.plugin.settings.recurringTaskManagerEnabled = value;
             await this.plugin.saveSettings();
             await this.plugin.updateRecurringTaskManagerState();
-            this.display();
+            this.update();
           });
         })
         .addButton((button) => {
@@ -766,7 +778,7 @@ export class NoesisFlowSettingTab extends PluginSettingTab {
             this.plugin.settings.recurringTasksUseSeparateNote = value;
             await this.plugin.saveSettings();
             await this.plugin.refreshCalendarTaskCounts(true);
-            this.display();
+            this.update();
           });
         });
 
@@ -791,7 +803,7 @@ export class NoesisFlowSettingTab extends PluginSettingTab {
                 this.plugin.settings.recurringTaskTargetNote = file.path;
                 await this.plugin.saveSettings();
                 await this.plugin.refreshCalendarTaskCounts(true);
-                this.display();
+                this.update();
               }).open();
             });
           })
@@ -799,7 +811,7 @@ export class NoesisFlowSettingTab extends PluginSettingTab {
             button.setButtonText("Use active note");
             button.onClick(async () => {
               const changed = await this.plugin.useActiveNoteAsRecurringTaskTarget();
-              if (changed) this.display();
+              if (changed) this.update();
             });
           });
       }
@@ -816,7 +828,7 @@ export class NoesisFlowSettingTab extends PluginSettingTab {
           this.plugin.settings.calendarShowTaskCounts = value;
           await this.plugin.saveSettings();
           await this.plugin.refreshCalendarTaskCounts(true);
-          this.display();
+          this.update();
         });
       });
 
@@ -930,7 +942,7 @@ export class NoesisFlowSettingTab extends PluginSettingTab {
           this.plugin.settings.taskListAddonEnabled = value;
           await this.plugin.saveSettings();
           await this.plugin.updateTaskListAddonState();
-          this.display();
+          this.update();
         });
       })
       .addButton((button) => {
@@ -939,14 +951,14 @@ export class NoesisFlowSettingTab extends PluginSettingTab {
           button.setCta();
           button.onClick(async () => {
             await this.plugin.applyPluginSettingsSnapshot({ tasksAddonEnabled: true, taskListAddonEnabled: true });
-            this.display();
+            this.update();
           });
         } else if (!this.plugin.settings.taskListAddonEnabled) {
           button.setButtonText("Enable Task List");
           button.setCta();
           button.onClick(async () => {
             await this.plugin.applyPluginSettingsSnapshot({ taskListAddonEnabled: true });
-            this.display();
+            this.update();
           });
         } else {
           button.setButtonText("Open");
@@ -966,7 +978,7 @@ export class NoesisFlowSettingTab extends PluginSettingTab {
         toggle.onChange(async (value) => {
           this.plugin.settings.taskAuditEnabled = value;
           await this.plugin.saveSettings();
-          this.display();
+          this.update();
         });
       });
 
@@ -995,7 +1007,7 @@ export class NoesisFlowSettingTab extends PluginSettingTab {
           new NoesisFlowMarkdownNoteChooserModal(this.app, "Choose Task History note", async (file) => {
             this.plugin.settings.taskAuditNote = file.path;
             await this.plugin.saveSettings();
-            this.display();
+            this.update();
           }).open();
         });
       })
@@ -1009,7 +1021,7 @@ export class NoesisFlowSettingTab extends PluginSettingTab {
           }
           this.plugin.settings.taskAuditNote = file.path;
           await this.plugin.saveSettings();
-          this.display();
+          this.update();
         });
       });
   }
@@ -1029,7 +1041,7 @@ export class NoesisFlowSettingTab extends PluginSettingTab {
           this.plugin.settings.planningAddonEnabled = value;
           await this.plugin.saveSettings();
           await this.plugin.updatePlanningAddonState();
-          this.display();
+          this.update();
         });
       })
       .addButton((button) => {
@@ -1038,14 +1050,14 @@ export class NoesisFlowSettingTab extends PluginSettingTab {
           button.setCta();
           button.onClick(async () => {
             await this.plugin.applyPluginSettingsSnapshot({ tasksAddonEnabled: true, planningAddonEnabled: true });
-            this.display();
+            this.update();
           });
         } else if (!this.plugin.settings.planningAddonEnabled) {
           button.setButtonText("Enable Monthly Planner");
           button.setCta();
           button.onClick(async () => {
             await this.plugin.applyPluginSettingsSnapshot({ planningAddonEnabled: true });
-            this.display();
+            this.update();
           });
         } else {
           button.setButtonText("Open");
@@ -1073,7 +1085,7 @@ export class NoesisFlowSettingTab extends PluginSettingTab {
           this.plugin.settings.kanbanTasksAddonEnabled = value;
           await this.plugin.saveSettings();
           await this.plugin.updateKanbanAddonState();
-          this.display();
+          this.update();
         });
       })
       .addButton((button) => {
@@ -1258,7 +1270,7 @@ export class NoesisFlowSettingTab extends PluginSettingTab {
           const input = savedGroup.createEl("input");
           input.type = "file";
           input.accept = "application/json,.json";
-          input.style.display = "none";
+          input.setCssStyles({ display: "none" });
           input.addEventListener("change", asVoidHandler(async () => {
             const file = input.files && input.files[0];
             if (!file) {
@@ -1276,7 +1288,7 @@ export class NoesisFlowSettingTab extends PluginSettingTab {
               this.plugin.settings.kanbanSavedViews = next;
               await this.plugin.saveSettings();
               new Notice(`Imported ${imported.length} Kanban ${imported.length === 1 ? "view" : "views"}.`);
-              this.display();
+              this.update();
             } catch (error) {
               new Notice(`Import failed: ${error.message || error}`);
             } finally {
@@ -1311,7 +1323,7 @@ export class NoesisFlowSettingTab extends PluginSettingTab {
             next[index] = Object.assign({}, next[index], details);
             this.plugin.settings.kanbanSavedViews = next;
             await this.plugin.saveSettings();
-            this.display();
+            this.update();
           }, { title: "Edit saved Kanban view", submitLabel: "Save changes" }).open());
         })
         .addButton((button) => {
@@ -1324,7 +1336,7 @@ export class NoesisFlowSettingTab extends PluginSettingTab {
             onConfirm: async () => {
               this.plugin.settings.kanbanSavedViews = this.plugin.settings.kanbanSavedViews.filter((_, savedIndex) => savedIndex !== index);
               await this.plugin.saveSettings();
-              this.display();
+              this.update();
             }
           }).open());
         });
@@ -1361,7 +1373,7 @@ export class NoesisFlowSettingTab extends PluginSettingTab {
         button.onClick(() => {
           new NoesisFlowMarkdownNoteChooserModal(this.app, "Choose task note", async (file) => {
             await this.plugin.setTaskInboxNote(file.path);
-            this.display();
+            this.update();
           }).open();
         });
       })
@@ -1369,13 +1381,13 @@ export class NoesisFlowSettingTab extends PluginSettingTab {
         button.setButtonText("Use active note");
         button.onClick(async () => {
           const changed = await this.plugin.useActiveNoteAsCalendarTaskTarget();
-          if (changed) this.display();
+          if (changed) this.update();
         });
       })
       .addButton((button) => {
         button.setButtonText("Create task note");
         button.onClick(async () => {
-          if (await this.plugin.createTaskInbox()) this.display();
+          if (await this.plugin.createTaskInbox()) this.update();
         });
       });
   }
@@ -1389,7 +1401,7 @@ export class NoesisFlowSettingTab extends PluginSettingTab {
     setting.addButton((button) => {
       button.setButtonText("Add note");
       button.onClick(() => new NoesisFlowMarkdownNoteChooserModal(this.app, "Add task source", async (file) => {
-        if (await this.plugin.addTaskSourceNote(file.path)) this.display();
+        if (await this.plugin.addTaskSourceNote(file.path)) this.update();
       }).open());
     });
 
@@ -1402,7 +1414,7 @@ export class NoesisFlowSettingTab extends PluginSettingTab {
       } else {
         const remove = row.createEl("button", { text: "Remove", attr: { type: "button" } });
         remove.addEventListener("click", asVoidHandler(async () => {
-          if (await this.plugin.removeTaskSourceNote(path)) this.display();
+          if (await this.plugin.removeTaskSourceNote(path)) this.update();
         }));
       }
     }
@@ -1429,7 +1441,7 @@ export class NoesisFlowSettingTab extends PluginSettingTab {
         }
         new NoesisFlowCalendarSectionModal(this.app, sections, async (section) => {
           if (!this.plugin.getTaskSourcePaths().includes(file.path)) await this.plugin.addTaskSourceNote(file.path);
-          if (await this.plugin.registerProject(file.path, section)) this.display();
+          if (await this.plugin.registerProject(file.path, section)) this.update();
         }, { title: "Register project heading", submitButtonText: "Register" }).open();
       }).open());
     });
@@ -1447,12 +1459,12 @@ export class NoesisFlowSettingTab extends PluginSettingTab {
       const toggle = row.createEl("button", { text: project.status === "active" ? "Pause" : "Activate", attr: { type: "button" } });
       toggle.addEventListener("click", asVoidHandler(async () => {
         await this.plugin.updateProject(project.id, { status: project.status === "active" ? "paused" : "active" });
-        this.display();
+        this.update();
       }));
       const archive = row.createEl("button", { text: project.status === "archived" ? "Restore" : "Archive", attr: { type: "button" } });
       archive.addEventListener("click", asVoidHandler(async () => {
         await this.plugin.updateProject(project.id, { status: project.status === "archived" ? "active" : "archived" });
-        this.display();
+        this.update();
       }));
       const due = row.createEl("button", { text: project.dueDate ? `Due ${project.dueDate}` : "Set due", attr: { type: "button" } });
       due.addEventListener("click", () => new NoesisFlowTextPromptModal(this.app, "Project due date", "YYYY-MM-DD (leave blank to clear)", project.dueDate || "", async (value) => {
@@ -1462,14 +1474,14 @@ export class NoesisFlowSettingTab extends PluginSettingTab {
           return;
         }
         await this.plugin.updateProject(project.id, { dueDate: next || undefined });
-        this.display();
+        this.update();
       }, { submitButtonText: "Save", allowEmpty: true }).open());
       const remove = row.createEl("button", { text: "Remove", attr: { type: "button" } });
       remove.addEventListener("click", () => new NoesisFlowConfirmModal(this.app, {
         title: "Remove project registration",
         message: `Remove ${project.name} from Noesis Flow? Its Markdown heading and task lines will be kept.`,
         confirmLabel: "Remove registration",
-        onConfirm: async () => { await this.plugin.removeProject(project.id); this.display(); }
+        onConfirm: async () => { await this.plugin.removeProject(project.id); this.update(); }
       }).open());
     }
   }
@@ -1494,7 +1506,7 @@ export class NoesisFlowSettingTab extends PluginSettingTab {
           }
           await this.plugin.saveSettings();
           await this.plugin.updateTimelineAddonState();
-          this.display();
+          this.update();
         });
       })
       .addButton((button) => {
@@ -1563,7 +1575,7 @@ export class NoesisFlowSettingTab extends PluginSettingTab {
           await this.plugin.saveSettings();
           await this.plugin.refreshTimelineEntries(true);
           this.plugin.refreshCalendarViews();
-          this.display();
+          this.update();
         });
       });
 
@@ -1586,7 +1598,7 @@ export class NoesisFlowSettingTab extends PluginSettingTab {
             this.plugin.settings.timelineNote = file.path;
             await this.plugin.saveSettings();
             await this.plugin.refreshTimelineEntries(true);
-            this.display();
+            this.update();
           }).open();
         });
       })
@@ -1594,7 +1606,7 @@ export class NoesisFlowSettingTab extends PluginSettingTab {
         button.setButtonText("Use active note");
         button.onClick(async () => {
           const changed = await this.plugin.useActiveNoteAsTimelineTarget();
-          if (changed) this.display();
+          if (changed) this.update();
         });
       });
 
@@ -1629,7 +1641,7 @@ export class NoesisFlowSettingTab extends PluginSettingTab {
           this.plugin.settings.holidayCalendarEnabled = value;
           await this.plugin.saveSettings();
           await this.plugin.refreshHolidayCalendar(true);
-          this.display();
+          this.update();
         });
       });
 
@@ -1655,7 +1667,7 @@ export class NoesisFlowSettingTab extends PluginSettingTab {
             this.plugin.settings.holidayCalendarNote = file.path;
             await this.plugin.saveSettings();
             await this.plugin.refreshHolidayCalendar(true);
-            this.display();
+            this.update();
           }).open();
         });
       })
@@ -1663,7 +1675,7 @@ export class NoesisFlowSettingTab extends PluginSettingTab {
         button.setButtonText("Use active note");
         button.onClick(async () => {
           const changed = await this.plugin.useActiveNoteAsHolidayCalendarTarget();
-          if (changed) this.display();
+          if (changed) this.update();
         });
       });
   }
@@ -1686,7 +1698,7 @@ export class NoesisFlowSettingTab extends PluginSettingTab {
           this.plugin.settings.timerAddonEnabled = value;
           await this.plugin.saveSettings();
           await this.plugin.updateTimerAddonState();
-          this.display();
+          this.update();
         });
       })
       .addButton((button) => {
@@ -1766,7 +1778,7 @@ export class NoesisFlowSettingTab extends PluginSettingTab {
             }
             await this.plugin.saveSettings();
             this.plugin.refreshTimerViews();
-            this.display();
+            this.update();
           });
       });
 

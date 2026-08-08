@@ -1,20 +1,27 @@
-import { Notice, Modal, Setting } from "obsidian";
+import { App, Notice, Modal, Setting } from "obsidian";
 import { normalizeCalendarSectionName } from "../utils";
 
+type CalendarSectionModalOptions = {
+  defaultValue?: string;
+  onCancel?: () => void;
+  submitButtonText?: string;
+  title?: string;
+};
+
 export class NoesisFlowCalendarSectionModal extends Modal {
-  onCancel: any;
-  defaultValue: any;
-  didCancel: any;
-  didSubmit: any;
-  onSubmit: any;
-  sections: any;
-  submitButtonText: any;
-  title: any;
-  constructor(app, sections, onSubmit, options: any = {}) {
+  onCancel: (() => void) | null;
+  defaultValue: string;
+  didCancel: boolean;
+  didSubmit: boolean;
+  onSubmit: (section: string) => void | Promise<void>;
+  sections: string[];
+  submitButtonText: string;
+  title: string;
+  constructor(app: App, sections: string[], onSubmit: (section: string) => void | Promise<void>, options: CalendarSectionModalOptions = {}) {
     super(app);
     this.sections = sections || [];
     this.onSubmit = onSubmit;
-    this.onCancel = typeof options.onCancel === "function" ? options.onCancel : null;
+    this.onCancel = options.onCancel || null;
     this.title = options.title || "Task project";
     this.defaultValue = options.defaultValue || "";
     this.submitButtonText = options.submitButtonText || "Next";
@@ -56,7 +63,7 @@ export class NoesisFlowCalendarSectionModal extends Modal {
         await this.onSubmit(value);
       } catch (error) {
         console.error(error);
-        new Notice(`Noesis Flow command failed: ${error.message || error}`);
+        new Notice(`Noesis Flow command failed: ${error instanceof Error ? error.message : String(error)}`);
       }
     };
 

@@ -1,18 +1,25 @@
-import { Modal, Notice } from "obsidian";
+import { App, Modal, Notice } from "obsidian";
 import { asVoidHandler } from "../utils";
+
+type ConfirmOptions = {
+  title?: string;
+  message?: string;
+  confirmLabel?: string;
+  onConfirm?: () => void | Promise<unknown>;
+};
 
 export class NoesisFlowConfirmModal extends Modal {
   title: string;
   message: string;
   confirmLabel: string;
-  onConfirm: any;
+  onConfirm: () => void | Promise<unknown>;
 
-  constructor(app, options: any = {}) {
+  constructor(app: App, options: ConfirmOptions = {}) {
     super(app);
     this.title = options.title || "Confirm action";
     this.message = options.message || "Are you sure you want to continue?";
     this.confirmLabel = options.confirmLabel || "Confirm";
-    this.onConfirm = options.onConfirm;
+    this.onConfirm = options.onConfirm || (() => undefined);
   }
 
   onOpen() {
@@ -33,7 +40,7 @@ export class NoesisFlowConfirmModal extends Modal {
         this.close();
       } catch (error) {
         console.error(error);
-        new Notice(`Noesis Flow command failed: ${error.message || error}`);
+        new Notice(`Noesis Flow command failed: ${error instanceof Error ? error.message : String(error)}`);
         confirm.disabled = false;
       }
     }));

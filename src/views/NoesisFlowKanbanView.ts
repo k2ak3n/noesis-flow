@@ -24,6 +24,12 @@ const PRIORITY_COLUMNS = [
   { value: " ", title: "No priority" }
 ];
 
+type KanbanColumn = {
+  title: string;
+  value: string;
+  tasks: CalendarTask[];
+};
+
 export class NoesisFlowKanbanView extends NoesisFlowTimedView {
   plugin: NoesisFlowPlugin;
   draggedTask: CalendarTask | null;
@@ -234,7 +240,7 @@ export class NoesisFlowKanbanView extends NoesisFlowTimedView {
       if (!task.completed && !this.plugin.settings.kanbanPriorityFilters.includes(task.marker)) return false;
       return !query || `${task.text} ${this.plugin.getProjectLabel(task)} ${task.sourcePath}`.toLowerCase().includes(query);
     });
-    const columns = new Map();
+    const columns = new Map<string, KanbanColumn>();
     const today = moment().startOf("day");
 
     if (view === "priority") {
@@ -270,8 +276,8 @@ export class NoesisFlowKanbanView extends NoesisFlowTimedView {
     }
 
     return Array.from(columns.values())
-      .map((column: any) => ({ ...column, tasks: this.sortTasks(column.tasks, view) }))
-      .sort((a: any, b: any) => {
+      .map((column) => ({ ...column, tasks: this.sortTasks(column.tasks, view) }))
+      .sort((a, b) => {
         if (view === "date") {
           if (!a.value) return 1;
           if (!b.value) return -1;

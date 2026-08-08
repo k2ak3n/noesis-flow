@@ -1,16 +1,24 @@
-import { Notice, Modal, Setting } from "obsidian";
+import { App, Notice, Modal, Setting } from "obsidian";
+
+type TextPromptOptions = {
+  allowEmpty?: boolean;
+  onCancel?: () => void;
+  requiredMessage?: string;
+  submitButtonText?: string;
+};
+
 export class NoesisFlowTextPromptModal extends Modal {
-  onCancel: any;
-  defaultValue: any;
-  didCancel: any;
-  didSubmit: any;
-  onSubmit: any;
-  requiredMessage: any;
-  submitButtonText: any;
-  title: any;
-  placeholder: any;
+  onCancel: (() => void) | null;
+  defaultValue: string;
+  didCancel: boolean;
+  didSubmit: boolean;
+  onSubmit: (value: string) => void | Promise<unknown>;
+  requiredMessage: string;
+  submitButtonText: string;
+  title: string;
+  placeholder: string;
   allowEmpty: boolean;
-  constructor(app, title, placeholder, defaultValue, onSubmit, options: any = {}) {
+  constructor(app: App, title: string, placeholder: string, defaultValue: string, onSubmit: (value: string) => void | Promise<unknown>, options: TextPromptOptions = {}) {
     super(app);
     this.title = title;
     this.placeholder = placeholder;

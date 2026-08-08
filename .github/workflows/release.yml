@@ -1,0 +1,72 @@
+name: Release 1.0.0
+
+on:
+  push:
+    tags:
+      - "1.0.0"
+
+permissions:
+  contents: write
+  attestations: write
+  id-token: write
+
+jobs:
+  release:
+    name: Build, attest, and publish
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out the release tag
+        uses: actions/checkout@v6
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v6
+        with:
+          node-version: 22
+
+      - name: Enable the pinned pnpm version
+        run: corepack enable
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Verify the tag versions
+        env:
+          RELEASE_TAG: ${{ github.ref_name }}
+        run: |
+          node -e 'const fs = require("node:fs"); const tag = process.env.RELEASE_TAG; const packageVersion = JSON.parse(fs.readFileSync("package.json", "utf8")).version; const manifestVersion = JSON.parse(fs.readFileSync("manifest.json", "utf8")).version; if (tag !== "1.0.0" || packageVersion !== tag || manifestVersion !== tag) throw new Error(`Expected tag, package version, and manifest version to be 1.0.0; got ${tag}, ${packageVersion}, ${manifestVersion}.`);'
+
+      - name: Verify and build
+        run: |
+          pnpm run typecheck
+          pnpm run lint -- --quiet
+          pnpm test
+          pnpm run build
+          test -f dist/main.js
+          test -f dist/manifest.json
+          test -f dist/styles.css
+
+      - name: Attest main.js provenance
+        uses: actions/attest@v4
+        with:
+          subject-path: dist/main.js
+
+      - name: Attest manifest.json provenance
+        uses: actions/attest@v4
+        with:
+          subject-path: dist/manifest.json
+
+      - name: Attest styles.css provenance
+        uses: actions/attest@v4
+        with:
+          subject-path: dist/styles.css
+
+      - name: Create the GitHub release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          if gh release view "$GITHUB_REF_NAME" >/dev/null 2>&1; then
+            gh release upload "$GITHUB_REF_NAME" dist/main.js dist/manifest.json dist/styles.css --clobber
+          else
+            gh release create "$GITHUB_REF_NAME" dist/main.js dist/manifest.json dist/styles.css --title "$GITHUB_REF_NAME" --generate-notes
+          fi

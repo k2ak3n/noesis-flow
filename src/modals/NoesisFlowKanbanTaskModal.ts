@@ -1,21 +1,40 @@
-import { Modal, Notice } from "obsidian";
+import { App, Modal, Notice } from "obsidian";
+import type { MomentInput } from "moment";
 import { moment } from "../time";
 import { asVoidHandler, CALENDAR_TASK_PRIORITIES, CALENDAR_TASK_RECURRENCE_OPTIONS } from "../utils";
 import { getRecurringTaskDateKeys } from "../tasks/TaskRecurrence";
 import { enhanceNoesisFlowDatePicker, enhanceNoesisFlowDatePickers } from "../ui/NoesisFlowUi";
+import type { RecurringTaskRecurrence, RecurringTaskRule } from "../types";
+
+export type TaskCaptureSubmission = {
+  text: string;
+  section: string;
+  dateKey: string;
+  marker: string;
+  metadata: Record<string, unknown>;
+  recurrence: RecurringTaskRecurrence;
+};
+
+type KanbanTaskModalOptions = {
+  defaultRecurrence?: RecurringTaskRule;
+  defaultUndated?: boolean;
+  initialDate?: MomentInput;
+  onCancel?: () => void;
+  recurrenceLimit?: number;
+};
 
 export class NoesisFlowKanbanTaskModal extends Modal {
   sections: string[];
   recurrenceEnabled: boolean;
-  onSubmit: any;
-  onCancel: any;
+  onSubmit: (task: TaskCaptureSubmission) => void | Promise<unknown>;
+  onCancel: (() => void) | null;
   initialDate: string;
   recurrenceLimit: number;
-  defaultRecurrence: string;
+  defaultRecurrence: RecurringTaskRule;
   defaultUndated: boolean;
   didSubmit: boolean;
 
-  constructor(app, sections, recurrenceEnabled, onSubmit, options: any = {}) {
+  constructor(app: App, sections: string[], recurrenceEnabled: boolean, onSubmit: (task: TaskCaptureSubmission) => void | Promise<unknown>, options: KanbanTaskModalOptions = {}) {
     super(app);
     this.sections = Array.isArray(sections) ? sections : [];
     this.recurrenceEnabled = !!recurrenceEnabled;
@@ -24,7 +43,7 @@ export class NoesisFlowKanbanTaskModal extends Modal {
     const initialDate = moment(options.initialDate || moment());
     this.initialDate = initialDate.isValid() ? initialDate.format("YYYY-MM-DD") : moment().format("YYYY-MM-DD");
     this.recurrenceLimit = Math.max(1, Math.min(52, Math.round(Number(options.recurrenceLimit) || 6)));
-    this.defaultRecurrence = String(options.defaultRecurrence || "none");
+    this.defaultRecurrence = options.defaultRecurrence || "none";
     this.defaultUndated = !!options.defaultUndated;
     this.didSubmit = false;
   }
@@ -304,6 +323,9 @@ export class NoesisFlowKanbanTaskModal extends Modal {
       }
 
       try {
+        const rule = recurrence as RecurringTaskRule;
+        const completionRule = completionUnitSelect?.value as NonNullable<RecurringTaskRecurrence["completionRule"]> | undefined;
+        const normalizedEndMode = endMode as NonNullable<RecurringTaskRecurrence["endMode"]>;
         await this.onSubmit({
           text,
           section,
@@ -311,15 +333,15 @@ export class NoesisFlowKanbanTaskModal extends Modal {
           marker: prioritySelect.value,
           metadata: {},
           recurrence: {
-            rule: recurrence,
-            completionRule: recurrence === "after-completion" && completionUnitSelect ? completionUnitSelect.value : "",
+            rule,
+            completionRule: rule === "after-completion" ? completionRule : undefined,
             interval,
             weekdays,
             skipWeekends: !!(skipWeekendsInput && skipWeekendsInput.checked),
             skipHolidays: !!(skipHolidaysInput && skipHolidaysInput.checked),
             excludedDates,
             includedDates,
-            endMode,
+            endMode: normalizedEndMode,
             endCount: endMode === "count" ? Number(endValue) : 0,
             endDate: endMode === "date" ? endValue : ""
           }

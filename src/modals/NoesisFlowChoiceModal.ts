@@ -1,23 +1,36 @@
-import { Modal, Setting, Notice } from "obsidian";
+import { App, Modal, Setting, Notice } from "obsidian";
 import { asVoidHandler } from "../utils";
 
-export class NoesisFlowChoiceModal extends Modal {
-  onCancel: any;
-  renderMeta: any;
-  renderTitle: any;
-  choices: any;
-  didCancel: any;
-  didChoose: any;
-  onChoose: any;
-  title: any;
-  constructor(app, onChoose, options: any = {}) {
+type ChoiceDescriptor = { label?: unknown; description?: unknown };
+type ChoiceOptions<Choice> = {
+  title?: string;
+  choices?: Choice[];
+  renderTitle?: (choice: Choice) => string;
+  renderMeta?: (choice: Choice) => string;
+  onCancel?: () => void;
+};
+
+export class NoesisFlowChoiceModal<Choice = ChoiceDescriptor | string> extends Modal {
+  onCancel: (() => void) | null;
+  renderMeta: (choice: Choice) => string;
+  renderTitle: (choice: Choice) => string;
+  choices: Choice[];
+  didCancel: boolean;
+  didChoose: boolean;
+  onChoose: (choice: Choice) => void | Promise<void>;
+  title: string;
+  constructor(app: App, onChoose: (choice: Choice) => void | Promise<void>, options: ChoiceOptions<Choice> = {}) {
     super(app);
     this.onChoose = onChoose;
     this.title = options.title || "Choose an option";
     this.choices = options.choices || [];
-    this.renderTitle = typeof options.renderTitle === "function" ? options.renderTitle : (c) => String(c.label || c);
-    this.renderMeta = typeof options.renderMeta === "function" ? options.renderMeta : (c) => String(c.description || "");
-    this.onCancel = typeof options.onCancel === "function" ? options.onCancel : null;
+    this.renderTitle = options.renderTitle || ((choice) => typeof choice === "object" && choice !== null && "label" in choice
+      ? String(choice.label || "")
+      : String(choice));
+    this.renderMeta = options.renderMeta || ((choice) => typeof choice === "object" && choice !== null && "description" in choice
+      ? String(choice.description || "")
+      : "");
+    this.onCancel = options.onCancel || null;
     this.didChoose = false;
     this.didCancel = false;
   }
@@ -49,7 +62,7 @@ export class NoesisFlowChoiceModal extends Modal {
           await this.onChoose(choice);
         } catch (error) {
           console.error(error);
-          new Notice(`Noesis Flow command failed: ${error.message || error}`);
+          new Notice(`Noesis Flow command failed: ${error instanceof Error ? error.message : String(error)}`);
         }
       }));
     }

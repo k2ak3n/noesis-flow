@@ -1,17 +1,20 @@
-import { Modal, Notice } from "obsidian";
+import { App, Modal, Notice } from "obsidian";
 import { moment } from "../time";
 import { enhanceNoesisFlowDatePickers } from "../ui/NoesisFlowUi";
 import { NoesisFlowConfirmModal } from "./NoesisFlowConfirmModal";
 import { asVoidHandler } from "../utils";
+import type { TimelineEntry } from "../types";
+
+type TimelineEventDetails = Pick<TimelineEntry, "dateKey" | "label" | "section">;
 
 export class NoesisFlowTimelineEventModal extends Modal {
-  event: any;
+  event: Partial<TimelineEventDetails>;
   sections: string[];
-  onSubmit: any;
-  onDelete: any;
+  onSubmit: (event: TimelineEventDetails) => void | Promise<unknown>;
+  onDelete: (() => boolean | Promise<boolean>) | null;
   title: string;
 
-  constructor(app, event, sections, onSubmit, title = "Edit event", onDelete = null) {
+  constructor(app: App, event: Partial<TimelineEventDetails>, sections: string[], onSubmit: (event: TimelineEventDetails) => void | Promise<unknown>, title = "Edit event", onDelete: (() => boolean | Promise<boolean>) | null = null) {
     super(app);
     this.event = event || {};
     this.sections = Array.isArray(sections) ? sections : [];

@@ -52,7 +52,7 @@ export function normalizeSettingsSchema(settings: NoesisFlowSettings, loaded: un
         occurrenceDates: Array.isArray(series.occurrenceDates)
           ? unique(series.occurrenceDates
             .filter((dateKey): dateKey is string => typeof dateKey === "string" && moment(dateKey, "YYYY-MM-DD", true).isValid()))
-            .sort() as string[]
+            .sort()
           : undefined
       }))
     : [];

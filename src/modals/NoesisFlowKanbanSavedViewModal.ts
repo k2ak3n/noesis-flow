@@ -1,13 +1,20 @@
-import { Modal, Notice } from "obsidian";
+import { App, Modal, Notice } from "obsidian";
 import { asVoidHandler } from "../utils";
+import type { KanbanSavedView } from "../types";
+
+type SavedViewDetails = Pick<KanbanSavedView, "name" | "description">;
+type KanbanSavedViewModalOptions = {
+  submitLabel?: string;
+  title?: string;
+};
 
 export class NoesisFlowKanbanSavedViewModal extends Modal {
-  savedView: any;
+  savedView: Partial<SavedViewDetails>;
   title: string;
   submitLabel: string;
-  onSubmit: any;
+  onSubmit: (details: SavedViewDetails) => void | Promise<unknown>;
 
-  constructor(app, savedView, onSubmit, options: any = {}) {
+  constructor(app: App, savedView: Partial<SavedViewDetails>, onSubmit: (details: SavedViewDetails) => void | Promise<unknown>, options: KanbanSavedViewModalOptions = {}) {
     super(app);
     this.savedView = savedView || {};
     this.onSubmit = onSubmit;

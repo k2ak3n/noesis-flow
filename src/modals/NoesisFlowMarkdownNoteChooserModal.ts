@@ -1,8 +1,8 @@
-import { Notice, Modal, Setting, TFile } from "obsidian";
+import { App, Notice, Modal, Setting, TFile } from "obsidian";
 export class NoesisFlowMarkdownNoteChooserModal extends Modal {
-  onChoose: any;
-  title: any;
-  constructor(app, title, onChoose) {
+  onChoose: (file: TFile) => void | Promise<unknown>;
+  title: string;
+  constructor(app: App, title: string, onChoose: (file: TFile) => void | Promise<unknown>) {
     super(app);
     this.title = title || "Choose note";
     this.onChoose = onChoose;
@@ -28,7 +28,7 @@ export class NoesisFlowMarkdownNoteChooserModal extends Modal {
       text: "Enter the exact vault-relative path to a Markdown note, for example Projects/Tasks.md."
     });
 
-    const choose = async (file) => {
+    const choose = async (file: TFile) => {
       this.close();
       try {
         await this.onChoose(file);

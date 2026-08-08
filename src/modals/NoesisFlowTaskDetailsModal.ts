@@ -1,17 +1,19 @@
-import { Modal, Notice, TFile } from "obsidian";
+import { App, Modal, Notice, TFile } from "obsidian";
 import type NoesisFlowPlugin from "../main";
+import type { CalendarTask } from "../types";
 import { moment } from "../time";
 import { asVoidHandler, CALENDAR_TASK_PRIORITIES } from "../utils";
 import { enhanceNoesisFlowDatePickers } from "../ui/NoesisFlowUi";
 import { getMarkdownH2Sections } from "../tasks/TaskMarkdown";
 import { NoesisFlowConfirmModal } from "./NoesisFlowConfirmModal";
+import type { TaskUpdates } from "../tasks/TaskMutationService";
 
 /** A single editor used by every task surface. */
 export class NoesisFlowTaskDetailsModal extends Modal {
   plugin: NoesisFlowPlugin;
-  task: any;
+  task: CalendarTask;
 
-  constructor(app, plugin, task) {
+  constructor(app: App, plugin: NoesisFlowPlugin, task: CalendarTask) {
     super(app);
     this.plugin = plugin;
     this.task = task;
@@ -165,7 +167,7 @@ const source = form.createEl("select");
         new Notice("Enter a task and valid Date - or clear an optional Date.");
         return;
       }
-      const updates: any = {};
+      const updates: TaskUpdates = {};
       if (text !== this.task.text) updates.text = text;
       if (section !== this.task.section) updates.section = section;
       const registeredProject = this.plugin.findProjectForSection(source.value || this.task.sourcePath, section);

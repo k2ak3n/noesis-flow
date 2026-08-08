@@ -169,7 +169,7 @@ export class NoesisFlowTimerView extends ItemView {
     void this.playSelectedSound();
   }
 
-  pause(options: any = {}) {
+  pause(options: { render?: boolean; sync?: boolean } = {}) {
     const { render = true, sync = true } = options;
     if (sync && this.running) {
       this.syncRemainingTime();
@@ -211,7 +211,7 @@ export class NoesisFlowTimerView extends ItemView {
     this.plugin.refreshDailyBriefViews();
   }
 
-  advanceWorkflow(options: any = {}) {
+  advanceWorkflow(options: { render?: boolean } = {}) {
     const { render = true } = options;
     this.running = false;
     this.endsAt = 0;

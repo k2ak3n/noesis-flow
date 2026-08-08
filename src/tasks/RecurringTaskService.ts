@@ -1,5 +1,5 @@
 import { Notice, TFile, Vault } from "obsidian";
-import { CalendarTask, NoesisFlowSettings, RecurringTaskRecurrence, RecurringTaskSeries } from "../types";
+import { CalendarTask, CalendarTaskIndex, NoesisFlowSettings, RecurringTaskRecurrence, RecurringTaskSeries } from "../types";
 import { moment } from "../time";
 import {
   createCalendarTaskId,
@@ -33,7 +33,7 @@ type RecoveredOccurrence = {
   completed: boolean;
 };
 
-function collectIndexTasks(index): RecoveredOccurrence[] {
+function collectIndexTasks(index: CalendarTaskIndex): RecoveredOccurrence[] {
   const groups = [
     ...Array.from(index.tasksByDate.values()),
     index.undatedTasks || [],
@@ -201,7 +201,7 @@ export class RecurringTaskService {
         const tasks = Array.from(parsed.tasksByDate.values()).flat()
           .filter((task) => task.seriesId === seriesId && task.dateKey && !moment(task.dateKey, "YYYY-MM-DD", true).isBefore(today, "day"))
           .sort((a, b) => b.lineIndex - a.lineIndex);
-        return tasks.reduce((nextContent, task) => updateCalendarTaskInContent(nextContent, task, {
+        return tasks.reduce<string>((nextContent, task) => updateCalendarTaskInContent(nextContent, task, {
           text: nextSeries.text,
           section: nextSeries.section,
           marker: nextSeries.marker
@@ -270,7 +270,7 @@ export class RecurringTaskService {
       return lines.length ? insertCalendarTasksInSection(content, series.section, lines) : content;
     });
     if (!addedDates.length) return 0;
-    const occurrenceDates = unique([...this.host.getRecurringTaskSeriesDates(series), ...addedDates]).sort() as string[];
+    const occurrenceDates = unique([...this.host.getRecurringTaskSeriesDates(series), ...addedDates]).sort();
     this.host.settings.recurringTaskSeries = this.series.map((item) => item.id === series.id
       ? { ...item, occurrenceCount: occurrenceDates.length, occurrenceDates }
       : item);
