@@ -1,20 +1,25 @@
-.noesis-flow-settings-panel h2,
-.noesis-flow-settings-panel h3,
-.noesis-flow-settings-panel h4 {
+.noesis-flow-settings {
+  display: block;
+  width: 100%;
+}
+
+.noesis-flow-settings h2,
+.noesis-flow-settings h3,
+.noesis-flow-settings h4 {
   margin-top: 1.25em;
 }
 
-.noesis-flow-settings-panel > p {
+.noesis-flow-settings > p {
   color: var(--text-muted);
   max-width: 720px;
 }
 
-.noesis-flow-settings-panel > h3 {
+.noesis-flow-settings > h3 {
   border-top: 1px solid var(--background-modifier-border);
   padding-top: 18px;
 }
 
-.noesis-flow-settings-panel > .noesis-flow-settings-group-heading {
+.noesis-flow-settings > .noesis-flow-settings-group-heading {
   border-top: 0;
   color: var(--text-normal);
   font-size: var(--font-ui-medium);
@@ -26,7 +31,7 @@
   padding-top: 0;
 }
 
-.noesis-flow-settings-panel > h2 + p + h3 {
+.noesis-flow-settings > h2 + p + h3 {
   margin-top: 18px;
 }
 
@@ -36,7 +41,7 @@
   margin: 22px 0 14px;
 }
 
-.noesis-flow-settings-panel .setting-item {
+.noesis-flow-settings .setting-item {
   padding-top: 10px;
   padding-bottom: 10px;
 }
@@ -3769,7 +3774,7 @@
 /* Noesis Flow quiet productivity system                                             */
 /* -------------------------------------------------------------------------- */
 
-:is(.noesis-flow-calendar-wrapper, .noesis-flow-time-shell, .noesis-flow-daily-brief-board, .noesis-flow-kanban-board, .noesis-flow-task-list, .noesis-flow-planning, .noesis-flow-timeline-shell, .noesis-flow-recurring-manager, .noesis-flow-settings-panel, .noesis-flow-dialog) {
+:is(.noesis-flow-calendar-wrapper, .noesis-flow-time-shell, .noesis-flow-daily-brief-board, .noesis-flow-kanban-board, .noesis-flow-task-list, .noesis-flow-planning, .noesis-flow-timeline-shell, .noesis-flow-recurring-manager, .noesis-flow-settings, .noesis-flow-dialog) {
   --noesis-flow-ui-accent: var(--noesis-flow-current-accent, var(--interactive-accent));
   --noesis-flow-ui-surface: color-mix(in srgb, var(--background-secondary) 58%, var(--background-primary));
   --noesis-flow-ui-surface-raised: color-mix(in srgb, var(--background-primary) 90%, var(--background-secondary));
@@ -3797,8 +3802,8 @@
 .noesis-flow-dialog.mod-warning, .noesis-flow-dialog .mod-warning { border-color: color-mix(in srgb, var(--text-error) 38%, var(--background-modifier-border)); }
 
 /* Settings and dialogs */
-.noesis-flow-settings-panel .setting-item { border-bottom: 1px solid color-mix(in srgb, var(--background-modifier-border) 58%, transparent); padding: 14px 2px; }
-.noesis-flow-settings-panel .setting-item:last-child { border-bottom: 0; }
+.noesis-flow-settings .setting-item { border-bottom: 1px solid color-mix(in srgb, var(--background-modifier-border) 58%, transparent); padding: 14px 2px; }
+.noesis-flow-settings .setting-item:last-child { border-bottom: 0; }
 .noesis-flow-settings-details, .noesis-flow-settings-card, .noesis-flow-task-source-row { background: var(--noesis-flow-ui-surface-quiet); border-color: var(--noesis-flow-ui-border); border-radius: var(--noesis-flow-ui-radius); box-shadow: none; }
 .noesis-flow-settings-details > summary { letter-spacing: 0; }
 .noesis-flow-modal-header, .noesis-flow-kanban-task-header { border-color: var(--noesis-flow-ui-border); margin-bottom: 18px; padding-bottom: 14px; }
@@ -4166,7 +4171,7 @@
 }
 
 /* Theme-native integration: let the active Obsidian theme own the visual language. */
-:is(.noesis-flow-calendar-wrapper, .noesis-flow-time-shell, .noesis-flow-daily-brief-board, .noesis-flow-kanban-board, .noesis-flow-task-list, .noesis-flow-planning, .noesis-flow-timeline-shell, .noesis-flow-recurring-manager, .noesis-flow-settings-panel, .noesis-flow-dialog) {
+:is(.noesis-flow-calendar-wrapper, .noesis-flow-time-shell, .noesis-flow-daily-brief-board, .noesis-flow-kanban-board, .noesis-flow-task-list, .noesis-flow-planning, .noesis-flow-timeline-shell, .noesis-flow-recurring-manager, .noesis-flow-settings, .noesis-flow-dialog) {
   --noesis-flow-ui-accent: var(--interactive-accent);
   --noesis-flow-ui-surface: var(--background-secondary);
   --noesis-flow-ui-surface-raised: var(--background-primary);
