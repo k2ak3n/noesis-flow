@@ -1,6 +1,6 @@
 {
   "name": "noesis-flow",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "A private, Markdown-native task hub for capture and planning.",
   "main": "main.js",
   "packageManager": "pnpm@11.7.0",

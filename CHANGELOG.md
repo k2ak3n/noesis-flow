@@ -1,5 +1,10 @@
 # Changelog
 
+## 1.0.3
+
+- Keep Calendar month and year controls text-only in both header layouts.
+- Preserve square checkbox sizing without `!important` overrides.
+
 ## 1.0.2
 
 - Fix Settings layout alignment.

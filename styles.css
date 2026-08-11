@@ -5316,24 +5316,33 @@
 /* Square checkbox geometry: prevent host themes from stretching task controls. */
 :is(.noesis-flow-calendar-wrapper, .noesis-flow-time-shell, .noesis-flow-daily-brief-board, .noesis-flow-kanban-board, .noesis-flow-task-list, .noesis-flow-planning, .noesis-flow-timeline-shell, .noesis-flow-recurring-manager, .noesis-flow-settings, .noesis-flow-dialog) input[type="checkbox"] {
   aspect-ratio: 1;
-  block-size: 16px !important;
+  block-size: 16px;
   box-sizing: border-box;
-  inline-size: 16px !important;
-  max-block-size: 16px !important;
-  max-inline-size: 16px !important;
-  min-block-size: 16px !important;
-  min-inline-size: 16px !important;
+  inline-size: 16px;
+  max-block-size: 16px;
+  max-inline-size: 16px;
+  min-block-size: 16px;
+  min-inline-size: 16px;
   padding: 0;
 }
 
-.noesis-flow-today-task-marker {
+:is(.noesis-flow-calendar-wrapper, .noesis-flow-time-shell, .noesis-flow-daily-brief-board, .noesis-flow-kanban-board, .noesis-flow-task-list, .noesis-flow-planning, .noesis-flow-timeline-shell, .noesis-flow-recurring-manager, .noesis-flow-dialog) .noesis-flow-today-task-marker {
   aspect-ratio: 1;
-  block-size: var(--noesis-flow-task-marker-size) !important;
-  flex: 0 0 var(--noesis-flow-task-marker-size) !important;
-  inline-size: var(--noesis-flow-task-marker-size) !important;
-  max-block-size: var(--noesis-flow-task-marker-size) !important;
-  max-inline-size: var(--noesis-flow-task-marker-size) !important;
-  min-block-size: var(--noesis-flow-task-marker-size) !important;
-  min-inline-size: var(--noesis-flow-task-marker-size) !important;
+  block-size: var(--noesis-flow-task-marker-size);
+  flex: 0 0 var(--noesis-flow-task-marker-size);
+  inline-size: var(--noesis-flow-task-marker-size);
+  max-block-size: var(--noesis-flow-task-marker-size);
+  max-inline-size: var(--noesis-flow-task-marker-size);
+  min-block-size: var(--noesis-flow-task-marker-size);
+  min-inline-size: var(--noesis-flow-task-marker-size);
   padding: 0;
+}
+
+/* Calendar title controls remain text-only in both header layouts. */
+.noesis-flow-calendar-wrapper .noesis-flow-calendar-title .noesis-flow-calendar-title-button,
+.noesis-flow-calendar-wrapper .noesis-flow-calendar-title .noesis-flow-calendar-title-button:is(:hover, :active, :focus-visible) {
+  background: transparent;
+  background-image: none;
+  border: 0;
+  box-shadow: none;
 }
