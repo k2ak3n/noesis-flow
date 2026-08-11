@@ -17,6 +17,9 @@ import {
 export function normalizeSettingsSchema(settings: NoesisFlowSettings, loaded: unknown): void {
   const raw = loaded && typeof loaded === "object" ? loaded as Record<string, unknown> : {};
 
+  settings.calendarPlainDateNumbers = !!settings.calendarPlainDateNumbers;
+  settings.calendarDateCellShape = settings.calendarDateCellShape === "circle" ? "circle" : "square";
+
   settings.timerFocusMinutes = clampNumber(settings.timerFocusMinutes, 1, 240, 25);
   settings.timerBreakMinutes = clampNumber(settings.timerBreakMinutes, 1, 120, 5);
   settings.timerLongBreakMinutes = clampNumber(settings.timerLongBreakMinutes, 1, 120, 20);

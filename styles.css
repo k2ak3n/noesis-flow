@@ -5352,6 +5352,20 @@
   background: color-mix(in srgb, var(--noesis-flow-task-priority-color) 26%, transparent);
   color: var(--noesis-flow-task-priority-color);
 }
+/* Calendar date-cell appearance options. */
+.noesis-flow-calendar-wrapper .noesis-flow-calendar-day {
+  border-radius: var(--noesis-flow-calendar-date-cell-radius, var(--noesis-flow-calendar-cell-radius, 6px));
+}
+
+.noesis-flow-calendar-wrapper.plain-date-numbers .noesis-flow-calendar-day:not(.active):not(.event):not(.task-load-busy):not(.task-load-warning):not(.task-load-critical):not(.task-load-overdue):not(.holiday),
+.noesis-flow-calendar-wrapper.plain-date-numbers .noesis-flow-calendar-day:not(.active):not(.event):not(.task-load-busy):not(.task-load-warning):not(.task-load-critical):not(.task-load-overdue):not(.holiday):hover {
+  background-color: transparent;
+}
+
+/* Dark mode keeps the primary countdown legible without stark white contrast. */
+.theme-dark .noesis-flow-time-shell :is(.noesis-flow-timer-time, .noesis-flow-timer-digital-time) {
+  color: color-mix(in srgb, var(--text-normal) 88%, var(--text-muted));
+}
 /* Calendar title controls remain text-only in both header layouts. */
 .noesis-flow-calendar-wrapper .noesis-flow-calendar-title .noesis-flow-calendar-title-button,
 .noesis-flow-calendar-wrapper .noesis-flow-calendar-title .noesis-flow-calendar-title-button:is(:hover, :active, :focus-visible) {

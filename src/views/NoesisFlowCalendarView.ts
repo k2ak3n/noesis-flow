@@ -215,12 +215,15 @@ export class NoesisFlowCalendarView extends ItemView {
     wrapper.classList.toggle("week-numbers-left", !!this.settings.calendarShowWeekNumbers && !this.settings.calendarShowWeekNumbersRight);
     wrapper.classList.toggle("weekend-shading-enabled", !!this.settings.calendarShadeWeekendColumns);
     wrapper.classList.toggle("weekend-tint-red", this.settings.calendarWeekendTintTone === "red");
+    wrapper.classList.toggle("plain-date-numbers", !!this.settings.calendarPlainDateNumbers);
+    wrapper.classList.toggle("calendar-date-shape-circle", this.settings.calendarDateCellShape === "circle");
     wrapper.classList.toggle("show-mobile-today", !!this.settings.calendarShowTodayButtonOnMobile);
     wrapper.classList.toggle("show-quarters", !!this.settings.calendarShowQuarters);
     wrapper.classList.toggle("show-task-counts", !!this.settings.calendarShowTaskCounts);
     wrapper.style.setProperty("--noesis-flow-calendar-title-size", `${this.settings.calendarHeaderDateScale}em`);
     wrapper.style.setProperty("--noesis-flow-calendar-day-size", `${this.settings.calendarDateNumberScale}em`);
     wrapper.style.setProperty("--noesis-flow-calendar-cell-radius", `${this.settings.calendarSelectedDateRadius}px`);
+    wrapper.style.setProperty("--noesis-flow-calendar-date-cell-radius", this.settings.calendarDateCellShape === "circle" ? "999px" : `${this.settings.calendarSelectedDateRadius}px`);
     wrapper.style.setProperty("--noesis-flow-calendar-quarter-section-spacing", `${this.settings.calendarQuarterRailSpacing}px`);
     wrapper.style.setProperty("--noesis-flow-calendar-adjacent-opacity", String(this.settings.calendarOverflowDateOpacity));
     wrapper.style.setProperty("--noesis-flow-calendar-weekend-strength", `${this.settings.calendarWeekendTintStrength}%`);

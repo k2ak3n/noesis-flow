@@ -1,5 +1,10 @@
 # Changelog
 
+## 1.0.5
+
+- Add plain-date and circle/square Calendar appearance options.
+- Slightly soften Pomodoro countdown text in dark mode.
+
 ## 1.0.4
 
 - Restore square, priority-colored task completion markers across task views.

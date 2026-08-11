@@ -99,6 +99,8 @@ export const DEFAULT_SETTINGS: NoesisFlowSettings = {
   calendarHeaderDateScale: 1,
   calendarDateNumberScale: 0.8,
   calendarSelectedDateRadius: 6,
+  calendarPlainDateNumbers: false,
+  calendarDateCellShape: "square",
   calendarQuarterRailSpacing: 4,
   calendarOverflowDateOpacity: 0.25,
   calendarWeekendTintStrength: 6,

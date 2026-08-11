@@ -39,4 +39,20 @@ describe("settings schema normalization", () => {
     normalizeSettingsSchema(settings, {});
     expect(settings.timerSoundPath).toBe("");
   });
+  it("normalizes calendar date appearance settings", () => {
+    const settings = structuredClone(DEFAULT_SETTINGS) as any;
+    settings.calendarPlainDateNumbers = "yes";
+    settings.calendarDateCellShape = "triangle";
+    normalizeSettingsSchema(settings, {});
+
+    expect(settings.calendarPlainDateNumbers).toBe(true);
+    expect(settings.calendarDateCellShape).toBe("square");
+
+    settings.calendarPlainDateNumbers = false;
+    settings.calendarDateCellShape = "circle";
+    normalizeSettingsSchema(settings, {});
+
+    expect(settings.calendarPlainDateNumbers).toBe(false);
+    expect(settings.calendarDateCellShape).toBe("circle");
+  });
 });

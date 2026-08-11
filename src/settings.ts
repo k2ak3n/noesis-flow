@@ -66,7 +66,7 @@ export class NoesisFlowSettingTab extends PluginSettingTab {
     const resetKeys: Record<string, (keyof NoesisFlowSettings)[]> = {
       "Date Parser": ["dateMarkerStyle"],
       "Dashboard": ["dailyBriefAddonEnabled", "dailyBriefTaskFilter", "dailyBriefShowTodayTasks", "dailyBriefShowOverdueTasks", "dailyBriefShowNextHoliday", "dailyBriefShowWeekend", "dailyBriefShowTimer"],
-      "Calendar": ["calendarAddonEnabled", "calendarLayoutStyle", "calendarWeekStart", "calendarShowWeekNumbers", "calendarShowWeekNumbersRight", "calendarShadeWeekendColumns", "calendarWeekendDays", "calendarShowQuarters", "calendarShowTodayButton", "calendarShowTodayButtonOnMobile", "calendarHeaderDateScale", "calendarDateNumberScale", "calendarSelectedDateRadius", "calendarQuarterRailSpacing", "calendarOverflowDateOpacity", "calendarWeekendTintStrength", "calendarWeekendTintTone"],
+      "Calendar": ["calendarAddonEnabled", "calendarLayoutStyle", "calendarWeekStart", "calendarShowWeekNumbers", "calendarShowWeekNumbersRight", "calendarShadeWeekendColumns", "calendarWeekendDays", "calendarShowQuarters", "calendarShowTodayButton", "calendarShowTodayButtonOnMobile", "calendarHeaderDateScale", "calendarDateNumberScale", "calendarSelectedDateRadius", "calendarPlainDateNumbers", "calendarDateCellShape", "calendarQuarterRailSpacing", "calendarOverflowDateOpacity", "calendarWeekendTintStrength", "calendarWeekendTintTone"],
       "Tasks": ["tasksAddonEnabled", "calendarTaskCaptureEnabled", "calendarTaskTargetNote", "taskInboxNote", "taskSourceNotes", "projects", "calendarShowTaskCounts", "calendarMarkOverdueTasks", "calendarTaskWorkloadThreshold", "calendarTaskOrangePriorityThreshold", "calendarTaskRedPriorityThreshold", "calendarTaskCriticalColor", "calendarTaskHighColor", "calendarTaskMediumColor", "calendarTaskLowColor", "recurringTasksEnabled", "recurringTaskOccurrenceLimit", "recurringTaskAutoExtend", "recurringTasksUseSeparateNote", "recurringTaskTargetNote", "recurringTaskManagerEnabled"],
       "Task List": ["taskListAddonEnabled", "taskListColumnOrder", "taskListVisibleColumns", "taskListColumnWidths", "taskListSortColumn", "taskListSortDirection", "taskListFilter", "taskListStatuses", "taskListPriorityFilters", "taskListUnscheduledFilter", "taskListSourceFilter", "taskAuditEnabled", "taskAuditNote"],
       "Monthly Planner": ["planningAddonEnabled"],
@@ -640,7 +640,31 @@ export class NoesisFlowSettingTab extends PluginSettingTab {
     };
     addAppearanceSlider("Header date scale", "Adjusts the month and year label size.", "calendarHeaderDateScale", 0.95, 1.5, 0.05, 1);
     addAppearanceSlider("Date number scale", "Adjusts the calendar day-number size.", "calendarDateNumberScale", 0.7, 1.05, 0.05, 0.8);
-    addAppearanceSlider("Selected date radius", "Adjusts rounding for selected and active date controls.", "calendarSelectedDateRadius", 0, 12, 1, 6);
+    new Setting(appearanceGroup)
+      .setName("Plain date numbers")
+      .setDesc("Removes the tile and hover fill from ordinary dates while keeping selected and status signals visible.")
+      .addToggle((toggle) => {
+        toggle.setValue(!!this.plugin.settings.calendarPlainDateNumbers);
+        toggle.onChange(async (value) => {
+          this.plugin.settings.calendarPlainDateNumbers = value;
+          await this.plugin.saveSettings();
+          this.plugin.refreshCalendarViews();
+        });
+      });
+    new Setting(appearanceGroup)
+      .setName("Date-cell shape")
+      .setDesc("Choose whether calendar date cells use the configured square rounding or a circle.")
+      .addDropdown((dropdown) => {
+        dropdown.addOption("square", "Square");
+        dropdown.addOption("circle", "Circle");
+        dropdown.setValue(this.plugin.settings.calendarDateCellShape === "circle" ? "circle" : "square");
+        dropdown.onChange(async (value) => {
+          this.plugin.settings.calendarDateCellShape = value === "circle" ? "circle" : "square";
+          await this.plugin.saveSettings();
+          this.plugin.refreshCalendarViews();
+        });
+      });
+    addAppearanceSlider("Square date radius", "Adjusts date-cell corner rounding when the shape is Square.", "calendarSelectedDateRadius", 0, 12, 1, 6);
     addAppearanceSlider("Quarter rail spacing", "Adjusts space around the optional quarter rail.", "calendarQuarterRailSpacing", 0, 18, 1, 4);
     addAppearanceSlider("Overflow date opacity", "Adjusts the visibility of dates outside the active month.", "calendarOverflowDateOpacity", 0.05, 0.7, 0.05, 0.25);
     addAppearanceSlider("Weekend tint strength", "Adjusts the tint applied to shaded weekend columns.", "calendarWeekendTintStrength", 0, 12, 1, 6);

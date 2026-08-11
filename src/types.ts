@@ -44,6 +44,8 @@ export interface NoesisFlowSettings {
   calendarHeaderDateScale: number;
   calendarDateNumberScale: number;
   calendarSelectedDateRadius: number;
+  calendarPlainDateNumbers: boolean;
+  calendarDateCellShape: "square" | "circle";
   calendarQuarterRailSpacing: number;
   calendarOverflowDateOpacity: number;
   calendarWeekendTintStrength: number;
