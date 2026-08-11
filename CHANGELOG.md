@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.0.4
+
+- Restore square, priority-colored task completion markers across task views.
+
 ## 1.0.3
 
 - Keep Calendar month and year controls text-only in both header layouts.

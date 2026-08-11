@@ -5326,18 +5326,32 @@
   padding: 0;
 }
 
-:is(.noesis-flow-calendar-wrapper, .noesis-flow-time-shell, .noesis-flow-daily-brief-board, .noesis-flow-kanban-board, .noesis-flow-task-list, .noesis-flow-planning, .noesis-flow-timeline-shell, .noesis-flow-recurring-manager, .noesis-flow-dialog) .noesis-flow-today-task-marker {
+:is(.noesis-flow-calendar-wrapper, .noesis-flow-time-shell, .noesis-flow-daily-brief-board, .noesis-flow-kanban-board, .noesis-flow-task-list, .noesis-flow-planning, .noesis-flow-timeline-shell, .noesis-flow-recurring-manager, .noesis-flow-dialog) .noesis-flow-today-task-item > button.noesis-flow-today-task-marker.noesis-flow-today-task-complete {
   aspect-ratio: 1;
+  background: color-mix(in srgb, var(--noesis-flow-task-priority-color) 18%, transparent);
   block-size: var(--noesis-flow-task-marker-size);
+  border: 0;
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--noesis-flow-task-priority-color) 36%, transparent);
+  color: var(--noesis-flow-task-priority-color);
   flex: 0 0 var(--noesis-flow-task-marker-size);
+  height: var(--noesis-flow-task-marker-size);
   inline-size: var(--noesis-flow-task-marker-size);
   max-block-size: var(--noesis-flow-task-marker-size);
+  max-height: var(--noesis-flow-task-marker-size);
   max-inline-size: var(--noesis-flow-task-marker-size);
+  max-width: var(--noesis-flow-task-marker-size);
   min-block-size: var(--noesis-flow-task-marker-size);
+  min-height: var(--noesis-flow-task-marker-size);
   min-inline-size: var(--noesis-flow-task-marker-size);
+  min-width: var(--noesis-flow-task-marker-size);
   padding: 0;
+  width: var(--noesis-flow-task-marker-size);
 }
 
+:is(.noesis-flow-calendar-wrapper, .noesis-flow-time-shell, .noesis-flow-daily-brief-board, .noesis-flow-kanban-board, .noesis-flow-task-list, .noesis-flow-planning, .noesis-flow-timeline-shell, .noesis-flow-recurring-manager, .noesis-flow-dialog) .noesis-flow-today-task-item > button.noesis-flow-today-task-marker.noesis-flow-today-task-complete:is(:hover, :focus-visible) {
+  background: color-mix(in srgb, var(--noesis-flow-task-priority-color) 26%, transparent);
+  color: var(--noesis-flow-task-priority-color);
+}
 /* Calendar title controls remain text-only in both header layouts. */
 .noesis-flow-calendar-wrapper .noesis-flow-calendar-title .noesis-flow-calendar-title-button,
 .noesis-flow-calendar-wrapper .noesis-flow-calendar-title .noesis-flow-calendar-title-button:is(:hover, :active, :focus-visible) {
