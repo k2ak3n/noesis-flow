@@ -5312,3 +5312,28 @@
     grid-template-columns: minmax(0, 1fr);
   }
 }
+
+/* Square checkbox geometry: prevent host themes from stretching task controls. */
+:is(.noesis-flow-calendar-wrapper, .noesis-flow-time-shell, .noesis-flow-daily-brief-board, .noesis-flow-kanban-board, .noesis-flow-task-list, .noesis-flow-planning, .noesis-flow-timeline-shell, .noesis-flow-recurring-manager, .noesis-flow-settings, .noesis-flow-dialog) input[type="checkbox"] {
+  aspect-ratio: 1;
+  block-size: 16px !important;
+  box-sizing: border-box;
+  inline-size: 16px !important;
+  max-block-size: 16px !important;
+  max-inline-size: 16px !important;
+  min-block-size: 16px !important;
+  min-inline-size: 16px !important;
+  padding: 0;
+}
+
+.noesis-flow-today-task-marker {
+  aspect-ratio: 1;
+  block-size: var(--noesis-flow-task-marker-size) !important;
+  flex: 0 0 var(--noesis-flow-task-marker-size) !important;
+  inline-size: var(--noesis-flow-task-marker-size) !important;
+  max-block-size: var(--noesis-flow-task-marker-size) !important;
+  max-inline-size: var(--noesis-flow-task-marker-size) !important;
+  min-block-size: var(--noesis-flow-task-marker-size) !important;
+  min-inline-size: var(--noesis-flow-task-marker-size) !important;
+  padding: 0;
+}

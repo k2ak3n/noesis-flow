@@ -1,5 +1,10 @@
 # Changelog
 
+## 1.0.2
+
+- Fix Settings layout alignment.
+- Make task-completion controls and plugin checkboxes consistently square.
+
 ## 1.0.1
 
 - Strengthen type safety and resolve source-code review warnings.
