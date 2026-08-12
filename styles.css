@@ -5366,6 +5366,15 @@
 .theme-dark .noesis-flow-time-shell :is(.noesis-flow-timer-time, .noesis-flow-timer-digital-time) {
   color: color-mix(in srgb, var(--text-normal) 88%, var(--text-muted));
 }
+/* Light themes need an explicit foreground for the primary play/pause glyph. */
+.theme-light .noesis-flow-pomodoro-actions .noesis-flow-time-button.icon-only.primary,
+.theme-light .noesis-flow-pomodoro-actions .noesis-flow-time-button.icon-only.primary:is(:hover, :active, :focus-visible) {
+  color: var(--text-on-accent, #fff);
+}
+
+.theme-light .noesis-flow-pomodoro-actions .noesis-flow-time-button.icon-only.primary svg {
+  stroke: currentColor;
+}
 /* Calendar title controls remain text-only in both header layouts. */
 .noesis-flow-calendar-wrapper .noesis-flow-calendar-title .noesis-flow-calendar-title-button,
 .noesis-flow-calendar-wrapper .noesis-flow-calendar-title .noesis-flow-calendar-title-button:is(:hover, :active, :focus-visible) {

@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.0.6
+
+- Improve light-mode visibility for the Pomodoro play and pause button.
+
 ## 1.0.5
 
 - Add plain-date and circle/square Calendar appearance options.
