@@ -83,7 +83,7 @@ export class NoesisFlowSettingTab extends PluginSettingTab {
     const keys = this.getSectionResetKeys(title);
     if (!keys.length) return;
     const action = details.createDiv({ cls: "noesis-flow-settings-section-action" });
-    const button = action.createEl("button", { text: "Reset this section", attr: { type: "button" } });
+    const button = action.createEl("button", { text: "Reset This Section", attr: { type: "button" } });
     button.addEventListener("click", (event) => {
       event.preventDefault();
       event.stopPropagation();
@@ -92,7 +92,7 @@ export class NoesisFlowSettingTab extends PluginSettingTab {
         message: title === "Kanban"
           ? "Restore the Kanban defaults? This also removes saved Kanban views."
           : `Restore the default settings for ${title}?`,
-        confirmLabel: "Reset section",
+        confirmLabel: "Reset Section",
         onConfirm: async () => {
           const updates = {} as Partial<NoesisFlowSettings>;
           for (const key of keys) {
@@ -145,11 +145,13 @@ export class NoesisFlowSettingTab extends PluginSettingTab {
         const exactMatch = !!query && name === query;
         item.classList.toggle("noesis-flow-settings-search-hidden", !matches);
         item.classList.toggle("noesis-flow-settings-search-exact", exactMatch);
+        item.classList.toggle("noesis-flow-settings-search-match", !!query && matches);
         hasMatchingControl ||= matches;
       }
       const summaryText = String(section.querySelector(":scope > summary")?.textContent || "").toLowerCase();
       const matches = !query || summaryText.includes(query) || hasMatchingControl;
       section.classList.toggle("noesis-flow-settings-search-hidden", !matches);
+      section.classList.toggle("noesis-flow-settings-search-match", !!query && summaryText.includes(query));
       if (query && matches) section.open = true;
       if (!query) {
         const key = section.dataset.noesisFlowSectionKey;
@@ -197,7 +199,7 @@ export class NoesisFlowSettingTab extends PluginSettingTab {
     this.renderDailyBriefAddons(containerEl);
     this.renderCalendarAddons(containerEl);
     this.renderTaskAddons(containerEl);
-    this.renderSettingsSectionHeading(containerEl, "Planning tools");
+    this.renderSettingsSectionHeading(containerEl, "Planning Tools");
     this.renderTaskListSettings(containerEl);
     this.renderPlanningSettings(containerEl);
     this.renderKanbanAddons(containerEl);
@@ -239,25 +241,25 @@ export class NoesisFlowSettingTab extends PluginSettingTab {
   }
 
   renderModuleOnboarding(containerEl: HTMLElement): void {
-    const onboarding = this.createSettingsDetails(containerEl, "Quick setup", "Set up the core task workflow, then enable only the extras you need.");
+    const onboarding = this.createSettingsDetails(containerEl, "Quick Setup", "Set up the core task workflow, then enable only the extras you need.");
     const inboxPath = this.plugin.settings.taskInboxNote || this.plugin.settings.calendarTaskTargetNote;
     if (!inboxPath) {
       onboarding.open = true;
     }
     const taskNote = new Setting(onboarding)
-      .setName("Task note")
+      .setName("Task Note")
       .setDesc(inboxPath
         ? `New tasks are stored in ${inboxPath}.`
         : "Create a task note or choose the Markdown note where Noesis Flow should store new tasks.");
     taskNote.addButton((button) => {
-      button.setButtonText("Use active note");
+      button.setButtonText("Use Active Note");
       button.setCta();
       button.onClick(async () => {
         if (await this.plugin.useActiveNoteAsCalendarTaskTarget()) this.update();
       });
     });
     taskNote.addButton((button) => {
-      button.setButtonText("Choose note");
+      button.setButtonText("Choose Note");
       button.onClick(() => new NoesisFlowMarkdownNoteChooserModal(this.app, "Choose task note", async (file) => {
         await this.plugin.setTaskInboxNote(file.path);
         this.update();
@@ -265,7 +267,7 @@ export class NoesisFlowSettingTab extends PluginSettingTab {
     });
     if (!inboxPath) {
       taskNote.addButton((button) => {
-        button.setButtonText("Create task note");
+        button.setButtonText("Create Task Note");
         button.onClick(async () => {
           if (await this.plugin.createTaskInbox()) this.update();
         });
@@ -276,7 +278,7 @@ export class NoesisFlowSettingTab extends PluginSettingTab {
       && this.plugin.settings.dailyBriefAddonEnabled
       && this.plugin.settings.taskListAddonEnabled;
     new Setting(onboarding)
-      .setName("Core task workflow")
+      .setName("Core Task Workflow")
       .setDesc("Use task capture, Dashboard, and Task List as one focused workflow.")
       .addToggle((toggle) => {
         toggle.setValue(coreWorkflowEnabled);
@@ -350,7 +352,7 @@ export class NoesisFlowSettingTab extends PluginSettingTab {
     );
 
     new Setting(parserGroup)
-      .setName("Date marker")
+      .setName("Date Marker")
       .setDesc(`Reads only the selected marker style. Changing it does not migrate existing Markdown notes.`)
       .addDropdown((dropdown) => {
         dropdown.addOption("tag", "#YYYY-MM-DD");
@@ -412,7 +414,7 @@ export class NoesisFlowSettingTab extends PluginSettingTab {
     if (!this.plugin.settings.dailyBriefAddonEnabled) return;
 
     new Setting(briefGroup)
-      .setName("Default task filter")
+      .setName("Default Task Filter")
       .setDesc("Initial task scope for the Dashboard task section.")
       .addDropdown((dropdown) => {
         for (const option of DATE_TASK_FILTER_OPTIONS) {
@@ -479,7 +481,7 @@ export class NoesisFlowSettingTab extends PluginSettingTab {
     );
 
     new Setting(containerEl)
-      .setName("Calendar panel")
+      .setName("Calendar Panel")
       .setDesc("Enables the ribbon action, command palette entry, and sidebar calendar view.")
       .addToggle((toggle) => {
         toggle.setValue(this.plugin.settings.calendarAddonEnabled);
@@ -506,9 +508,9 @@ export class NoesisFlowSettingTab extends PluginSettingTab {
       return;
     }
 
-    const displayGroup = this.createSettingsDetails(containerEl, "Calendar layout");
+    const displayGroup = this.createSettingsDetails(containerEl, "Calendar Layout");
     new Setting(displayGroup)
-      .setName("Calendar style")
+      .setName("Calendar Style")
       .setDesc("Choose between the classic header and a centered month with weekday band.")
       .addDropdown((dropdown) => {
         dropdown.addOption("classic", "Classic");
@@ -522,13 +524,13 @@ export class NoesisFlowSettingTab extends PluginSettingTab {
       });
 
     new Setting(displayGroup)
-      .setName("Week origin")
+      .setName("Week Origin")
       .setDesc("Sets the first day column and week reference calculation.")
       .addDropdown((dropdown) => {
         dropdown.addOption("monday", "Monday");
         dropdown.addOption("sunday", "Sunday");
         dropdown.addOption("saturday", "Saturday");
-        dropdown.addOption("locale", "Locale default");
+        dropdown.addOption("locale", "Locale Default");
         dropdown.setValue(this.plugin.settings.calendarWeekStart || "monday");
         dropdown.onChange(async (value) => {
           this.plugin.settings.calendarWeekStart = ["monday", "sunday", "saturday", "locale"].includes(value)
@@ -540,7 +542,7 @@ export class NoesisFlowSettingTab extends PluginSettingTab {
       });
 
     new Setting(displayGroup)
-      .setName("Week reference rail")
+      .setName("Week Reference Rail")
       .setDesc("Adds a slim week reference beside the date grid.")
       .addToggle((toggle) => {
         toggle.setValue(this.plugin.settings.calendarShowWeekNumbers);
@@ -554,7 +556,7 @@ export class NoesisFlowSettingTab extends PluginSettingTab {
 
     if (this.plugin.settings.calendarShowWeekNumbers) {
       new Setting(displayGroup)
-        .setName("Place rail on right")
+        .setName("Place Rail on Right")
         .setDesc("Places the week reference after the date columns.")
         .addToggle((toggle) => {
           toggle.setValue(this.plugin.settings.calendarShowWeekNumbersRight);
@@ -567,7 +569,7 @@ export class NoesisFlowSettingTab extends PluginSettingTab {
     }
 
     new Setting(displayGroup)
-      .setName("Quarter rail")
+      .setName("Quarter Rail")
       .setDesc("Adds the segmented quarter jump row above the weekday labels.")
       .addToggle((toggle) => {
         toggle.setValue(this.plugin.settings.calendarShowQuarters);
@@ -579,7 +581,7 @@ export class NoesisFlowSettingTab extends PluginSettingTab {
       });
 
     new Setting(displayGroup)
-      .setName("Today control")
+      .setName("Today Control")
       .setDesc("Adds a compact return-to-today action in the calendar header.")
       .addToggle((toggle) => {
         toggle.setValue(this.plugin.settings.calendarShowTodayButton);
@@ -593,7 +595,7 @@ export class NoesisFlowSettingTab extends PluginSettingTab {
 
 
     new Setting(displayGroup)
-      .setName("Weekend column tint")
+      .setName("Weekend Column Tint")
       .setDesc("Applies a restrained accent tint to weekend columns.")
       .addToggle((toggle) => {
         toggle.setValue(this.plugin.settings.calendarShadeWeekendColumns);
@@ -606,7 +608,7 @@ export class NoesisFlowSettingTab extends PluginSettingTab {
 
     if (this.plugin.settings.calendarShowTodayButton) {
       new Setting(displayGroup)
-        .setName("Keep Today in compact panes")
+        .setName("Keep Today in Compact Panes")
         .setDesc("Keeps the Today action visible when the sidebar is narrow.")
         .addToggle((toggle) => {
           toggle.setValue(this.plugin.settings.calendarShowTodayButtonOnMobile);
@@ -620,7 +622,7 @@ export class NoesisFlowSettingTab extends PluginSettingTab {
 
     const appearanceGroup = this.createSettingsDetails(
       containerEl,
-      "Calendar appearance",
+      "Calendar Appearance",
       "Fine-tune Calendar typography, date-cell geometry, and weekend color."
     );
     const addAppearanceSlider = (name: string, desc: string, key: NumberSettingKey, min: number, max: number, step: number, fallback: number): void => {
@@ -641,7 +643,7 @@ export class NoesisFlowSettingTab extends PluginSettingTab {
     addAppearanceSlider("Header date scale", "Adjusts the month and year label size.", "calendarHeaderDateScale", 0.95, 1.5, 0.05, 1);
     addAppearanceSlider("Date number scale", "Adjusts the calendar day-number size.", "calendarDateNumberScale", 0.7, 1.05, 0.05, 0.8);
     new Setting(appearanceGroup)
-      .setName("Plain date numbers")
+      .setName("Plain Date Numbers")
       .setDesc("Removes the tile and hover fill from ordinary dates while keeping selected and status signals visible.")
       .addToggle((toggle) => {
         toggle.setValue(!!this.plugin.settings.calendarPlainDateNumbers);
@@ -652,7 +654,7 @@ export class NoesisFlowSettingTab extends PluginSettingTab {
         });
       });
     new Setting(appearanceGroup)
-      .setName("Date-cell shape")
+      .setName("Date-Cell Shape")
       .setDesc("Choose whether calendar date cells use the configured square rounding or a circle.")
       .addDropdown((dropdown) => {
         dropdown.addOption("square", "Square");
@@ -669,7 +671,7 @@ export class NoesisFlowSettingTab extends PluginSettingTab {
     addAppearanceSlider("Overflow date opacity", "Adjusts the visibility of dates outside the active month.", "calendarOverflowDateOpacity", 0.05, 0.7, 0.05, 0.25);
     addAppearanceSlider("Weekend tint strength", "Adjusts the tint applied to shaded weekend columns.", "calendarWeekendTintStrength", 0, 12, 1, 6);
     new Setting(appearanceGroup)
-      .setName("Weekend tint tone")
+      .setName("Weekend Tint Tone")
       .setDesc("Choose the color used for shaded weekend columns.")
       .addDropdown((dropdown) => {
         dropdown.addOption("accent", "Accent");
@@ -694,7 +696,7 @@ export class NoesisFlowSettingTab extends PluginSettingTab {
     );
 
     new Setting(taskGroup)
-      .setName("Tasks add-on")
+      .setName("Tasks Add-On")
       .setDesc("Enables task capture, task parsing, calendar task indicators, Task List, Monthly Planner, Kanban, and Recurring Tasks.")
       .addToggle((toggle) => {
         toggle.setValue(this.plugin.settings.tasksAddonEnabled);
@@ -730,7 +732,7 @@ export class NoesisFlowSettingTab extends PluginSettingTab {
 
   renderTaskCaptureSettings(taskGroup: HTMLElement) {
     new Setting(taskGroup)
-      .setName("Date task capture")
+      .setName("Date Task Capture")
       .setDesc("Turns calendar date clicks into a guided task capture flow.")
       .addToggle((toggle) => {
         toggle.setValue(this.plugin.settings.calendarTaskCaptureEnabled);
@@ -743,7 +745,7 @@ export class NoesisFlowSettingTab extends PluginSettingTab {
       });
 
     new Setting(taskGroup)
-      .setName("Recurring task capture")
+      .setName("Recurring Task Capture")
       .setDesc("Adds a repeat step to calendar-created tasks. Noesis Flow writes only a bounded set of dated task lines and skips duplicates.")
       .addToggle((toggle) => {
         toggle.setValue(this.plugin.settings.recurringTasksEnabled);
@@ -757,7 +759,7 @@ export class NoesisFlowSettingTab extends PluginSettingTab {
 
     if (this.plugin.settings.recurringTasksEnabled) {
       new Setting(taskGroup)
-        .setName("Recurring-task manager")
+        .setName("Recurring Task Manager")
         .setDesc("Tracks new repeating tasks in one place, where a series can be paused or resumed.")
         .addToggle((toggle) => {
           toggle.setValue(this.plugin.settings.recurringTaskManagerEnabled !== false);
@@ -774,7 +776,7 @@ export class NoesisFlowSettingTab extends PluginSettingTab {
         });
 
       new Setting(taskGroup)
-        .setName("Recurring occurrence limit")
+        .setName("Recurring Occurrence Limit")
         .setDesc("Number of future dates kept ready for an ongoing recurring task.")
         .addSlider((slider) => {
           slider
@@ -787,7 +789,7 @@ export class NoesisFlowSettingTab extends PluginSettingTab {
         });
 
       new Setting(taskGroup)
-        .setName("Maintain upcoming occurrences")
+        .setName("Maintain Upcoming Occurrences")
         .setDesc("On startup, extend active open-ended series so this many future dates remain planned. Explicit end dates and counts are respected.")
         .addToggle((toggle) => {
           toggle.setValue(this.plugin.settings.recurringTaskAutoExtend !== false);
@@ -798,7 +800,7 @@ export class NoesisFlowSettingTab extends PluginSettingTab {
         });
 
       new Setting(taskGroup)
-        .setName("Separate recurring note")
+        .setName("Separate Recurring Note")
         .setDesc("Routes recurring calendar-created tasks into a dedicated note while one-off tasks stay in the task note.")
         .addToggle((toggle) => {
           toggle.setValue(this.plugin.settings.recurringTasksUseSeparateNote);
@@ -812,7 +814,7 @@ export class NoesisFlowSettingTab extends PluginSettingTab {
 
       if (this.plugin.settings.recurringTasksUseSeparateNote) {
         new Setting(taskGroup)
-          .setName("Recurring task note")
+          .setName("Recurring Task Note")
           .setDesc("Vault markdown note that receives recurring calendar-created tasks.")
           .addText((text) => {
             const applyRecurringTaskNote = async (value: string): Promise<void> => {
@@ -836,7 +838,7 @@ export class NoesisFlowSettingTab extends PluginSettingTab {
             });
           })
           .addButton((button) => {
-            button.setButtonText("Use active note");
+            button.setButtonText("Use Active Note");
             button.onClick(async () => {
               const changed = await this.plugin.useActiveNoteAsRecurringTaskTarget();
               if (changed) this.update();
@@ -848,7 +850,7 @@ export class NoesisFlowSettingTab extends PluginSettingTab {
 
   renderTaskIndicatorSettings(taskGroup: HTMLElement) {
     new Setting(taskGroup)
-      .setName("Task indicators")
+      .setName("Task Indicators")
       .setDesc("Shows subtle dots and workload color on dates with date-marked tasks.")
       .addToggle((toggle) => {
         toggle.setValue(this.plugin.settings.calendarShowTaskCounts);
@@ -862,7 +864,7 @@ export class NoesisFlowSettingTab extends PluginSettingTab {
 
     if (this.plugin.settings.calendarShowTaskCounts) {
       new Setting(taskGroup)
-        .setName("Past-scheduled task marker")
+        .setName("Past-Scheduled Task Marker")
         .setDesc("Marks past dates red when they still have open tasks.")
         .addToggle((toggle) => {
           toggle.setValue(this.plugin.settings.calendarMarkOverdueTasks);
@@ -874,7 +876,7 @@ export class NoesisFlowSettingTab extends PluginSettingTab {
         });
 
       new Setting(taskGroup)
-        .setName("Workload threshold")
+        .setName("Workload Threshold")
         .setDesc("Total date-marked tasks required before a date receives workload color.")
         .addSlider((slider) => {
           slider
@@ -888,7 +890,7 @@ export class NoesisFlowSettingTab extends PluginSettingTab {
         });
 
       new Setting(taskGroup)
-        .setName("Orange priority threshold")
+        .setName("Orange Priority Threshold")
         .setDesc("High or critical tasks needed at workload threshold before the date turns orange.")
         .addSlider((slider) => {
           slider
@@ -902,7 +904,7 @@ export class NoesisFlowSettingTab extends PluginSettingTab {
         });
 
       new Setting(taskGroup)
-        .setName("Red priority threshold")
+        .setName("Red Priority Threshold")
         .setDesc("High or critical tasks needed at workload threshold before the date turns red.")
         .addSlider((slider) => {
           slider
@@ -918,7 +920,7 @@ export class NoesisFlowSettingTab extends PluginSettingTab {
 
     const priorityDetails = this.createSettingsDetails(
       taskGroup,
-      "Priority markers",
+      "Priority Markers",
       "Recognized task checkbox priorities."
     );
     for (const priority of CALENDAR_TASK_PRIORITIES) {
@@ -1019,7 +1021,7 @@ export class NoesisFlowSettingTab extends PluginSettingTab {
     }
 
     new Setting(taskListGroup)
-      .setName("History note")
+      .setName("History Note")
       .setDesc("Existing Markdown note where history entries are appended. Noesis Flow will not create this note for you.")
       .addText((text) => {
         text.setPlaceholder("Choose an existing note");
@@ -1040,7 +1042,7 @@ export class NoesisFlowSettingTab extends PluginSettingTab {
         });
       })
       .addButton((button) => {
-        button.setButtonText("Use active note");
+        button.setButtonText("Use Active Note");
         button.onClick(async () => {
           const file = this.plugin.getActiveMarkdownFile();
           if (!file) {
@@ -1105,7 +1107,7 @@ export class NoesisFlowSettingTab extends PluginSettingTab {
       "Board layout, filters, and saved views."
     );
     new Setting(kanbanGroup)
-      .setName("Kanban board")
+      .setName("Kanban Board")
       .setDesc("Adds a main-tab task board grouped by Project, Date, or Priority.")
       .addToggle((toggle) => {
         toggle.setValue(this.plugin.settings.kanbanTasksAddonEnabled);
@@ -1127,7 +1129,7 @@ export class NoesisFlowSettingTab extends PluginSettingTab {
     }
 
     new Setting(kanbanGroup)
-      .setName("Hide weekends in Scheduled view")
+      .setName("Hide Weekends in Scheduled View")
       .setDesc("Shows only Monday through Friday when Kanban is grouped by Date.")
       .addToggle((toggle) => {
         toggle.setValue(!!this.plugin.settings.kanbanDateHideWeekends);
@@ -1139,7 +1141,7 @@ export class NoesisFlowSettingTab extends PluginSettingTab {
       });
 
     new Setting(kanbanGroup)
-      .setName("Default Kanban filter")
+      .setName("Default Kanban Filter")
       .setDesc("Initial Date scope outside the weekly Date view. All also includes unscheduled tasks.")
       .addDropdown((dropdown) => {
         for (const option of DATE_TASK_FILTER_OPTIONS) dropdown.addOption(option.value, option.label);
@@ -1152,7 +1154,7 @@ export class NoesisFlowSettingTab extends PluginSettingTab {
       });
 
     new Setting(kanbanGroup)
-      .setName("Default Kanban view")
+      .setName("Default Kanban View")
       .setDesc("Choose whether Kanban columns represent Projects, Dates, or Priorities.")
       .addDropdown((dropdown) => {
         for (const option of KANBAN_TASK_VIEW_OPTIONS) dropdown.addOption(option.value, option.label);
@@ -1165,11 +1167,11 @@ export class NoesisFlowSettingTab extends PluginSettingTab {
       });
 
     new Setting(kanbanGroup)
-      .setName("Card order")
+      .setName("Card Order")
       .setDesc("Priority keeps a consistent priority-first order. Custom lets you drag cards to reorder them within a Project lane.")
       .addDropdown((dropdown) => {
         dropdown.addOption("priority", "Priority");
-        dropdown.addOption("custom", "Custom (Projects only)");
+        dropdown.addOption("custom", "Custom (Projects Only)");
         dropdown.setValue(this.plugin.settings.kanbanCardOrder || "priority");
         dropdown.onChange(async (value) => {
           this.plugin.settings.kanbanCardOrder = value === "custom" ? "custom" : "priority";
@@ -1180,11 +1182,11 @@ export class NoesisFlowSettingTab extends PluginSettingTab {
 
     const cardStyleGroup = this.createSettingsDetails(
       kanbanGroup,
-      "Kanban card style",
+      "Kanban Card Style",
       "Optional priority color, accent, divider, and density treatments."
     );
     new Setting(cardStyleGroup)
-      .setName("Compact cards")
+      .setName("Compact Cards")
       .setDesc("Tightens card spacing for denser Kanban boards without hiding task actions.")
       .addToggle((toggle) => {
         toggle.setValue(!!this.plugin.settings.kanbanCompactCards);
@@ -1196,7 +1198,7 @@ export class NoesisFlowSettingTab extends PluginSettingTab {
       });
 
     new Setting(cardStyleGroup)
-      .setName("Card corner radius")
+      .setName("Card Corner Radius")
       .setDesc("Controls how rounded Kanban task cards are. Set to 0 for square corners.")
       .addSlider((slider) => {
         slider
@@ -1210,7 +1212,7 @@ export class NoesisFlowSettingTab extends PluginSettingTab {
       });
 
     new Setting(cardStyleGroup)
-      .setName("Priority borders")
+      .setName("Priority Borders")
       .setDesc("Tints each card's thin border with its priority color.")
       .addToggle((toggle) => {
         toggle.setValue(!!this.plugin.settings.kanbanCardPriorityBorders);
@@ -1222,7 +1224,7 @@ export class NoesisFlowSettingTab extends PluginSettingTab {
       });
 
     new Setting(cardStyleGroup)
-      .setName("Accent bar")
+      .setName("Accent Bar")
       .setDesc("Choose where each card's priority accent appears.")
       .addDropdown((dropdown) => {
         dropdown.addOption("left", "Left");
@@ -1236,7 +1238,7 @@ export class NoesisFlowSettingTab extends PluginSettingTab {
       });
 
     new Setting(cardStyleGroup)
-      .setName("Context placement")
+      .setName("Context Placement")
       .setDesc("Place the Project, Date, and Priority context above or below the task.")
       .addDropdown((dropdown) => {
         dropdown.addOption("top", "Top");
@@ -1250,7 +1252,7 @@ export class NoesisFlowSettingTab extends PluginSettingTab {
       });
 
     new Setting(cardStyleGroup)
-      .setName("Context alignment")
+      .setName("Context Alignment")
       .setDesc("Align the Project, Date, and Priority context with the card content or its center.")
       .addDropdown((dropdown) => {
         dropdown.addOption("left", "Left");
@@ -1264,7 +1266,7 @@ export class NoesisFlowSettingTab extends PluginSettingTab {
       });
 
     new Setting(cardStyleGroup)
-      .setName("Context divider")
+      .setName("Context Divider")
       .setDesc("Adds a thin priority-colored divider between card context and task name.")
       .addToggle((toggle) => {
         toggle.setValue(!!this.plugin.settings.kanbanCardContextDivider);
@@ -1282,11 +1284,11 @@ export class NoesisFlowSettingTab extends PluginSettingTab {
     const savedViews = Array.isArray(this.plugin.settings.kanbanSavedViews) ? this.plugin.settings.kanbanSavedViews : [];
     const savedGroup = this.createSettingsDetails(
       containerEl,
-      "Kanban saved views",
+      "Kanban Saved Views",
       savedViews.length ? `${savedViews.length} saved ${savedViews.length === 1 ? "view" : "views"}.` : "Save a Kanban view to manage it here."
     );
     new Setting(savedGroup)
-      .setName("Import / export")
+      .setName("Import / Export")
       .setDesc("Export a portable backup or import saved Kanban views. Imported names replace matching existing views.")
       .addButton((button) => {
         button.setButtonText("Export JSON");
@@ -1374,7 +1376,7 @@ export class NoesisFlowSettingTab extends PluginSettingTab {
 
   renderTaskNoteSettings(taskGroup: HTMLElement) {
     new Setting(taskGroup)
-      .setName("Task note")
+      .setName("Task Note")
       .setDesc("Vault markdown note that receives new tasks. Tasks without a project go under its Unassigned heading.")
       .addText((text) => {
         let appliedValue = this.plugin.settings.taskInboxNote || this.plugin.settings.calendarTaskTargetNote || "";
@@ -1407,14 +1409,14 @@ export class NoesisFlowSettingTab extends PluginSettingTab {
         });
       })
       .addButton((button) => {
-        button.setButtonText("Use active note");
+        button.setButtonText("Use Active Note");
         button.onClick(async () => {
           const changed = await this.plugin.useActiveNoteAsCalendarTaskTarget();
           if (changed) this.update();
         });
       })
       .addButton((button) => {
-        button.setButtonText("Create task note");
+        button.setButtonText("Create Task Note");
         button.onClick(async () => {
           if (await this.plugin.createTaskInbox()) this.update();
         });
@@ -1425,10 +1427,10 @@ export class NoesisFlowSettingTab extends PluginSettingTab {
     const sources = this.plugin.getTaskSourcePaths();
     const inbox = this.plugin.getCalendarTaskTargetPath();
     const setting = new Setting(taskGroup)
-      .setName("Additional task sources")
+      .setName("Additional Task Sources")
       .setDesc("Index tasks from other Markdown notes. New captures still go to the task note.");
     setting.addButton((button) => {
-      button.setButtonText("Add note");
+      button.setButtonText("Add Note");
       button.onClick(() => new NoesisFlowMarkdownNoteChooserModal(this.app, "Add task source", async (file) => {
         if (await this.plugin.addTaskSourceNote(file.path)) this.update();
       }).open());
@@ -1439,7 +1441,7 @@ export class NoesisFlowSettingTab extends PluginSettingTab {
       const row = list.createDiv({ cls: "noesis-flow-task-source-row" });
       row.createSpan({ text: path });
       if (path === inbox) {
-        row.createSpan({ cls: "noesis-flow-task-source-label", text: "Task note" });
+        row.createSpan({ cls: "noesis-flow-task-source-label", text: "Task Note" });
       } else {
         const remove = row.createEl("button", { text: "Remove", attr: { type: "button" } });
         remove.addEventListener("click", asVoidHandler(async () => {
@@ -1454,7 +1456,7 @@ export class NoesisFlowSettingTab extends PluginSettingTab {
       .setName("Projects")
       .setDesc("Register Markdown ## headings as projects. Existing headings keep working without registration; registration adds stable status and due-date context.");
     setting.addButton((button) => {
-      button.setButtonText("Register heading");
+      button.setButtonText("Register Heading");
       button.setCta();
       button.onClick(() => new NoesisFlowMarkdownNoteChooserModal(this.app, "Choose project note", async (file) => {
         let sections: string[] = [];
@@ -1523,7 +1525,7 @@ export class NoesisFlowSettingTab extends PluginSettingTab {
     );
 
     new Setting(timelineGroup)
-      .setName("Timeline widget")
+      .setName("Timeline Widget")
       .setDesc("Adds a simple upcoming-events tab and ribbon action. It uses Calendar sources.")
       .addToggle((toggle) => {
         toggle.setValue(this.plugin.settings.timelineAddonEnabled);
@@ -1547,7 +1549,7 @@ export class NoesisFlowSettingTab extends PluginSettingTab {
     if (!this.plugin.settings.timelineAddonEnabled) return;
 
     new Setting(timelineGroup)
-      .setName("Timeline range")
+      .setName("Timeline Range")
       .setDesc("Number of upcoming days to include from holidays and milestones/events.")
       .addSlider((slider) => {
         slider
@@ -1561,7 +1563,7 @@ export class NoesisFlowSettingTab extends PluginSettingTab {
       });
 
     new Setting(timelineGroup)
-      .setName("Include milestones / events")
+      .setName("Include Milestones / Events")
       .setDesc("Adds entries from the configured milestones/events note to the Timeline widget.")
       .addToggle((toggle) => {
         toggle.setValue(this.plugin.settings.timelineIncludeEvents !== false);
@@ -1574,7 +1576,7 @@ export class NoesisFlowSettingTab extends PluginSettingTab {
       });
 
     new Setting(timelineGroup)
-      .setName("Include holidays")
+      .setName("Include Holidays")
       .setDesc("Adds configured holiday calendar entries to the Timeline widget.")
       .addToggle((toggle) => {
         toggle.setValue(this.plugin.settings.timelineIncludeHolidays);
@@ -1595,7 +1597,7 @@ export class NoesisFlowSettingTab extends PluginSettingTab {
     );
 
     new Setting(eventGroup)
-      .setName("Milestones / Events dates")
+      .setName("Milestones / Events Dates")
       .setDesc("Marks dated entries from the milestones/events note in Calendar.")
       .addToggle((toggle) => {
         toggle.setValue(this.plugin.settings.calendarEventsEnabled);
@@ -1609,7 +1611,7 @@ export class NoesisFlowSettingTab extends PluginSettingTab {
       });
 
     new Setting(eventGroup)
-      .setName("Milestones / Events note")
+      .setName("Milestones / Events Note")
       .setDesc(`Reads lines that contain ${getDateMarkerLabel(this.plugin.settings)} from this note.`)
       .addText((text) => {
         text.setPlaceholder("Milestones.md");
@@ -1632,7 +1634,7 @@ export class NoesisFlowSettingTab extends PluginSettingTab {
         });
       })
       .addButton((button) => {
-        button.setButtonText("Use active note");
+        button.setButtonText("Use Active Note");
         button.onClick(async () => {
           const changed = await this.plugin.useActiveNoteAsTimelineTarget();
           if (changed) this.update();
@@ -1640,7 +1642,7 @@ export class NoesisFlowSettingTab extends PluginSettingTab {
       });
 
     new Setting(eventGroup)
-      .setName("Calendar event color")
+      .setName("Calendar Event Color")
       .setDesc("Color used for milestone/event dates in Calendar.")
       .addColorPicker((color) => {
         color.setValue(this.plugin.settings.calendarEventColor || "#eab308");
@@ -1662,7 +1664,7 @@ export class NoesisFlowSettingTab extends PluginSettingTab {
     );
 
     new Setting(holidayGroup)
-      .setName("Holiday dates")
+      .setName("Holiday Dates")
       .setDesc("Reads holiday dates from a markdown note and marks them red in Calendar.")
       .addToggle((toggle) => {
         toggle.setValue(this.plugin.settings.holidayCalendarEnabled);
@@ -1677,7 +1679,7 @@ export class NoesisFlowSettingTab extends PluginSettingTab {
     if (!this.plugin.settings.holidayCalendarEnabled) return;
 
     new Setting(holidayGroup)
-      .setName("Holiday note")
+      .setName("Holiday Note")
       .setDesc("Markdown note with dates like 2026-12-25 Holiday name.")
       .addText((text) => {
         const applyHolidayNote = async (value: string): Promise<void> => {
@@ -1701,7 +1703,7 @@ export class NoesisFlowSettingTab extends PluginSettingTab {
         });
       })
       .addButton((button) => {
-        button.setButtonText("Use active note");
+        button.setButtonText("Use Active Note");
         button.onClick(async () => {
           const changed = await this.plugin.useActiveNoteAsHolidayCalendarTarget();
           if (changed) this.update();
@@ -1738,7 +1740,7 @@ export class NoesisFlowSettingTab extends PluginSettingTab {
     if (!this.plugin.settings.timerAddonEnabled) return;
 
     new Setting(timerGroup)
-      .setName("Timer display")
+      .setName("Timer Display")
       .setDesc("Choose the compact Timer display or the Pomodoro progress circle.")
       .addDropdown((dropdown) => {
         dropdown.addOption("timer", "Timer");
@@ -1752,7 +1754,7 @@ export class NoesisFlowSettingTab extends PluginSettingTab {
       });
 
     new Setting(timerGroup)
-      .setName("Focus minutes")
+      .setName("Focus Minutes")
       .setDesc("Length of each focus cycle.")
       .addSlider((slider) => {
         slider
@@ -1766,7 +1768,7 @@ export class NoesisFlowSettingTab extends PluginSettingTab {
       });
 
     new Setting(timerGroup)
-      .setName("Short break minutes")
+      .setName("Short Break Minutes")
       .setDesc("Length of each regular break.")
       .addSlider((slider) => {
         slider
@@ -1780,7 +1782,7 @@ export class NoesisFlowSettingTab extends PluginSettingTab {
       });
 
     new Setting(timerGroup)
-      .setName("Long break minutes")
+      .setName("Long Break Minutes")
       .setDesc("Length of the long break.")
       .addSlider((slider) => {
         slider
@@ -1794,7 +1796,7 @@ export class NoesisFlowSettingTab extends PluginSettingTab {
       });
 
     new Setting(timerGroup)
-      .setName("Focus cycles")
+      .setName("Focus Cycles")
       .setDesc("Number of focus cycles in one Pomodoro session.")
       .addSlider((slider) => {
         slider
@@ -1812,7 +1814,7 @@ export class NoesisFlowSettingTab extends PluginSettingTab {
       });
 
     new Setting(timerGroup)
-      .setName("Long break after")
+      .setName("Long Break After")
       .setDesc("Completed focus cycles before the long break starts.")
       .addSlider((slider) => {
         const cycleLimit = clampNumber(this.plugin.settings.timerFocusCycles, 1, 12, 4);
@@ -1827,7 +1829,7 @@ export class NoesisFlowSettingTab extends PluginSettingTab {
       });
 
     new Setting(timerGroup)
-      .setName("Focus sound")
+      .setName("Focus Sound")
       .setDesc("Choose the timer media file to play during focus periods.")
       .addDropdown((dropdown) => {
         dropdown.addOption("", "Silent");
@@ -1841,7 +1843,7 @@ export class NoesisFlowSettingTab extends PluginSettingTab {
         });
       });
     new Setting(timerGroup)
-      .setName("Completion sound")
+      .setName("Completion Sound")
       .setDesc("Play the selected focus sound once when a focus or break period ends.")
       .addToggle((toggle) => {
         toggle
@@ -1853,7 +1855,7 @@ export class NoesisFlowSettingTab extends PluginSettingTab {
       });
 
     new Setting(timerGroup)
-      .setName("Desktop completion notification")
+      .setName("Desktop Completion Notification")
       .setDesc("Show a system notification at the end of a period when Obsidian has permission.")
       .addToggle((toggle) => {
         toggle

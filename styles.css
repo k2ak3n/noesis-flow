@@ -5366,14 +5366,110 @@
 .theme-dark .noesis-flow-time-shell :is(.noesis-flow-timer-time, .noesis-flow-timer-digital-time) {
   color: color-mix(in srgb, var(--text-normal) 88%, var(--text-muted));
 }
-/* Light themes need an explicit foreground for the primary play/pause glyph. */
-.theme-light .noesis-flow-pomodoro-actions .noesis-flow-time-button.icon-only.primary,
-.theme-light .noesis-flow-pomodoro-actions .noesis-flow-time-button.icon-only.primary:is(:hover, :active, :focus-visible) {
+/* Light themes use a solid accent control and filled play/pause glyph. */
+.theme-light .noesis-flow-time-shell .noesis-flow-pomodoro-actions > button.noesis-flow-time-button.icon-only.primary,
+.theme-light .noesis-flow-time-shell .noesis-flow-pomodoro-actions > button.noesis-flow-time-button.icon-only.primary:is(:hover, :active, :focus-visible) {
+  background: var(--interactive-accent);
+  border-color: var(--interactive-accent);
   color: var(--text-on-accent, #fff);
 }
 
-.theme-light .noesis-flow-pomodoro-actions .noesis-flow-time-button.icon-only.primary svg {
-  stroke: currentColor;
+.noesis-flow-pomodoro-primary-glyph {
+  color: currentColor;
+  display: inline-block;
+  flex: 0 0 auto;
+}
+
+.noesis-flow-pomodoro-primary-glyph.is-play {
+  border-bottom: 6px solid transparent;
+  border-left: 10px solid currentColor;
+  border-top: 6px solid transparent;
+  height: 0;
+  margin-left: 1px;
+  width: 0;
+}
+
+.noesis-flow-pomodoro-primary-glyph.is-pause {
+  display: inline-flex;
+  gap: 3px;
+  height: 12px;
+  width: 9px;
+}
+
+.noesis-flow-pomodoro-primary-glyph.is-pause::before,
+.noesis-flow-pomodoro-primary-glyph.is-pause::after {
+  background: currentColor;
+  border-radius: 1px;
+  content: "";
+  height: 12px;
+  width: 3px;
+}
+/* Settings hierarchy: compact navigation accents with quiet control labels. */
+.noesis-flow-settings > .noesis-flow-settings-group-heading {
+  border-bottom: 1px solid color-mix(in srgb, var(--interactive-accent) 32%, var(--background-modifier-border));
+  color: color-mix(in srgb, var(--interactive-accent) 72%, var(--text-normal));
+  font-size: 0.7em;
+  font-weight: 750;
+  letter-spacing: 0.1em;
+  margin: 30px 0 10px;
+  padding: 0 0 8px;
+  text-transform: uppercase;
+}
+
+.noesis-flow-settings > .noesis-flow-settings-group-heading:first-of-type {
+  margin-top: 24px;
+}
+
+.noesis-flow-settings-details {
+  margin: 10px 0;
+  padding-inline: 14px;
+}
+
+.noesis-flow-settings-details > summary {
+  padding: 11px 0;
+}
+
+.noesis-flow-settings-summary-title {
+  color: var(--text-muted);
+  font-size: 0.72em;
+  font-weight: 750;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.noesis-flow-settings-details[open] > summary {
+  border-bottom-color: color-mix(in srgb, var(--interactive-accent) 24%, var(--background-modifier-border));
+  margin-bottom: 4px;
+}
+
+.noesis-flow-settings-details[open] > summary .noesis-flow-settings-summary-title {
+  color: color-mix(in srgb, var(--interactive-accent) 76%, var(--text-normal));
+}
+
+.noesis-flow-settings .setting-item {
+  padding-block: 12px;
+}
+
+.noesis-flow-settings .setting-item-name {
+  color: var(--text-normal);
+  font-size: var(--font-ui-small);
+  font-weight: 600;
+  letter-spacing: 0;
+  text-transform: none;
+}
+
+.noesis-flow-settings .setting-item-description {
+  line-height: 1.4;
+}
+
+.noesis-flow-settings .noesis-flow-settings-search-match .setting-item-name,
+.noesis-flow-settings .noesis-flow-settings-search-match .noesis-flow-settings-summary-title {
+  color: var(--interactive-accent);
+}
+
+.noesis-flow-settings-section-action button {
+  font-size: 0.72em;
+  font-weight: 650;
 }
 /* Calendar title controls remain text-only in both header layouts. */
 .noesis-flow-calendar-wrapper .noesis-flow-calendar-title .noesis-flow-calendar-title-button,

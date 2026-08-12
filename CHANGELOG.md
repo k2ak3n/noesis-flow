@@ -1,5 +1,10 @@
 # Changelog
 
+## 1.0.7
+
+- Use a solid accent play/pause control with filled icons in light mode.
+- Refine Settings hierarchy, capitalization, and section-level accent cues.
+
 ## 1.0.6
 
 - Improve light-mode visibility for the Pomodoro play and pause button.

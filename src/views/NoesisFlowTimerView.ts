@@ -391,7 +391,7 @@ export class NoesisFlowTimerView extends ItemView {
         "aria-label": this.running ? `Pause ${this.getModeLabel()} timer` : `Start ${this.getModeLabel()} timer`
       }
     });
-    setIcon(primary, this.running ? "pause" : "play");
+    primary.createSpan({ cls: `noesis-flow-pomodoro-primary-glyph ${this.running ? "is-pause" : "is-play"}`, attr: { "aria-hidden": "true" } });
     setTooltip(primary, this.running ? `Pause ${this.getModeLabel()} timer` : `Start ${this.getModeLabel()} timer`);
     primary.addEventListener("click", () => this.running ? this.pause() : this.start());
 
