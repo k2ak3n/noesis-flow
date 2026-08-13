@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.0.8
+
+- Keep task date-picker controls stable while opening the native calendar.
+
 ## 1.0.7
 
 - Use a solid accent play/pause control with filled icons in light mode.

@@ -88,9 +88,13 @@ export function enhanceNoesisFlowDatePicker(input: HTMLInputElement): void {
   const button = wrapper.createEl("button", { cls: "noesis-flow-date-picker-button", attr: { type: "button" } });
   setIcon(button, "calendar-days");
   setTooltip(button, "Open date picker");
-  button.addEventListener("click", () => {
+  button.addEventListener("pointerdown", (event) => {
+    // Keep the picker anchored to the date field instead of transferring focus to the trigger.
+    event.preventDefault();
+  });
+  button.addEventListener("click", (event) => {
+    event.preventDefault();
     if (input.disabled) return;
-    input.focus();
     const pickerInput = input as HTMLInputElement & { showPicker?: () => void };
     try {
       if (typeof pickerInput.showPicker === "function") pickerInput.showPicker();
