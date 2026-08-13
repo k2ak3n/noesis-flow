@@ -64,7 +64,7 @@ export class NoesisFlowPlanningView extends NoesisFlowTimedView {
     });
     chip.setAttribute("title", `${task.section || "Unsorted"} - ${PRIORITY_NAMES[task.marker] || "Normal"}`);
     chip.createSpan({ cls: "noesis-flow-planning-task-title", text: task.text });
-    const details = chip.createEl("button", { cls: "noesis-flow-planning-task-details", attr: { type: "button", "aria-label": `Open task details: ${task.text}`, title: "Task details" } });
+    const details = chip.createEl("button", { cls: "noesis-flow-planning-task-details noesis-flow-task-details-button", attr: { type: "button", "aria-label": `Open task details: ${task.text}`, title: "Task details" } });
     setIcon(details, "panel-right-open");
     details.addEventListener("click", (event) => {
       event.preventDefault();

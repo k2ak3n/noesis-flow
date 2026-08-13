@@ -373,7 +373,7 @@ export class NoesisFlowTaskListView extends NoesisFlowTimedView {
   renderActionsCell(row: HTMLTableRowElement, task: CalendarTask): void {
     const cell = row.createEl("td", { cls: "noesis-flow-task-list-cell noesis-flow-task-list-actions-cell" });
     const controls = cell.createDiv({ cls: "noesis-flow-task-list-row-actions" });
-    const details = controls.createEl("button", { cls: "noesis-flow-task-list-action-button", attr: { type: "button", "aria-label": `Open task details: ${task.text}`, title: "Task details" } });
+    const details = controls.createEl("button", { cls: "noesis-flow-task-list-action-button noesis-flow-task-details-button", attr: { type: "button", "aria-label": `Open task details: ${task.text}`, title: "Task details" } });
     setIcon(details, "panel-right-open");
     details.addEventListener("click", () => void this.plugin.openTaskDetails(task));
     const source = controls.createEl("button", { cls: "noesis-flow-task-list-action-button", attr: { type: "button", "aria-label": `Open source note: ${task.text}`, title: "Open source note" } });

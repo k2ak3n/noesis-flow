@@ -1,5 +1,10 @@
 # Changelog
 
+## 1.0.9
+
+- Restore browser-managed date selectors across Noesis Flow to prevent picker position glitches.
+- Blend task-details icons into task rows with borderless resting states.
+
 ## 1.0.8
 
 - Keep task date-picker controls stable while opening the native calendar.

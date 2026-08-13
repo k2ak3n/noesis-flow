@@ -1,6 +1,5 @@
 import { App, Modal, Notice } from "obsidian";
 import { moment } from "../time";
-import { enhanceNoesisFlowDatePickers } from "../ui/NoesisFlowUi";
 import { NoesisFlowConfirmModal } from "./NoesisFlowConfirmModal";
 import { asVoidHandler } from "../utils";
 import type { TimelineEntry } from "../types";
@@ -64,8 +63,6 @@ export class NoesisFlowTimelineEventModal extends Modal {
     dataList.id = project.getAttribute("list") || "";
     for (const section of this.sections) dataList.appendChild(new Option(section, section));
     form.appendChild(dataList);
-
-    enhanceNoesisFlowDatePickers(contentEl);
 
     const actions = contentEl.createDiv({ cls: "noesis-flow-kanban-task-actions" });
     if (this.onDelete) {

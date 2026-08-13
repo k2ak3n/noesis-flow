@@ -2,7 +2,6 @@ import { App, Modal, Notice } from "obsidian";
 import { moment } from "../time";
 import { asVoidHandler, CALENDAR_TASK_PRIORITIES, CALENDAR_TASK_RECURRENCE_OPTIONS } from "../utils";
 import { getRecurringTaskDateKeys } from "../tasks/TaskRecurrence";
-import { enhanceNoesisFlowDatePicker, enhanceNoesisFlowDatePickers } from "../ui/NoesisFlowUi";
 import type { RecurringTaskRecurrence, RecurringTaskSeries } from "../types";
 
 export class NoesisFlowRecurringSeriesModal extends Modal {
@@ -143,15 +142,12 @@ export class NoesisFlowRecurringSeriesModal extends Modal {
         endInput.type = "date";
         endInput.value = recurrence.endDate || this.series.startDate || "";
       }
-      enhanceNoesisFlowDatePicker(endInput);
     };
     repeatSelect.addEventListener("change", updateFields);
     completionUnitSelect.addEventListener("change", updateFields);
     endsSelect.addEventListener("change", updateFields);
     intervalInput.addEventListener("change", updateFields);
     updateFields();
-
-    enhanceNoesisFlowDatePickers(contentEl);
 
     const actions = contentEl.createDiv({ cls: "noesis-flow-kanban-task-actions" });
     actions.createEl("button", { text: "Cancel", attr: { type: "button" } }).addEventListener("click", () => this.close());

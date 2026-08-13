@@ -3,7 +3,6 @@ import type NoesisFlowPlugin from "../main";
 import type { CalendarTask } from "../types";
 import { moment } from "../time";
 import { asVoidHandler, CALENDAR_TASK_PRIORITIES } from "../utils";
-import { enhanceNoesisFlowDatePickers } from "../ui/NoesisFlowUi";
 import { getMarkdownH2Sections } from "../tasks/TaskMarkdown";
 import { NoesisFlowConfirmModal } from "./NoesisFlowConfirmModal";
 import type { TaskUpdates } from "../tasks/TaskMutationService";
@@ -146,7 +145,6 @@ const source = form.createEl("select");
         }).open();
       });
     }
-    enhanceNoesisFlowDatePickers(contentEl);
 
     const actions = contentEl.createDiv({ cls: "noesis-flow-modal-actions noesis-flow-task-details-actions" });
     const remove = actions.createEl("button", { text: "Delete", cls: "mod-warning", attr: { type: "button" } });

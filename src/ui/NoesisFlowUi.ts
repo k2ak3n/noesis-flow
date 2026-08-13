@@ -72,42 +72,6 @@ export function createCalendarIconButton(
   return button;
 }
 
-export function enhanceNoesisFlowDatePicker(input: HTMLInputElement): void {
-  const existing = input.parentElement?.closest(".noesis-flow-date-input-control");
-  if (existing) {
-    existing.classList.toggle("is-date-input", input.type === "date");
-    const button = existing.querySelector<HTMLButtonElement>(".noesis-flow-date-picker-button");
-    if (button) button.hidden = input.type !== "date";
-    return;
-  }
-  if (input.type !== "date" || !input.parentElement) return;
-  const parent = input.parentElement;
-  const wrapper = parent.createDiv({ cls: "noesis-flow-date-input-control is-date-input" });
-  parent.insertBefore(wrapper, input);
-  wrapper.appendChild(input);
-  const button = wrapper.createEl("button", { cls: "noesis-flow-date-picker-button", attr: { type: "button" } });
-  setIcon(button, "calendar-days");
-  setTooltip(button, "Open date picker");
-  button.addEventListener("pointerdown", (event) => {
-    // Keep the picker anchored to the date field instead of transferring focus to the trigger.
-    event.preventDefault();
-  });
-  button.addEventListener("click", (event) => {
-    event.preventDefault();
-    if (input.disabled) return;
-    const pickerInput = input as HTMLInputElement & { showPicker?: () => void };
-    try {
-      if (typeof pickerInput.showPicker === "function") pickerInput.showPicker();
-      else input.click();
-    } catch {
-      input.click();
-    }
-  });
-}
-
-export function enhanceNoesisFlowDatePickers(container: HTMLElement): void {
-  container.querySelectorAll<HTMLInputElement>('input[type="date"]').forEach(enhanceNoesisFlowDatePicker);
-}
 export function createNoesisFlowWidgetShell(container: NoesisFlowElement, options: NoesisFlowWidgetOptions = {}) {
   const shell = container.createDiv({ cls: `noesis-flow-productivity-widget noesis-flow-widget-shell ${options.shellClass || ""}`.trim() });
   const header = shell.createDiv({ cls: `noesis-flow-widget-header ${options.headerClass || ""}`.trim() });
@@ -196,7 +160,7 @@ export function renderNoesisFlowTaskRow(
     app: callbacks.app, component: callbacks.component, sourcePath: task.sourcePath || callbacks.sourcePath || ""
   });
   const renderActions = (target: NoesisFlowElement) => {
-    if (callbacks.onOpen) createCalendarIconButton(target, "panel-right-open", `Open task details: ${task.text}`, () => callbacks.onOpen?.(task), "", "noesis-flow-task-edit-button");
+    if (callbacks.onOpen) createCalendarIconButton(target, "panel-right-open", `Open task details: ${task.text}`, () => callbacks.onOpen?.(task), "", "noesis-flow-task-edit-button noesis-flow-task-details-button");
   };
   if (actionsPlacement === "top") renderActions(main.createDiv({ cls: "noesis-flow-task-edit-actions" }));
 

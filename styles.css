@@ -2062,27 +2062,6 @@
   width: 100%;
 }
 
-.noesis-flow-dialog input[type="date"],
-.noesis-flow-task-list-add-row input[type="date"],
-.noesis-flow-task-list-bulk-actions input[type="date"] {
-  direction: rtl;
-  padding-right: 34px;
-  position: relative;
-  text-align: left;
-}
-
-.noesis-flow-dialog input[type="date"]::-webkit-calendar-picker-indicator,
-.noesis-flow-task-list-add-row input[type="date"]::-webkit-calendar-picker-indicator,
-.noesis-flow-task-list-bulk-actions input[type="date"]::-webkit-calendar-picker-indicator {
-  cursor: pointer;
-}
-
-.noesis-flow-dialog input[type="date"]::-webkit-datetime-edit,
-.noesis-flow-task-list-add-row input[type="date"]::-webkit-datetime-edit,
-.noesis-flow-task-list-bulk-actions input[type="date"]::-webkit-datetime-edit {
-  direction: ltr;
-  text-align: left;
-}
 
 .noesis-flow-kanban-repeat-interval-unit {
   color: var(--text-muted);
@@ -3728,48 +3707,6 @@
   }
 }
 
-.noesis-flow-dialog .noesis-flow-date-input-control {
-  position: relative;
-  width: 100%;
-}
-
-.noesis-flow-dialog .noesis-flow-date-input-control input[type="date"] {
-  direction: ltr;
-  padding-right: 38px;
-  text-align: left;
-}
-
-.noesis-flow-dialog .noesis-flow-date-input-control input[type="date"]::-webkit-calendar-picker-indicator {
-  opacity: 0;
-  pointer-events: none;
-}
-
-.noesis-flow-date-picker-button {
-  align-items: center;
-  background: transparent;
-  border: 0;
-  color: var(--text-muted);
-  cursor: pointer;
-  display: inline-flex;
-  height: 24px;
-  justify-content: center;
-  padding: 0;
-  position: absolute;
-  right: 5px;
-  top: 50%;
-  transform: translateY(-50%);
-  width: 24px;
-}
-
-.noesis-flow-date-picker-button:hover,
-.noesis-flow-date-picker-button:focus-visible {
-  color: var(--text-normal);
-}
-
-.noesis-flow-date-picker-button svg {
-  height: 14px;
-  width: 14px;
-}
 /* -------------------------------------------------------------------------- */
 /* Noesis Flow quiet productivity system                                             */
 /* -------------------------------------------------------------------------- */
@@ -3912,32 +3849,6 @@
 }
 
 
-/* Date fields own one surface; their picker trigger is a stable icon affordance. */
-.noesis-flow-date-input-control.is-date-input > input[type="date"] {
-  padding-right: 38px;
-}
-
-.noesis-flow-date-input-control.is-date-input > input[type="date"]::-webkit-calendar-picker-indicator {
-  opacity: 0;
-  pointer-events: none;
-}
-
-.noesis-flow-date-input-control .noesis-flow-date-picker-button {
-  appearance: none;
-  background: transparent;
-  border: 0;
-  border-radius: 0;
-  box-shadow: none;
-  height: 24px;
-  min-height: 24px;
-  min-width: 24px;
-  transform: translateY(-50%);
-}
-
-.noesis-flow-date-input-control .noesis-flow-date-picker-button:hover {
-  background: transparent;
-  transform: translateY(-50%);
-}
 .noesis-flow-timeline-item, .noesis-flow-recurring-card { border-color: var(--noesis-flow-ui-border); }
 .noesis-flow-planner-subtitle, .noesis-flow-planner-signal { font-weight: 500; letter-spacing: 0; text-transform: none; }
 
@@ -4042,23 +3953,11 @@
 
 .noesis-flow-planning-task-details {
   align-self: center;
-  background: transparent;
-  border: 1px solid var(--noesis-flow-ui-border);
-  border-radius: 6px;
-  box-shadow: none;
   height: 24px;
   justify-content: center;
   justify-self: end;
   min-height: 24px;
-  padding: 0;
   width: 24px;
-}
-
-.noesis-flow-planning-task-details:hover,
-.noesis-flow-planning-task-details:focus-visible {
-  background: color-mix(in srgb, var(--noesis-flow-ui-accent) 8%, transparent);
-  border-color: var(--noesis-flow-ui-border-strong);
-  transform: none;
 }
 
 @container (max-width: 560px) {
@@ -5481,29 +5380,54 @@
 }
 
 
-/* Keep the custom date trigger fixed while the native picker opens. */
-.noesis-flow-dialog .noesis-flow-date-input-control > .noesis-flow-date-picker-button {
-  align-items: center;
+/* Task details actions are quiet icons until they are intentionally engaged. */
+.noesis-flow-task-details-button {
   appearance: none;
   background: transparent;
   border: 0;
-  border-radius: 0;
   box-shadow: none;
-  box-sizing: border-box;
-  display: inline-flex;
-  flex: 0 0 24px;
-  inset: 50% 5px auto auto;
-  justify-content: center;
-  margin: 0;
-  min-height: 24px;
-  min-width: 24px;
+  color: var(--text-muted);
+  cursor: pointer;
   padding: 0;
-  position: absolute;
-  transform: translateY(-50%);
 }
 
-.noesis-flow-dialog .noesis-flow-date-input-control > .noesis-flow-date-picker-button:is(:hover, :active, :focus-visible) {
-  background: transparent;
+.noesis-flow-task-details-button:is(:hover, :active) {
+  background: color-mix(in srgb, var(--noesis-flow-ui-accent, var(--interactive-accent)) 10%, transparent);
+  border: 0;
   box-shadow: none;
-  transform: translateY(-50%);
+  color: var(--noesis-flow-ui-accent, var(--interactive-accent));
+  transform: none;
+}
+
+.noesis-flow-task-details-button:focus-visible {
+  background: color-mix(in srgb, var(--noesis-flow-ui-accent, var(--interactive-accent)) 10%, transparent);
+  border: 0;
+  box-shadow: 0 0 0 2px color-mix(in srgb, var(--noesis-flow-ui-accent, var(--interactive-accent)) 66%, transparent);
+  color: var(--noesis-flow-ui-accent, var(--interactive-accent));
+  outline: 0;
+  transform: none;
+}
+
+
+/* Card-level icon styles must not reintroduce a surface for task details. */
+.noesis-flow-kanban-card .noesis-flow-task-edit-button.noesis-flow-calendar-icon-button.noesis-flow-task-details-button,
+.noesis-flow-today-task-item .noesis-flow-task-edit-button.noesis-flow-calendar-icon-button.noesis-flow-task-details-button,
+.noesis-flow-task-list-action-button.noesis-flow-task-details-button,
+.noesis-flow-planning-task-details.noesis-flow-task-details-button {
+  background: transparent;
+  background-color: transparent;
+  background-image: none;
+  border: 0;
+  border-color: transparent;
+  box-shadow: none;
+}
+
+.noesis-flow-kanban-card .noesis-flow-task-edit-button.noesis-flow-calendar-icon-button.noesis-flow-task-details-button:is(:hover, :active),
+.noesis-flow-today-task-item .noesis-flow-task-edit-button.noesis-flow-calendar-icon-button.noesis-flow-task-details-button:is(:hover, :active),
+.noesis-flow-task-list-action-button.noesis-flow-task-details-button:is(:hover, :active),
+.noesis-flow-planning-task-details.noesis-flow-task-details-button:is(:hover, :active) {
+  background: color-mix(in srgb, var(--noesis-flow-ui-accent, var(--interactive-accent)) 10%, transparent);
+  background-color: color-mix(in srgb, var(--noesis-flow-ui-accent, var(--interactive-accent)) 10%, transparent);
+  border: 0;
+  box-shadow: none;
 }

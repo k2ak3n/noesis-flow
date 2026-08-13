@@ -3,7 +3,6 @@ import type { MomentInput } from "moment";
 import { moment } from "../time";
 import { asVoidHandler, CALENDAR_TASK_PRIORITIES, CALENDAR_TASK_RECURRENCE_OPTIONS } from "../utils";
 import { getRecurringTaskDateKeys } from "../tasks/TaskRecurrence";
-import { enhanceNoesisFlowDatePicker, enhanceNoesisFlowDatePickers } from "../ui/NoesisFlowUi";
 import type { RecurringTaskRecurrence, RecurringTaskRule } from "../types";
 
 export type TaskCaptureSubmission = {
@@ -263,7 +262,6 @@ export class NoesisFlowKanbanTaskModal extends Modal {
           endValueInput.removeAttribute("step");
           endValueInput.value = this.initialDate;
         }
-        enhanceNoesisFlowDatePicker(endValueInput);
       };
       recurrenceSelect.addEventListener("change", updateRepeatFields);
       completionUnitSelect.addEventListener("change", updateRepeatFields);
@@ -278,8 +276,6 @@ export class NoesisFlowKanbanTaskModal extends Modal {
     });
     dateInput.disabled = noDateInput.checked;
     dateField.classList.toggle("is-undated", noDateInput.checked);
-
-    enhanceNoesisFlowDatePickers(contentEl);
 
     const submit = async () => {
       const text = taskInput.value.trim();
